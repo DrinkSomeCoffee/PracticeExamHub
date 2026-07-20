@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/practice_exam_hub.html" }
+  ]
+}
