@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Practice Exam Hub</title>
+<style>
+  :root{
+    --navy:#004977;
+    --btn-navy:#0068a9;
+    --btn-navy-hover:#00588f;
+    --text-dark:#000000;
+    --panel-border:#c9ccd3;
+    --lavender:#d7dcee;
+    --content-top:#fbfbfc;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; min-height:100%;
+    font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    color:var(--text-dark);
+    background:linear-gradient(180deg,var(--content-top) 0%, var(--lavender) 100%);
+  }
+  #topbar{
+    background:var(--navy);
+    color:#fff;
+    padding:22px 36px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.15);
+  }
+  #topbar h1{
+    margin:0;
+    font-size:22px;
+    font-weight:700;
+    letter-spacing:0.2px;
+  }
+  #topbar p{
+    margin:4px 0 0;
+    font-size:13.5px;
+    color:#cfe0ec;
+  }
+  #wrap{
+    max-width:820px;
+    margin:0 auto;
+    padding:32px 24px 60px;
+  }
+  .subject-heading{
+    font-size:19px;
+    font-weight:700;
+    color:var(--navy);
+    border-bottom:2px solid var(--navy);
+    padding-bottom:8px;
+    margin:0 0 16px;
+  }
+  .back-link{
+    display:block;
+    text-align:center;
+    font-size:16px;
+    font-weight:700;
+    color:var(--btn-navy);
+    text-decoration:none;
+    margin:28px 0 0;
+  }
+  .back-link:hover{ text-decoration:underline; }
+  .exam-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .category-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:12px;
+  }
+  @media (max-width:520px){
+    .category-grid{ grid-template-columns:1fr; }
+  }
+  .category-card .exam-card-title{ font-size:16.5px; }
+  .exam-card{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:#ffffff;
+    border:1px solid var(--panel-border);
+    border-radius:8px;
+    padding:16px 20px;
+    text-decoration:none;
+    color:var(--text-dark);
+    transition:box-shadow 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  }
+  .exam-card:hover{
+    border-color:var(--btn-navy);
+    box-shadow:0 3px 10px rgba(0,73,119,0.18);
+    transform:translateY(-1px);
+  }
+  .exam-card-title{
+    font-size:15.5px;
+    font-weight:600;
+  }
+  .exam-card-meta{
+    font-size:12.5px;
+    color:#5a5f6b;
+    margin-top:3px;
+  }
+  .exam-card-arrow{
+    background:var(--btn-navy);
+    color:#fff;
+    border-radius:50%;
+    width:30px;
+    height:30px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:15px;
+    margin-left:14px;
+  }
+  .exam-card-score{
+    display:inline-block;
+    font-size:12.5px;
+    font-weight:700;
+    margin-top:7px;
+    padding:2px 9px;
+    border-radius:10px;
+  }
+  .exam-card-score.good{ background:#e3f6e8; color:#1a8a3d; }
+  .exam-card-score.mid{ background:#fff3d6; color:#8a6a1a; }
+  .exam-card-score.low{ background:#fde3e3; color:#b3261e; }
+  .exam-card-score.in-progress{ background:#e3ecf9; color:#1a4f8a; }
+  .exam-card-score-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-top:7px;
+  }
+  .exam-card-score-row .exam-card-score{ margin-top:0; }
+  .btn-reset{
+    font-size:11.5px;
+    font-weight:600;
+    color:#5a5f6b;
+    background:#fff;
+    border:1px solid var(--panel-border);
+    border-radius:10px;
+    padding:2px 9px;
+    cursor:pointer;
+  }
+  .btn-reset:hover{
+    color:#b3261e;
+    border-color:#b3261e;
+    background:#fde3e3;
+  }
+  .reset-all-btn{
+    display:block;
+    margin:28px auto 0;
+    font-size:13px;
+    font-weight:600;
+    color:#b3261e;
+    background:#fff;
+    border:1px solid #f3c6c2;
+    border-radius:20px;
+    padding:8px 18px;
+    cursor:pointer;
+  }
+  .reset-all-btn:hover{ background:#fde3e3; border-color:#b3261e; }
+  .reset-all-overlay{
+    position:fixed; inset:0;
+    background:rgba(10,18,30,.6);
+    z-index:1000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+  }
+  .reset-all-overlay.open{ display:flex; }
+  .reset-all-card{
+    background:#fff;
+    border-radius:10px;
+    padding:30px 36px;
+    max-width:380px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  }
+  .reset-all-card p{
+    font-size:14.5px;
+    color:var(--text-dark);
+    margin:0 0 22px;
+    line-height:1.5;
+  }
+  .reset-all-card .btn-row{
+    display:flex; justify-content:center; gap:12px;
+  }
+  .reset-all-card button{
+    font-size:14px; font-weight:700;
+    border-radius:8px; padding:10px 22px;
+    cursor:pointer; border:1.5px solid transparent;
+  }
+  .reset-all-card .btn-no{
+    background:#fff; color:var(--text-dark); border-color:var(--panel-border);
+  }
+  .reset-all-card .btn-no:hover{ background:#f2f3f5; }
+  .reset-all-card .btn-yes{
+    background:#b3261e; color:#fff;
+  }
+  .reset-all-card .btn-yes:hover{ background:#921f18; }
+  .reset-all-card .btn-yes:disabled{ opacity:0.6; cursor:default; }
+  .empty-note{
+    font-size:13.5px;
+    color:#6b7280;
+    font-style:italic;
+    padding:6px 2px;
+  }
+  #footer-note{
+    max-width:820px;
+    margin:0 auto;
+    padding:0 24px 40px;
+    font-size:12px;
+    color:#6b7280;
+  }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <h1>Practice Exam Hub</h1>
+  <p id="topbar-subtitle">Select a subject to view its practice exams.</p>
+</div>
+
+<div id="wrap"></div>
+<div id="footer-note"></div>
+
+<!-- RESET ALL CONFIRM OVERLAY -->
+<div class="reset-all-overlay" id="reset-all-confirm-overlay">
+  <div class="reset-all-card">
+    <p>Are you sure? This will reset all Exams and remove any saved data.</p>
+    <div class="btn-row">
+      <button type="button" class="btn-no" id="btn-reset-all-no">No</button>
+      <button type="button" class="btn-yes" id="btn-reset-all-yes">Yes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* =========================================================
+     EXAM INDEX — add one entry per exam here as new forms are built.
+     Grouped onto its subject's page automatically; within a subject,
+     always sorted numerically by form number (see extractFormNumber/
+     getExamsForSubject below) regardless of what order entries are
+     added here. "subject" must match an entry in SUBJECTS below.
+  ==========================================================*/
+  const EXAMS = [
+    { subject: "Internal Medicine", form: "Form 4", file: "dependencies/internal_medicine_form_4.html", questionCount: 49 },
+    { subject: "Internal Medicine", form: "Form 5", file: "dependencies/internal_medicine_form_5.html", questionCount: 50 },
+    { subject: "Internal Medicine", form: "Form 6", file: "dependencies/internal_medicine_form_6.html", questionCount: 50 },
+    { subject: "Internal Medicine", form: "Form 7", file: "dependencies/internal_medicine_form_7.html", questionCount: 50 },
+    { subject: "Neurology", form: "Form 6", file: "dependencies/neurology_form_6.html", questionCount: 50 },
+    { subject: "NBME Step 2 CK", form: "Form 13", file: "dependencies/nbme_step2_form13.html", questionCount: 200 },
+    { subject: "OB/GYN", form: "Form 3", file: "dependencies/obgyn_form_3.html", questionCount: 50 },
+    { subject: "Pediatrics", form: "Form 8", file: "dependencies/pediatrics_form_8.html", questionCount: 50 },
+    { subject: "Pediatrics", form: "Form 3", file: "dependencies/pediatrics_form_3.html", questionCount: 49 },
+    { subject: "Pediatrics", form: "Form 7", file: "dependencies/pediatrics_form_7.html", questionCount: 50 },
+    { subject: "Pediatrics", form: "Form 6", file: "dependencies/pediatrics_form_6.html", questionCount: 50 },
+    { subject: "Pediatrics", form: "Form 4", file: "dependencies/pediatrics_form_4.html", questionCount: 50 },
+    { subject: "Pediatrics", form: "Form 5", file: "dependencies/pediatrics_form_5.html", questionCount: 50 },
+  ];
+
+  // The full subject taxonomy for the home page's category grid — listed
+  // alphabetically regardless of insertion order here, and shown even for
+  // subjects with zero exams yet (so the hub's shape doesn't change as
+  // forms get added). A subject not in this list won't get a category box
+  // even if an EXAMS entry references it, so add new subjects here first.
+  //
+  // Alphabetical order is enforced by the comparator below, not array
+  // position — so subjects can be added here in any order. The one
+  // exception: NBME_STEP2_SUBJECT always sorts to the very end regardless
+  // of where "N" would normally fall, since it's a self-assessment/board
+  // exam rather than a clinical subject and reads better grouped apart
+  // from the rest. Add a subject here to give it a category box even
+  // before any exam exists for it yet.
+  const NBME_STEP2_SUBJECT = "NBME Step 2 CK";
+  const SUBJECTS = [
+    "Family Medicine",
+    "Internal Medicine",
+    "Neurology",
+    "OB/GYN",
+    "Pediatrics",
+    "Psychiatry",
+    "Surgery",
+    NBME_STEP2_SUBJECT,
+  ].sort((a, b)=>{
+    if(a === NBME_STEP2_SUBJECT) return 1;
+    if(b === NBME_STEP2_SUBJECT) return -1;
+    return a.localeCompare(b);
+  });
+
+  // An exam page that was just completed passes its score back via URL
+  // query params on the "End Review" link (see the exam template's
+  // btn-endblock handler) — this is what's guaranteed to work even when
+  // these are plain local files opened with no server, where localStorage
+  // often can't be shared across separate file:// documents. A "Save and
+  // Exit" click mid-attempt (unfinished, no score yet) reuses the same
+  // examFile param but adds inProgress=1 instead of a score — see
+  // getIncomingProgressFromURL() below — so this only treats it as a real
+  // completed score when inProgress isn't set, otherwise an in-progress
+  // exit would wrongly get recorded as "Completed — 0%".
+  function getIncomingScoreFromURL(){
+    try{
+      const params = new URLSearchParams(location.search);
+      const examFile = params.get('examFile');
+      if(!examFile || params.get('inProgress') === '1') return null;
+      return {
+        file: examFile,
+        correct: Number(params.get('correct')),
+        total: Number(params.get('total')),
+        pct: Number(params.get('pct'))
+      };
+    }catch(e){ return null; }
+  }
+  // The mid-attempt counterpart to the score hand-off above: "Save and
+  // Exit" on an unfinished exam passes examFile + inProgress=1 (no score),
+  // which just means "mark this exam's card with a Resume indicator" — see
+  // hasInProgress()/buildExamCard() below.
+  function getIncomingProgressFromURL(){
+    try{
+      const params = new URLSearchParams(location.search);
+      const examFile = params.get('examFile');
+      if(!examFile || params.get('inProgress') !== '1') return null;
+      return { file: examFile };
+    }catch(e){ return null; }
+  }
+  let incomingScore = getIncomingScoreFromURL();
+  let incomingProgress = getIncomingProgressFromURL();
+  if(incomingScore){
+    // Save it into THIS file's own localStorage. Browsers give every local
+    // file:// URL its own isolated storage, so this hub page can't read
+    // scores another file wrote — but this hub page CAN read what it wrote
+    // to its own storage on a previous visit. That's exactly what makes
+    // this persist: every future time you reopen this same hub file, the
+    // completed exams below still show their scores, even without the URL
+    // params (which only exist right after clicking "End Review").
+    try{
+      localStorage.setItem('nbmeExamScore:' + incomingScore.file, JSON.stringify({
+        correct: incomingScore.correct, total: incomingScore.total, pct: incomingScore.pct, ts: Date.now()
+      }));
+      // A finished exam is never also "in progress" — clear any stale
+      // Resume flag left over from an earlier Save and Exit on this file.
+      localStorage.removeItem('nbmeExamProgress:' + incomingScore.file);
+    }catch(e){ /* storage disabled entirely (e.g. private/incognito mode) */ }
+  }
+  if(incomingProgress){
+    try{
+      localStorage.setItem('nbmeExamProgress:' + incomingProgress.file, '1');
+    }catch(e){ /* storage disabled entirely (e.g. private/incognito mode) */ }
+  }
+  if(incomingScore || incomingProgress){
+    // Drop the query string so refreshing this page doesn't keep replaying
+    // it — but keep the hash: an in-progress exit already lands here with
+    // "#subject/<name>" attached (set by the exam file itself, so it opens
+    // straight on the right subject page), and a finished exit gets its
+    // hash set separately just below.
+    try{ history.replaceState(null, '', location.pathname + location.hash); }catch(e){}
+  }
+
+  // Reads back a completed score for an exam: the score that just arrived
+  // via URL takes priority (covers the moment right after "End Review"),
+  // falling back to this hub's own localStorage for every visit after that.
+  function getScore(file){
+    if(incomingScore && incomingScore.file === file) return incomingScore;
+    try{
+      const raw = localStorage.getItem('nbmeExamScore:' + file);
+      if(!raw) return null;
+      return JSON.parse(raw);
+    }catch(e){ return null; }
+  }
+
+  // True if this exam has an unfinished attempt saved (via "Save and Exit"
+  // mid-block) with no completed score yet — drives the "Resume" indicator
+  // on its card. An exam is only ever one or the other: a completed score
+  // always wins if somehow both are present (e.g. stale leftover data).
+  function hasInProgress(file){
+    if(getScore(file)) return false;
+    if(incomingProgress && incomingProgress.file === file) return true;
+    try{
+      return localStorage.getItem('nbmeExamProgress:' + file) === '1';
+    }catch(e){ return false; }
+  }
+
+  // Pulls the first number out of a form label ("Form 6" -> 6, "Form 7
+  // (test - 5 items)" -> 7) so exams can be listed in numerical order
+  // regardless of the order they were added to EXAMS below — e.g. Form 4
+  // always lists above Form 5 even if Form 5 was registered first. Forms
+  // with no number in the label (rare) sort to the end rather than erroring.
+  function extractFormNumber(formLabel){
+    const m = String(formLabel).match(/(\d+)/);
+    return m ? parseInt(m[1], 10) : Number.POSITIVE_INFINITY;
+  }
+
+  function getExamsForSubject(subject){
+    // Always numerical by form number, not insertion order into EXAMS above.
+    return EXAMS.filter(e=> e.subject === subject)
+      .slice()
+      .sort((a,b)=> extractFormNumber(a.form) - extractFormNumber(b.form));
+  }
+
+  // Clears an exam's own saved state (answers, strike-outs, marks,
+  // highlights) without ever navigating the visible page there. A hidden
+  // 0x0 iframe loads "<file>?reset=1" — same trick the exam-to-hub score
+  // hand-off relies on, just inverted and kept off-screen. The exam's own
+  // clearExamStateIfResetRequested() runs synchronously during that
+  // iframe's initial script execution (see the exam template's INIT
+  // block) and posts an "nbmeResetDone" message back once the wipe is
+  // done, which is the primary completion signal here. The iframe's own
+  // load event and a timeout are both fallbacks in case the message never
+  // arrives (e.g. a blocked or missing file), so the button never gets
+  // stuck waiting.
+  function resetExamStateInBackground(file, onDone){
+    let done = false;
+    const onMessage = (e)=>{
+      if(e.data && e.data.type === 'nbmeResetDone' && e.data.file === file) finish();
+    };
+    window.addEventListener('message', onMessage);
+    const finish = ()=>{
+      if(done) return;
+      done = true;
+      window.removeEventListener('message', onMessage);
+      try{ iframe.remove(); }catch(e){}
+      onDone();
+    };
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:absolute; width:0; height:0; border:0; opacity:0; pointer-events:none;';
+    iframe.setAttribute('aria-hidden', 'true');
+    iframe.addEventListener('load', finish);
+    iframe.src = file + '?reset=1';
+    document.body.appendChild(iframe);
+    setTimeout(finish, 2500);
+  }
+
+  // "Reset All" — same background-iframe trick as the single-exam Reset
+  // button above, just run once per exam in EXAMS (in parallel, not one at
+  // a time, so this doesn't take N times as long). Also clears this hub's
+  // own mirrored score/progress flags and any one-time incoming snapshots
+  // for every file, so every card goes back to "not yet taken" immediately
+  // on the next render — not just the exam files' own storage.
+  function resetAllExamsInBackground(onDone){
+    const files = EXAMS.map(e=> e.file);
+    if(files.length === 0){ onDone(); return; }
+    let remaining = files.length;
+    files.forEach(file=>{
+      resetExamStateInBackground(file, ()=>{
+        try{ localStorage.removeItem('nbmeExamScore:' + file); }catch(e){}
+        try{ localStorage.removeItem('nbmeExamProgress:' + file); }catch(e){}
+        if(incomingScore && incomingScore.file === file) incomingScore = null;
+        if(incomingProgress && incomingProgress.file === file) incomingProgress = null;
+        remaining--;
+        if(remaining === 0) onDone();
+      });
+    });
+  }
+
+  // Shared by the subject page's exam list. Handles the exam's own
+  // navigation (resumes a finished review via the exam's own localStorage —
+  // see restoreExamStateIfPresent() in the exam template) plus the
+  // completed-score pill and Reset button.
+  function buildExamCard(exam){
+    const card = document.createElement('a');
+    card.className = 'exam-card';
+    card.href = exam.file;
+
+    const left = document.createElement('div');
+    const title = document.createElement('div');
+    title.className = 'exam-card-title';
+    title.textContent = exam.subject + ' — ' + exam.form;
+    const meta = document.createElement('div');
+    meta.className = 'exam-card-meta';
+    meta.textContent = exam.questionCount ? (exam.questionCount + ' items') : '';
+    left.appendChild(title);
+    left.appendChild(meta);
+
+    const score = getScore(exam.file);
+    if(!score && hasInProgress(exam.file)){
+      const progressRow = document.createElement('div');
+      progressRow.className = 'exam-card-score-row';
+
+      const resumePill = document.createElement('div');
+      resumePill.className = 'exam-card-score in-progress';
+      resumePill.textContent = '↻ In Progress — Resume';
+      progressRow.appendChild(resumePill);
+
+      left.appendChild(progressRow);
+    }
+    if(score){
+      const scoreRow = document.createElement('div');
+      scoreRow.className = 'exam-card-score-row';
+
+      const scorePill = document.createElement('div');
+      const tier = score.pct >= 80 ? 'good' : score.pct >= 60 ? 'mid' : 'low';
+      scorePill.className = 'exam-card-score ' + tier;
+      scorePill.textContent = '✓ Completed — ' + score.pct + '% (' + score.correct + '/' + score.total + ')';
+      scoreRow.appendChild(scorePill);
+
+      // Retaking an exam needs its own saved answers/state wiped too, and
+      // that lives in the exam file's own localStorage — isolated from
+      // this hub's, since every local file:// URL gets separate storage.
+      // This hub can clear the record it owns directly, but the exam-side
+      // wipe can only run from a browsing context whose origin is that
+      // exact exam file. Rather than navigating the whole page there (which
+      // would visibly open the exam), a hidden iframe loads the exam with
+      // ?reset=1 in the background — its clearExamStateIfResetRequested()
+      // runs during that iframe's own page load and clears its state, then
+      // the iframe is torn down without ever being shown. The user stays on
+      // the hub throughout; the card just goes back to "not completed".
+      const resetBtn = document.createElement('button');
+      resetBtn.type = 'button';
+      resetBtn.className = 'btn-reset';
+      resetBtn.textContent = 'Reset';
+      resetBtn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+        const label = exam.subject + ' — ' + exam.form;
+        const ok = confirm('Reset "' + label + '"? This clears your saved answers and score and marks it as not yet taken. You will not be taken into the exam.');
+        if(!ok) return;
+        resetBtn.disabled = true;
+        resetBtn.textContent = 'Resetting…';
+        resetExamStateInBackground(exam.file, ()=>{
+          try{ localStorage.removeItem('nbmeExamScore:' + exam.file); }catch(err){}
+          try{ localStorage.removeItem('nbmeExamProgress:' + exam.file); }catch(err){}
+          // incomingScore/incomingProgress are one-time snapshots captured
+          // from URL params at page load (see getIncomingScoreFromURL()/
+          // getIncomingProgressFromURL() above); getScore()/hasInProgress()
+          // check them before localStorage, so they must be cleared here
+          // too, or a just-arrived value for this exact exam would keep
+          // winning over the reset and its pill would never disappear.
+          if(incomingScore && incomingScore.file === exam.file) incomingScore = null;
+          if(incomingProgress && incomingProgress.file === exam.file) incomingProgress = null;
+          render();
+        });
+      });
+      scoreRow.appendChild(resetBtn);
+
+      left.appendChild(scoreRow);
+    }
+
+    const arrow = document.createElement('div');
+    arrow.className = 'exam-card-arrow';
+    arrow.textContent = '→';
+
+    card.appendChild(left);
+    card.appendChild(arrow);
+    return card;
+  }
+
+  function renderHome(){
+    document.getElementById('topbar-subtitle').textContent = 'Select a subject to view its practice exams.';
+    const wrap = document.getElementById('wrap');
+    wrap.innerHTML = '';
+
+    const grid = document.createElement('div');
+    grid.className = 'category-grid';
+
+    SUBJECTS.forEach(subject=>{
+      const count = EXAMS.filter(e=> e.subject === subject).length;
+      const box = document.createElement('a');
+      box.className = 'exam-card category-card';
+      box.href = '#subject/' + encodeURIComponent(subject);
+
+      const left = document.createElement('div');
+      const title = document.createElement('div');
+      title.className = 'exam-card-title';
+      title.textContent = subject;
+      const meta = document.createElement('div');
+      meta.className = 'exam-card-meta';
+      meta.textContent = count === 0 ? 'No exams yet' : (count + (count === 1 ? ' exam' : ' exams'));
+      left.appendChild(title);
+      left.appendChild(meta);
+
+      const arrow = document.createElement('div');
+      arrow.className = 'exam-card-arrow';
+      arrow.textContent = '→';
+
+      box.appendChild(left);
+      box.appendChild(arrow);
+      grid.appendChild(box);
+    });
+
+    wrap.appendChild(grid);
+
+    // Bottom-center "Reset All" — deliberately small and off to the side
+    // visually (pill-shaped, muted red) rather than a prominent primary
+    // action, since it's destructive and rarely needed; the confirmation
+    // overlay is what actually guards against an accidental click.
+    const resetAllBtn = document.createElement('button');
+    resetAllBtn.type = 'button';
+    resetAllBtn.className = 'reset-all-btn';
+    resetAllBtn.textContent = 'Reset All';
+    resetAllBtn.addEventListener('click', ()=>{
+      document.getElementById('reset-all-confirm-overlay').classList.add('open');
+    });
+    wrap.appendChild(resetAllBtn);
+  }
+
+  function renderSubjectExams(subject){
+    document.getElementById('topbar-subtitle').textContent = subject + ' — select a form to begin.';
+    const wrap = document.getElementById('wrap');
+    wrap.innerHTML = '';
+
+    const heading = document.createElement('div');
+    heading.className = 'subject-heading';
+    heading.textContent = subject;
+    wrap.appendChild(heading);
+
+    const exams = getExamsForSubject(subject);
+    if(exams.length === 0){
+      const note = document.createElement('p');
+      note.className = 'empty-note';
+      note.textContent = 'No exams yet for this subject.';
+      wrap.appendChild(note);
+    } else {
+      const list = document.createElement('div');
+      list.className = 'exam-list';
+      exams.forEach(exam=> list.appendChild(buildExamCard(exam)));
+      wrap.appendChild(list);
+    }
+
+    // Bottom-center "back to all subjects" control — enlarged and moved
+    // below the exam list (rather than a small top-left link above the
+    // heading) per the user's preference; still works the same way, just
+    // repositioned/resized, so back/forward and a raw "#" link are unaffected.
+    const back = document.createElement('a');
+    back.className = 'back-link';
+    back.href = '#';
+    back.textContent = '← All Subjects';
+    wrap.appendChild(back);
+  }
+
+  // View is driven entirely by the URL hash ("#subject/Pediatrics" or empty
+  // for the home grid) so the back/forward buttons and a raw link both work
+  // without any extra state to keep in sync.
+  function currentViewFromHash(){
+    const m = location.hash.match(/^#subject\/(.+)$/);
+    if(m){
+      const subject = decodeURIComponent(m[1]);
+      if(SUBJECTS.includes(subject)) return { type: 'subject', subject: subject };
+    }
+    return { type: 'home' };
+  }
+
+  function render(){
+    const view = currentViewFromHash();
+    if(view.type === 'subject') renderSubjectExams(view.subject);
+    else renderHome();
+  }
+
+  window.addEventListener('hashchange', render);
+
+  document.getElementById('btn-reset-all-no').addEventListener('click', ()=>{
+    document.getElementById('reset-all-confirm-overlay').classList.remove('open');
+  });
+  document.getElementById('btn-reset-all-yes').addEventListener('click', ()=>{
+    const yesBtn = document.getElementById('btn-reset-all-yes');
+    yesBtn.disabled = true;
+    yesBtn.textContent = 'Resetting…';
+    resetAllExamsInBackground(()=>{
+      document.getElementById('reset-all-confirm-overlay').classList.remove('open');
+      yesBtn.disabled = false;
+      yesBtn.textContent = 'Yes';
+      render();
+    });
+  });
+
+  // If we just arrived back from a finished exam (score in the URL, handled
+  // above), jump straight to that exam's subject page so the updated score
+  // and Reset button are visible immediately instead of landing on the home
+  // grid and requiring an extra click back in.
+  if(incomingScore){
+    const owner = EXAMS.find(e=> e.file === incomingScore.file);
+    if(owner) location.hash = 'subject/' + encodeURIComponent(owner.subject);
+  }
+
+  render();
+</script>
+</body>
+</html>
