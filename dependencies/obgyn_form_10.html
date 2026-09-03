@@ -1,0 +1,3679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- CONTENT:TITLE:START -->
+<title>OB/GYN Form 10 - NBME Practice Exam</title>
+<!-- CONTENT:TITLE:END -->
+<style>
+  :root{
+    --navy:#004977;
+    --navy-dark:#00395e;
+    --btn-navy:#0068a9;
+    --border-navy:#004977;
+    --panel-border:#c9ccd3;
+    --text-dark:#000000;
+    --row-line:#e2e4ea;
+    --answered-dot:#000;
+    --sidebar-bg:#ffffff;
+    --sidebar-current:#004977;
+    --sidebar-hover:#eef0f4;
+    --lavender:#d7dcee;
+    --content-top:#fbfbfc;
+    --lab-header-gray:#d9d9d9;
+    --red:#ff0000;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    height:100%; margin:0; padding:0;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-dark);
+    background:#fff;
+    font-size:15px;
+    user-select:none;
+  }
+  #app{ display:flex; height:100vh; }
+
+  /* ============ LEFT SIDEBAR ============ */
+  #sidebar{
+    width:120px;
+    flex-shrink:0;
+    background:var(--sidebar-bg);
+    border-right:1px solid var(--panel-border);
+    display:flex;
+    flex-direction:column;
+  }
+  #sidebar-header{
+    font-weight:bold;
+    text-align:center;
+    padding:10px 6px;
+    border-bottom:2px solid var(--navy);
+    font-size:13.5px;
+    line-height:1.25;
+  }
+  #sidebar-list{ overflow-y:auto; flex:1; }
+  .sidebar-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 14px;
+    font-size:14px;
+    cursor:pointer;
+    border-bottom:1px solid #eee;
+  }
+  .sidebar-item:hover{ background:var(--sidebar-hover); }
+  .sidebar-item.current{ background:var(--navy); color:#fff; font-weight:normal; }
+  .sidebar-item .dot{
+    width:7px; height:7px; border-radius:50%; background:var(--answered-dot); flex-shrink:0;
+  }
+  .sidebar-item.current .dot{ background:#fff; }
+  .sidebar-item .dot.unanswered{ background:transparent; border:1.3px solid #666; }
+  .sidebar-item.current .dot.unanswered{ border-color:#fff; }
+  .sidebar-item .flag{ margin-left:auto; display:inline-flex; }
+  .sidebar-item .flag svg{ width:19px; height:19px; }
+  .sidebar-item.incomplete{ outline:2px solid var(--red); outline-offset:-2px; }
+
+  /* ============ RIGHT COLUMN ============ */
+  #main-col{ flex:1; display:flex; flex-direction:column; min-width:0; }
+
+  /* ===== TOP BAR ===== */
+  #topbar{
+    background:var(--navy);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    padding:8px 16px;
+    flex-shrink:0;
+    gap:20px;
+  }
+  #item-id-box{
+    background:#fff;
+    color:var(--text-dark);
+    border:1.5px solid #fff;
+    border-radius:2px;
+    padding:5px 12px;
+    font-size:13.5px;
+    line-height:1.3;
+  }
+  #item-id-box .l1{ font-weight:bold; }
+  #topbar-nav{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin:0 auto;
+    padding-left:60px;
+  }
+  .icon-btn{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    cursor:pointer;
+    color:#fff;
+    font-size:11px;
+    background:none;
+    border:none;
+    padding:0;
+  }
+  .icon-btn:hover .icon-circle, .icon-btn:hover .icon-square{ background:#eef2f8; }
+  .icon-circle{
+    width:34px; height:34px; border-radius:50%;
+    background:#fff; color:var(--navy);
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; font-weight:bold;
+  }
+  .icon-square{
+    width:34px; height:34px; border-radius:6px;
+    background:#fff; color:var(--navy);
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px;
+  }
+  .icon-square svg{ width:19px; height:19px; }
+  .icon-circle svg{ width:19px; height:19px; }
+  .icon-btn.active .icon-square{ background:#cfe0ff; }
+  .icon-badge{ width:34px; height:34px; display:flex; align-items:center; justify-content:center; }
+  .icon-badge svg{ width:30px; height:30px; }
+  .icon-badge-wrap{ position:relative; }
+  .icon-badge-wrap > span[data-icon]{ display:flex; align-items:center; justify-content:center; width:100%; height:100%; }
+  .badge-num{
+    position:absolute; bottom:-2px; right:-3px;
+    font-size:10px; font-weight:bold; font-style:normal;
+    color:var(--navy); background:#fff;
+    border-radius:3px; padding:0 2px; line-height:1.3;
+  }
+  #nav-counter{ font-size:14px; font-weight:bold; padding:0 2px; }
+  #toolbar-icons{ display:flex; align-items:center; gap:16px; margin-left:auto; }
+
+  /* ===== CONTENT ===== */
+  #content-wrap{ flex:1; display:flex; min-height:0; position:relative; }
+  #content{
+    flex:1;
+    overflow-y:auto;
+    padding:20px 34px 40px 34px;
+    min-width:280px;
+    background:linear-gradient(to bottom, var(--content-top), var(--lavender));
+  }
+  #mark-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:18px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    width:max-content;
+  }
+  #mark-row input{
+    appearance:none; -webkit-appearance:none;
+    width:17px; height:17px; cursor:pointer;
+    border:1.7px solid #4a4a4a; border-radius:2px;
+    background:#fff; position:relative; margin:0;
+  }
+  #mark-row input:checked{ background:var(--navy); border-color:var(--navy); }
+  #mark-row input:checked::after{
+    content:"";
+    position:absolute; left:4px; top:0px;
+    width:5px; height:9px;
+    border:solid #fff; border-width:0 2px 2px 0;
+    transform:rotate(40deg);
+  }
+  #mark-row .flag-icon{ font-size:15px; color:#333; display:inline-flex; }
+  #mark-row .flag-icon svg{ width:16px; height:16px; }
+
+  #qa-body{
+    display:flex;
+    gap:32px;
+    align-items:flex-start;
+  }
+  #qa-text{ flex:1; min-width:0; max-width:760px; }
+  #qa-image{
+    display:none;
+    flex:0 0 auto;
+    max-width:42%;
+  }
+  #qa-image.show{ display:block; }
+  #qa-image img{
+    max-width:100%;
+    display:block;
+    border:1px solid #999;
+  }
+
+  #question-stem{
+    line-height:1.65;
+    font-size:15px;
+    margin-bottom:20px;
+    white-space:pre-wrap;
+    user-select:text;
+    -webkit-user-select:text;
+  }
+  #question-stem .highlighted{ background:#ffeb3b; cursor:pointer; }
+
+  /* Lab-value tables (Serum studies show: / Urinalysis shows: / etc.) —
+     centered as a standalone block, label/value columns close together
+     and left-aligned to each other, matching the real NBME layout instead
+     of running the values inline with the surrounding prose. See the
+     LAB_TABLE_MARKER handling in renderStemWithHighlights(), which builds
+     these tables inline. Selectable/highlightable exactly like the
+     surrounding prose (see "VIGNETTE HIGHLIGHTING" below) — a real NBME
+     exam lets a test-taker highlight lab values just as freely as the rest
+     of the vignette, so this should never be user-select:none again.
+
+     IMPORTANT: this uses `.stem-lab-table`, a name deliberately distinct
+     from the pre-existing `.lab-table` class used by the Lab Values
+     reference panel (the "Lab Values" toolbar button's popup, defined
+     further down). That class sets `width:100%` and a `border-bottom` on
+     every cell — exactly wrong for this feature (it stretches the table
+     to the full stem width, which both breaks centering and drags the
+     value column far from its label, and draws a line under every row).
+     Reusing that class name here was the actual bug behind all three
+     visual complaints (borders between rows, off-center table, wide
+     label/value gap) — the fix was giving this its own class, not tweaking
+     margins. Do not rename this back to `.lab-table` or merge the two;
+     they render two structurally different things (a full reference
+     panel vs. one compact inline table) and need different box models.
+  */
+  #question-stem table.stem-lab-table{
+    width:auto;
+    margin:14px auto;
+    border-collapse:collapse;
+    border:none;
+    white-space:normal;
+    user-select:text;
+    -webkit-user-select:text;
+  }
+  #question-stem table.stem-lab-table td,
+  #question-stem table.stem-lab-table th{
+    padding:1px 16px 1px 0;
+    border:none;
+    text-align:left;
+    vertical-align:top;
+    font-size:15px;
+    font-weight:normal;
+    width:auto;
+  }
+  #question-stem table.stem-lab-table td:last-child,
+  #question-stem table.stem-lab-table th:last-child{ padding-right:0; }
+  /* Multi-column panels (e.g. a time-series table with two reading columns):
+     the label column (first cell) stays left-aligned, but every value column
+     is centered and gets extra left padding so the numbers sit under their
+     bold column titles, matching the real NBME time-series lab table. */
+  #question-stem table.stem-lab-table.multicol td:not(:first-child),
+  #question-stem table.stem-lab-table.multicol th:not(:first-child){
+    text-align:center;
+    padding-left:28px;
+  }
+  #question-stem table.stem-lab-table.multicol th{ font-weight:bold; }
+
+  #answers{
+    border:2px solid var(--border-navy);
+    background:#fff;
+  }
+  .answer-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 14px;
+    border-bottom:1px solid var(--row-line);
+    cursor:pointer;
+    line-height:1.4;
+  }
+  .answer-row:last-child{ border-bottom:none; }
+  .answer-row:hover{ background:#f4f7fc; }
+  .answer-row.selected{ background:#dbe8ff; }
+  .answer-letter{ font-weight:normal; }
+  .answer-letter.struck{ text-decoration:line-through; color:#9a9a9a; }
+  .answer-radio{
+    width:16px;height:16px;
+    border-radius:50%;
+    border:1.5px solid #555;
+    flex-shrink:0;
+    position:relative;
+    background:#fff;
+  }
+  .answer-row.selected .answer-radio::after{
+    content:"";
+    position:absolute;
+    top:3px;left:3px;right:3px;bottom:3px;
+    background:var(--navy);
+    border-radius:50%;
+  }
+  .answer-text{ flex:1; }
+  .answer-text.struck{ text-decoration:line-through; color:#9a9a9a; }
+  .strike-icon{
+    font-size:13px;
+    color:#555;
+    padding:2px 6px;
+    cursor:pointer;
+    text-decoration:line-through;
+    user-select:none;
+    border-radius:3px;
+    flex-shrink:0;
+  }
+  .strike-icon:hover{ background:#e2e4ea; }
+  .strike-icon.on{ color:#555; }
+  .strike-icon.disabled{ opacity:.4; cursor:default; pointer-events:none; }
+
+  #proceed-btn{
+    margin-top:14px;
+    background:linear-gradient(180deg, #5889C4 0%, #3855A2 100%);
+    color:#fff;
+    border:1px solid #2f4f8c;
+    padding:4px 16px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:4px;
+    cursor:pointer;
+    box-shadow:0 1px 2px rgba(0,0,0,0.15);
+  }
+  #proceed-btn:hover{ background:linear-gradient(180deg, #6796CE 0%, #4265AC 100%); }
+  #proceed-btn:active{ background:linear-gradient(180deg, #4E7EB8 0%, #33518F 100%); }
+
+  /* ===== LAB VALUES PANEL ===== */
+  #lab-panel{
+    position:relative;
+    width:62%;
+    max-width:900px;
+    flex-shrink:0;
+    background:#fff;
+    box-shadow:-4px 0 18px rgba(0,0,0,.25);
+    display:none;
+    flex-direction:column;
+    z-index:50;
+    border-left:1px solid #bbb;
+  }
+  #lab-panel.open{ display:flex; }
+  #lab-resize-handle{
+    position:absolute;
+    left:-3px; top:0; bottom:0;
+    width:7px;
+    cursor:ew-resize;
+    z-index:51;
+    background:transparent;
+  }
+  #lab-resize-handle:hover, #lab-resize-handle.dragging{ background:rgba(0,73,119,.28); }
+  #lab-header{
+    background:var(--lab-header-gray);
+    padding:14px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-shrink:0;
+  }
+  #lab-header .title{ font-size:19px; font-weight:600; display:flex; align-items:center; gap:8px; }
+  #lab-header .title svg{ width:20px; height:20px; }
+  #lab-close{ cursor:pointer; font-size:18px; background:none; border:none; color:var(--text-dark); }
+  #lab-close svg{ width:17px; height:17px; }
+  #lab-controls{
+    padding:16px 20px 0 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-shrink:0;
+  }
+  #lab-search{
+    border:1px solid #888;
+    border-radius:2px;
+    padding:7px 10px;
+    font-size:14px;
+    width:220px;
+  }
+  #lab-si{ font-size:14px; display:flex; align-items:center; gap:6px; }
+  #lab-tabs{
+    display:flex;
+    gap:8px;
+    padding:14px 20px 12px 20px;
+    flex-shrink:0;
+  }
+  .lab-tab{
+    padding:7px 14px;
+    font-size:14px;
+    border:1px solid #999;
+    border-radius:3px;
+    background:#fff;
+    cursor:pointer;
+  }
+  .lab-tab.active{ background:var(--lavender); }
+  #lab-body{
+    flex:1;
+    overflow-y:auto;
+    background:var(--lavender);
+  }
+  .lab-panel-content{ display:none; }
+  .lab-panel-content.active{ display:block; }
+  .lab-table{ width:100%; border-collapse:collapse; }
+  .lab-table td{
+    padding:9px 24px;
+    font-size:15px;
+    border-bottom:1px solid #c5c8d4;
+    vertical-align:top;
+  }
+  .lab-table td.val{ text-align:left; width:40%; }
+  .lab-table tr.group td{ font-weight:bold; }
+  .lab-table tr.sub td.lbl{ padding-left:44px; }
+  .lab-table tr.section-title td{ font-weight:bold; font-size:15px; background:var(--lavender); }
+  .lab-table tr.hidden-row{ display:none; }
+
+  /* ===== NOTES POPUP ===== */
+  .popup{
+    position:fixed;
+    top:110px; left:50%;
+    transform:translateX(-50%);
+    background:#fff;
+    border:1px solid #888;
+    box-shadow:0 6px 24px rgba(0,0,0,.35);
+    z-index:500;
+    display:none;
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .popup.open{ display:block; }
+  .popup-header{
+    background:var(--navy);
+    color:#fff;
+    padding:8px 12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:move;
+    font-size:13px;
+    font-weight:bold;
+  }
+  .popup-header .close-x{ cursor:pointer; font-size:16px; line-height:1; padding:0 4px; }
+  .popup-body{ padding:14px; }
+  #notes-popup .popup-body{ width:340px; }
+  #notes-popup textarea{
+    width:100%; height:160px; resize:vertical;
+    font-family:inherit; font-size:13px; padding:8px;
+    border:1px solid #ccc; border-radius:3px;
+  }
+  #calc-popup .popup-body{ width:220px; }
+  #calc-display{
+    width:100%; box-sizing:border-box; text-align:right;
+    font-size:20px; padding:8px; margin-bottom:8px;
+    border:1px solid #ccc; background:#f9f9f9; border-radius:3px;
+  }
+  #calc-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+  #calc-grid button{
+    padding:12px 0; font-size:15px; border:1px solid #bbb;
+    background:#f4f5f7; border-radius:3px; cursor:pointer;
+  }
+  #calc-grid button:hover{ background:#e2e4e8; }
+  #calc-grid button.op{ background:#dbe8ff; }
+  #calc-grid button.eq{ background:var(--btn-navy); color:#fff; grid-column: span 2; }
+  #calc-grid button.zero{ grid-column: span 2; }
+
+  /* ===== BOTTOM BAR ===== */
+  #bottombar{
+    background:var(--navy);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:8px 16px;
+    flex-shrink:0;
+  }
+  #bottombar .left{ display:flex; align-items:center; gap:14px; }
+  #time-box{
+    background:#fff;
+    color:var(--text-dark);
+    border:1.5px solid #fff;
+    border-radius:2px;
+    padding:6px 12px;
+    font-size:13.5px;
+    font-weight:bold;
+  }
+  #list-icon{
+    width:30px; height:30px; border-radius:4px;
+    background:#fff; color:var(--navy);
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; cursor:pointer;
+    position:relative;
+  }
+  #timer-mode-menu{
+    position:absolute; bottom:40px; left:0;
+    background:#fff; color:var(--text-dark);
+    border:1px solid var(--panel-border);
+    border-radius:6px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.25);
+    display:none; flex-direction:column;
+    min-width:140px; overflow:hidden; z-index:50;
+    cursor:default;
+  }
+  #timer-mode-menu.open{ display:flex; }
+  #timer-mode-menu button{
+    background:none; border:none; text-align:left;
+    padding:10px 14px; font-size:13.5px; cursor:pointer; color:var(--text-dark);
+    font-family:inherit;
+  }
+  #timer-mode-menu button:hover{ background:#eef2f8; }
+  #timer-mode-menu button.active{ font-weight:700; color:var(--btn-navy); }
+  #time-elapsed.time-limit-reached{ color:#b3261e; }
+  #bottombar .right{ display:flex; align-items:center; gap:18px; }
+
+  /* ===== FULLSCREEN OVERLAYS (pause / end block / results) ===== */
+  .fullscreen-overlay{
+    position:fixed; inset:0;
+    background:rgba(10,18,30,.6);
+    z-index:1000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+  }
+  .fullscreen-overlay.open{ display:flex; }
+  .overlay-card{
+    background:#fff;
+    border-radius:6px;
+    padding:36px 44px;
+    text-align:center;
+    box-shadow:0 10px 40px rgba(0,0,0,.45);
+    min-width:340px;
+    max-width:480px;
+  }
+  .overlay-card h2{
+    margin:0 0 14px;
+    color:var(--navy);
+    font-size:22px;
+  }
+  .overlay-card p{
+    margin:0 0 22px;
+    font-size:14px;
+    line-height:1.5;
+    color:#333;
+  }
+  .overlay-btn{
+    background:var(--btn-navy);
+    color:#fff;
+    border:none;
+    padding:10px 26px;
+    border-radius:4px;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+  }
+  .overlay-btn:hover{ background:var(--navy-dark); }
+  .overlay-btn.secondary{
+    background:#e4e6ea;
+    color:#333;
+    margin-right:12px;
+  }
+  .overlay-btn.secondary:hover{ background:#d3d6dc; }
+  #results-overlay{
+    background:#fff;
+    flex-direction:column;
+  }
+  #results-overlay.open{ display:flex; }
+  .results-percent{
+    font-size:104px;
+    font-weight:bold;
+    color:#1a8a3d;
+    line-height:1;
+    margin-bottom:22px;
+  }
+  .results-fraction{
+    font-size:30px;
+    font-weight:600;
+    color:#333;
+    margin-bottom:48px;
+  }
+
+  /* ===== REVIEW MODE ===== */
+  #app.review-mode .answer-row{ cursor:default; }
+  #app.review-mode .strike-icon{ cursor:default; }
+  .review-mark{ width:15px; height:15px; flex-shrink:0; display:inline-flex; }
+  .review-mark svg{ width:15px; height:15px; display:block; }
+  .review-answer-mark{ flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; }
+  .review-answer-mark svg{ width:18px; height:18px; display:block; }
+
+  /* ===== EXPLANATION PANEL (review mode) ===== */
+  #explanation-panel{
+    position:relative;
+    width:44%;
+    max-width:680px;
+    flex-shrink:0;
+    background:#fff;
+    box-shadow:-4px 0 18px rgba(0,0,0,.25);
+    display:none;
+    flex-direction:column;
+    z-index:50;
+    border-left:1px solid #bbb;
+  }
+  #explanation-panel.open{ display:flex; }
+  #explanation-resize-handle{
+    position:absolute;
+    left:-3px; top:0; bottom:0;
+    width:7px;
+    cursor:ew-resize;
+    z-index:51;
+    background:transparent;
+  }
+  #explanation-resize-handle:hover, #explanation-resize-handle.dragging{ background:rgba(0,73,119,.28); }
+  #explanation-tabs{
+    display:flex;
+    gap:8px;
+    padding:14px 20px 12px 20px;
+    flex-shrink:0;
+    border-bottom:1px solid #c5c8d4;
+  }
+  #explanation-body{
+    flex:1;
+    overflow-y:auto;
+    padding:18px 22px 30px 22px;
+    font-size:15px;
+    line-height:1.65;
+    white-space:pre-wrap;
+    color:#000;
+  }
+
+  ::selection{ background:#ffe58f; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- LEFT SIDEBAR -->
+  <div id="sidebar">
+    <div id="sidebar-header">Question<br>Status</div>
+    <div id="sidebar-list"></div>
+  </div>
+
+  <div id="main-col">
+
+    <!-- TOP BAR -->
+    <div id="topbar">
+      <div id="item-id-box">
+        <div class="l1" id="item-line">Item: 1 of 1</div>
+      </div>
+
+      <div id="topbar-nav">
+        <button class="icon-btn" id="btn-prev">
+          <span class="icon-circle" data-icon="previous"></span>Previous
+        </button>
+        <span id="nav-counter">1 / 1</span>
+        <button class="icon-btn" id="btn-next">
+          <span class="icon-circle" data-icon="next"></span>Next
+        </button>
+      </div>
+
+      <div id="toolbar-icons">
+        <button class="icon-btn" id="btn-labs"><span class="icon-square" data-icon="flask"></span>Lab Values</button>
+        <button class="icon-btn" id="btn-notes"><span class="icon-square" data-icon="pencil"></span>Notes</button>
+        <button class="icon-btn" id="btn-calc"><span class="icon-square" data-icon="calc"></span>Calculator</button>
+        <button class="icon-btn" id="btn-settings"><span class="icon-square" data-icon="gear"></span>Settings</button>
+      </div>
+    </div>
+
+    <!-- CONTENT + LAB PANEL -->
+    <div id="content-wrap">
+      <div id="content">
+        <div id="mark-row">
+          <input type="checkbox" id="mark-checkbox">
+          <span class="flag-icon" data-icon="flag"></span>
+          <span>Mark Question</span>
+        </div>
+
+        <div id="qa-body">
+          <div id="qa-text">
+            <div id="question-stem"></div>
+            <div id="answers"></div>
+            <button id="proceed-btn">Proceed To Next Item</button>
+          </div>
+          <div id="qa-image"><img id="question-img" alt="Question image"></div>
+        </div>
+      </div>
+
+      <!-- LAB VALUES SLIDE-IN PANEL -->
+      <div id="lab-panel">
+        <div id="lab-resize-handle" title="Drag to resize"></div>
+        <div id="lab-header">
+          <span class="title"><span data-icon="flask"></span> Lab Values</span>
+          <button id="lab-close" title="Close"><span data-icon="expand"></span></button>
+        </div>
+        <div id="lab-controls">
+          <input type="text" id="lab-search" placeholder="Search...">
+          <label id="lab-si"><input type="checkbox" id="lab-si-check"> SI Reference Intervals</label>
+        </div>
+        <div id="lab-tabs">
+          <div class="lab-tab active" data-panel="lab-serum">Serum</div>
+          <div class="lab-tab" data-panel="lab-csf">Cerebrospinal</div>
+          <div class="lab-tab" data-panel="lab-blood">Blood</div>
+          <div class="lab-tab" data-panel="lab-urine">Urine and BMI</div>
+        </div>
+        <div id="lab-body"></div>
+      </div>
+
+      <!-- EXPLANATION PANEL (review mode only) -->
+      <div id="explanation-panel">
+        <div id="explanation-resize-handle" title="Drag to resize"></div>
+        <div id="explanation-tabs">
+          <div class="lab-tab active">Explanation</div>
+        </div>
+        <div id="explanation-body"></div>
+      </div>
+    </div>
+
+    <!-- BOTTOM BAR -->
+    <div id="bottombar">
+      <div class="left">
+        <div id="time-box">Block Time Elapsed: <span id="time-elapsed">00:00:00</span></div>
+        <div id="list-icon" title="Timer display — Count Up or Count Down">&#9776;
+          <div id="timer-mode-menu">
+            <button type="button" data-mode="countdown">Count Down</button>
+            <button type="button" data-mode="countup">Count Up</button>
+          </div>
+        </div>
+      </div>
+      <div class="right">
+        <button class="icon-btn" id="btn-save-exit"><span class="icon-square" data-icon="saveexit"></span>Save and Exit</button>
+        <button class="icon-btn" id="btn-pause"><span class="icon-square" data-icon="pause"></span>Pause</button>
+        <button class="icon-btn endblock" id="btn-endblock"><span class="icon-badge" data-icon="xmark"></span><span id="endblock-label">End Block</span></button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- NOTES POPUP -->
+<div class="popup" id="notes-popup">
+  <div class="popup-header">Notes<span class="close-x" data-close="notes-popup">&#10005;</span></div>
+  <div class="popup-body">
+    <textarea id="notes-text" placeholder="Type your notes for this item..."></textarea>
+  </div>
+</div>
+
+<!-- CALCULATOR POPUP -->
+<div class="popup" id="calc-popup">
+  <div class="popup-header">Calculator<span class="close-x" data-close="calc-popup">&#10005;</span></div>
+  <div class="popup-body">
+    <input id="calc-display" readonly value="0">
+    <div id="calc-grid"></div>
+  </div>
+</div>
+
+<!-- PAUSE OVERLAY -->
+<div class="fullscreen-overlay" id="pause-overlay">
+  <div class="overlay-card">
+    <h2>Exam Paused</h2>
+    <p>The timer has been paused. Click Resume when you're ready to continue your exam.</p>
+    <button class="overlay-btn" id="btn-resume">Resume</button>
+  </div>
+</div>
+
+<!-- END BLOCK CONFIRM OVERLAY -->
+<div class="fullscreen-overlay" id="endblock-confirm-overlay">
+  <div class="overlay-card">
+    <h2>End Block?</h2>
+    <p>Are you sure you want to end this block? Once ended, you will not be able to return to review or change your answers.</p>
+    <button class="overlay-btn secondary" id="btn-endblock-cancel">Cancel</button>
+    <button class="overlay-btn" id="btn-endblock-confirm">End Block</button>
+  </div>
+</div>
+
+<!-- SAVE AND EXIT CONFIRM OVERLAY -->
+<div class="fullscreen-overlay" id="save-exit-confirm-overlay">
+  <div class="overlay-card">
+    <h2>Save and Exit?</h2>
+    <p>Are you sure you want to Save and Exit?</p>
+    <button class="overlay-btn secondary" id="btn-save-exit-no">No</button>
+    <button class="overlay-btn" id="btn-save-exit-yes">Yes</button>
+  </div>
+</div>
+
+<!-- RESULTS FULL PAGE (placeholder scoring until a real answer key is wired up) -->
+<div class="fullscreen-overlay" id="results-overlay">
+  <div class="results-percent" id="results-score"></div>
+  <div class="results-fraction" id="results-fraction"></div>
+  <button class="overlay-btn" id="btn-review-test">Review Test</button>
+</div>
+
+<!-- TIME WARNING OVERLAY -->
+<div class="fullscreen-overlay" id="time-warning-overlay">
+  <div class="overlay-card">
+    <h2>Time Warning</h2>
+    <p id="time-warning-text"></p>
+    <button class="overlay-btn" id="btn-time-warning-close">OK</button>
+  </div>
+</div>
+
+<!-- INCOMPLETE QUESTIONS OVERLAY -->
+<div class="fullscreen-overlay" id="incomplete-overlay">
+  <div class="overlay-card">
+    <h2>Incomplete Questions</h2>
+    <p id="incomplete-text"></p>
+    <button class="overlay-btn secondary" id="btn-incomplete-close">Return To Unanswered Item</button>
+    <button class="overlay-btn" id="btn-end-anyway">End Anyway</button>
+  </div>
+</div>
+
+<script>
+(function(){
+
+  /* =========================================================
+     MONOCHROME ICON SET (inline SVG, matches template reference)
+  ==========================================================*/
+  const ICON = {
+    previous: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="6" y2="12"/><polyline points="11.2,6.3 5,12 11.2,17.7"/></svg>',
+    next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="18" y2="12"/><polyline points="12.8,6.3 19,12 12.8,17.7"/></svg>',
+    flask: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14.3 2H9.7v6.4L4.1 19a2.1 2.1 0 0 0 1.9 3h12a2.1 2.1 0 0 0 1.9-3l-5.6-10.6z"/><rect x="10.5" y="2" width="1.15" height="6" fill="#fff"/><rect x="12.35" y="2" width="1.15" height="6" fill="#fff"/></svg>',
+    pencil: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.3 20.7l1.1-4.6 3.5 3.5-4.6 1.1z"/><path d="M5.3 15.1l10-10 3.6 3.6-10 10z"/><path d="M16 4.4l1.6-1.6a1.6 1.6 0 0 1 2.3 0l1.3 1.3a1.6 1.6 0 0 1 0 2.3L19.6 8z"/></svg>',
+    calc: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="4.5" y="2" width="15" height="20" rx="2.2"/><rect x="6.7" y="4.3" width="10.6" height="4" rx="0.6" fill="#fff"/><rect x="6.9" y="10.4" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="10.55" y="10.4" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="14.2" y="10.4" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="6.9" y="14.1" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="10.55" y="14.1" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="14.2" y="14.1" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="6.9" y="17.8" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="10.55" y="17.8" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="14.2" y="17.8" width="2.9" height="2.4" rx="0.5" fill="#fff"/></svg>',
+    gear: '<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="9.21,5.26 10.12,3.61 9.77,2.05 14.23,2.05 13.88,3.61 14.79,5.26 16.61,4.74 17.47,3.39 20.61,6.53 19.26,7.39 18.74,9.21 20.39,10.12 21.95,9.77 21.95,14.23 20.39,13.88 18.74,14.79 19.26,16.61 20.61,17.47 17.47,20.61 16.61,19.26 14.79,18.74 13.88,20.39 14.23,21.95 9.77,21.95 10.12,20.39 9.21,18.74 7.39,19.26 6.53,20.61 3.39,17.47 4.74,16.61 5.26,14.79 3.61,13.88 2.05,14.23 2.05,9.77 3.61,10.12 5.26,9.21 4.74,7.39 3.39,6.53 6.53,3.39 7.39,4.74"/><circle cx="12" cy="12" r="3.1" fill="#fff"/></svg>',
+    pause: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9.3"/><rect x="8.7" y="7.3" width="2.3" height="9.4" rx="0.5" fill="currentColor" stroke="none"/><rect x="13" y="7.3" width="2.3" height="9.4" rx="0.5" fill="currentColor" stroke="none"/></svg>',
+    saveexit: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h12.5L20 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><rect x="7" y="3" width="8" height="6" fill="#fff"/><rect x="6" y="13" width="12" height="7" fill="#fff"/></svg>',
+    xmark: '<svg viewBox="0 0 24 24"><path d="M8 2h8l6 6v8l-6 6H8l-6-6V8z" fill="#ff0000" stroke="#fff" stroke-width="1.5"/><path d="M8.7 8.7l6.6 6.6M15.3 8.7l-6.6 6.6" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/></svg>',
+    flag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M5 2.5v19"/><path d="M5 4Q8 2.5 10 4T15 4V10Q12 11.5 10 10T5 10Z"/></svg>',
+    flagFilled: '<svg viewBox="0 0 24 24"><path d="M5 2.5v19" stroke="#ff0000" stroke-width="2.4" stroke-linecap="round"/><path d="M5 4Q8 2.5 10 4T15 4V10Q12 11.5 10 10T5 10Z" fill="#ff0000"/></svg>',
+    expand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9.5 14.5l6-6"/><path d="M11 8.5h4.5V13"/></svg>',
+    reviewCorrect: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a8a3d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,13 9.5,18.5 20,6"/></svg>',
+    reviewIncorrect: '<svg viewBox="0 0 24 24" fill="none" stroke="#d32f2f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>'
+  };
+  function paintIcons(){
+    document.querySelectorAll('[data-icon]').forEach(el=>{
+      const name = el.getAttribute('data-icon');
+      if(ICON[name]) el.innerHTML = ICON[name];
+    });
+  }
+  paintIcons();
+
+  /* =========================================================
+     QUESTION DATA (scaffolded for multiple items later)
+  ==========================================================*/
+  const CYANOSIS_OPTIONS = [
+    {letter:"A", text:"Asthma"},
+    {letter:"B", text:"Bronchopulmonary dysplasia"},
+    {letter:"C", text:"Congenital heart disease with right-to-left shunt"},
+    {letter:"D", text:"Cystic fibrosis"},
+    {letter:"E", text:"Hypertrophic cardiomyopathy"},
+    {letter:"F", text:"Idiopathic pulmonary hypertension"},
+    {letter:"G", text:"Methemoglobinemia"},
+    {letter:"H", text:"Patent foramen ovale"},
+    {letter:"I", text:"Persistent pulmonary hypertension"},
+    {letter:"J", text:"Pneumococcal pneumonia"},
+    {letter:"K", text:"Respiratory distress syndrome"}
+  ];
+  const ANEMIA_OPTIONS = [
+    {letter:"A", text:"Acute lymphoblastic leukemia"},
+    {letter:"B", text:"Anemia of chronic disease"},
+    {letter:"C", text:"Autoimmune hemolytic anemia"},
+    {letter:"D", text:"Glucose 6-phosphate dehydrogenase deficiency"},
+    {letter:"E", text:"Hemolytic uremic syndrome"},
+    {letter:"F", text:"Hereditary spherocytosis"},
+    {letter:"G", text:"Lead poisoning"},
+    {letter:"H", text:"Red blood cell aplasia (acquired)"},
+    {letter:"I", text:"Sickle cell disease"},
+    {letter:"J", text:"Thalassemia"},
+    {letter:"K", text:"Uremia of chronic renal failure"}
+  ];
+
+  function mc(letters, texts){
+    return letters.split(',').map((l,i)=>({letter:l, text:texts[i]}));
+  }
+
+  // === CONTENT:QUESTIONS:START ===
+  const QUESTIONS = [
+  {
+    "id": 1,
+    "correct": "A",
+    "stem": "A 12-year-old girl is brought to the physician by her mother because she has never had a menstrual period. The patient's mother and grandmother had their first menstrual periods at the age of 9 years. The patient has no history of serious illness. She is at the 60th percentile for height and 50th percentile for weight. Breast development is sexual maturity rating stage 2, and pubic hair development is sexual maturity rating stage 1. Which of the following is the most appropriate next step in management?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Reassurance"
+      },
+      {
+        "letter": "B",
+        "text": "Measurement of serum thyroid-stimulating hormone concentration"
+      },
+      {
+        "letter": "C",
+        "text": "Ultrasonography of the pelvis"
+      },
+      {
+        "letter": "D",
+        "text": "MRI of the brain"
+      },
+      {
+        "letter": "E",
+        "text": "Administration of exogenous estrogen"
+      }
+    ],
+    "explanation": "Primary amenorrhea is described as the absence of menarche at the age of 15 years with appropriate secondary sexual characteristics, or at the age of 13 years without secondary sexual characteristics. Prior to this, amenorrhea is not considered pathologic. Common causes of primary amenorrhea include functional hypothalamic amenorrhea, constitutional delay of puberty, Turner syndrome, Mullerian agenesis, hyperprolactinemia, gonadotropin-releasing hormone deficiency, polycystic ovary syndrome, and an imperforate hymen. Initial evaluation includes pelvic ultrasonography to ensure the presence of a uterus, followed by measurements of follicle-stimulating hormone, thyroid-stimulating hormone, prolactin, and testosterone to help identify the underlying pathology. This patient is aged 12 years and exhibits secondary sexual characteristics; thus, she does not meet the definition for primary amenorrhea. Reassurance that her amenorrhea is likely a normal variant is the most appropriate next step.\n\nIncorrect Answers: B, C, D, and E."
+  },
+  {
+    "id": 2,
+    "correct": "B",
+    "stem": "A 24-year-old woman comes to the emergency department because of a 3-week history of frequent urination. She says she has the urge to urinate every 10 minutes. She feels a painful sensation of bladder fullness that is relieved with voiding. She also has nighttime urinary urgency. She has not had fever, chills, nausea, vomiting, or diarrhea. She has no history of serious illness and takes no medications. She is 168 cm (5 ft 6 in) tall and weighs 62 kg (137 lb); BMI is 22 kg/m2. Her temperature is 37°C (98.6°F), and blood pressure is 110/70 mm Hg. Physical examination shows no abnormalities. Urinalysis shows:[[LAB_TABLE]]\n\nWhich of the following is the most likely diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Detrusor overactivity"
+      },
+      {
+        "letter": "B",
+        "text": "Interstitial cystitis"
+      },
+      {
+        "letter": "C",
+        "text": "Nephrolithiasis"
+      },
+      {
+        "letter": "D",
+        "text": "Pyelonephritis"
+      },
+      {
+        "letter": "E",
+        "text": "Urinary tract infection"
+      }
+    ],
+    "explanation": "Interstitial cystitis (also called painful bladder syndrome) is a chronic condition characterized by urinary frequency, urgency, nocturia, and suprapubic/bladder pain that is classically relieved by voiding, in the absence of infection or other identifiable cause. Urinalysis and urine cultures are unremarkable, as in this patient, which helps distinguish it from a urinary tract infection. Diagnosis is one of exclusion, and cystoscopy may show Hunner ulcers or glomerulations. Management includes behavioral modification, dietary changes, and pentosan polysulfate.\n\nIncorrect Answers: A, C, D, and E.",
+    "labValues": [
+      {
+        "label": "pH",
+        "value": "5.5"
+      },
+      {
+        "label": "Specific gravity",
+        "value": "1.020"
+      },
+      {
+        "label": "Blood",
+        "value": "negative"
+      },
+      {
+        "label": "Glucose",
+        "value": "negative"
+      },
+      {
+        "label": "Bilirubin",
+        "value": "negative"
+      },
+      {
+        "label": "Ketones",
+        "value": "negative"
+      },
+      {
+        "label": "RBC",
+        "value": "0–3/hpf"
+      },
+      {
+        "label": "WBC",
+        "value": "1–3/hpf"
+      },
+      {
+        "label": "Epithelial cells",
+        "value": "1+"
+      },
+      {
+        "label": "Nitrites",
+        "value": "negative"
+      },
+      {
+        "label": "Leukocyte esterase",
+        "value": "trace"
+      },
+      {
+        "label": "Albumin",
+        "value": "negative"
+      },
+      {
+        "label": "Urobilinogen",
+        "value": "0.2 mg/dL (N<2)"
+      },
+      {
+        "label": "Mucus",
+        "value": "1+"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "correct": "A",
+    "stem": "A 72-year-old woman, gravida 4, para 4, comes to the physician because of a 6-month history of intermittent loss of urine associated with the sudden sensation of needing to void several times daily. She can usually reach a bathroom in time, but she has had loss of moderate amounts of urine once or twice each week. She has also had nocturnal incontinence once or twice each month. She has had no pain with urination. She has ischemic heart disease with atrial fibrillation and mild congestive heart failure. Medications include digoxin, furosemide, and warfarin. Physical and pelvic examinations show no abnormalities. Urinalysis shows rare WBCs. Which of the following is the most likely explanation for this patient's urinary incontinence?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Detrusor instability"
+      },
+      {
+        "letter": "B",
+        "text": "Diuretic therapy"
+      },
+      {
+        "letter": "C",
+        "text": "Pelvic floor laxity"
+      },
+      {
+        "letter": "D",
+        "text": "Sensory neuropathy"
+      },
+      {
+        "letter": "E",
+        "text": "Urinary tract infection"
+      }
+    ],
+    "explanation": "Urge incontinence most commonly occurs as a result of detrusor hyperreflexia or overactivity (detrusor instability). It typically presents with the sudden urge to urinate followed by the leakage of a variable amount of urine, as in this patient. It is most commonly associated with neurologic disorders (eg, multiple sclerosis, spinal stenosis, or spinal cord injuries) but may also be idiopathic. Laboratory studies and postvoid residual volumes are typically normal. Treatment of urge incontinence includes strengthening of the pelvic floor, minimizing caffeine and alcohol intake, bladder training or timed voiding, antimuscarinic agents (eg, oxybutynin), and weight loss for patients who are overweight.\n\nIncorrect Answers: B, C, D, and E."
+  },
+  {
+    "id": 4,
+    "correct": "E",
+    "stem": "A healthy 25-year-old woman of Native American descent comes to the office for a routine health maintenance examination. She says she is getting married in 2 months and wants to know about the risk of having any children with sickle cell disease. Her younger brother has sickle cell disease, and her younger sister has no history of serious illness. The patient's fiancé has no personal or family history of serious illness. Physical examination shows no abnormalities. Results of a complete blood count are within the reference ranges. Which of the following is the most appropriate next step to address this patient's concern?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Inform her that her children will not be at risk for sickle cell anemia"
+      },
+      {
+        "letter": "B",
+        "text": "Obtain iron studies"
+      },
+      {
+        "letter": "C",
+        "text": "Obtain more information about her brother's medical history"
+      },
+      {
+        "letter": "D",
+        "text": "Obtain a peripheral blood smear"
+      },
+      {
+        "letter": "E",
+        "text": "Perform hemoglobin electrophoresis on the patient"
+      }
+    ],
+    "explanation": "Sickle cell disease is an autosomal recessive condition inherited in a normal Mendelian fashion. Hemoglobin S results from a point mutation in the β-globin chain whereby valine is substituted for glutamic acid at position 6. Because this patient's brother has sickle cell disease, both of her parents must be at least carriers of the sickle cell trait, meaning there is a 50% chance the patient is a carrier. Performing hemoglobin electrophoresis on the patient is the most appropriate next step to determine her carrier status and counsel her about her children's risk.\n\nIncorrect Answers: A, B, C, and D."
+  },
+  {
+    "id": 5,
+    "correct": "D",
+    "stem": "A 21-year-old primigravid woman at 8 weeks' gestation comes for her first prenatal visit. She sustained multiple injuries in a motor vehicle collision 14 years ago and required hospitalization for 3 weeks. She received several blood transfusions at that time. She has been otherwise healthy. Her blood group is O, Rh-positive. Examination shows a uterus consistent in size with an 8- to 10-week gestation. Kell antibody testing is positive. Four weeks later, repeat Kell antibody testing shows increasing titers. This patient's fetus is at greatest risk for which of the following?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Amniotic band syndrome"
+      },
+      {
+        "letter": "B",
+        "text": "Congenital malformation"
+      },
+      {
+        "letter": "C",
+        "text": "Fetal growth restriction"
+      },
+      {
+        "letter": "D",
+        "text": "Fetal hydrops"
+      },
+      {
+        "letter": "E",
+        "text": "Oligohydramnios"
+      }
+    ],
+    "explanation": "Because this patient is Rh-positive, Rh isoimmunization is not a concern; however, her positive Kell antibody status is notable. The Kell antigen is another blood group antigen that can cause isoimmunization, leading to hemolytic disease of the fetus and newborn (HDFN). The blood transfusions this patient received 14 years ago likely introduced Kell antigens, resulting in the development of Kell antibodies. The increasing titers indicate a rising risk for HDFN, which can cause severe fetal anemia and hydrops fetalis. Monitoring with serial antibody titers and fetal ultrasonography is essential, and intrauterine transfusion or early delivery may be necessary.\n\nIncorrect Answers: A, B, C, and E."
+  },
+  {
+    "id": 6,
+    "correct": "A",
+    "stem": "A 24-year-old primigravid woman comes to the physician for her first prenatal visit. She had been using an oral contraceptive until 1 week ago when a home pregnancy test was positive, and she began to have nausea and tenderness of the breasts. She does not know the gestational age of the fetus and is concerned that her contraceptive use during pregnancy may have harmed the fetus. She has no history of serious illness. Her pulse is 64/min, and blood pressure is 110/60 mm Hg. Examination shows a uterus consistent in size with an 8-week gestation. Pelvic ultrasonography confirms an intrauterine pregnancy at 8 weeks' gestation. Which of the following is the most appropriate next step in management?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Reassurance"
+      },
+      {
+        "letter": "B",
+        "text": "Measurement of serum β-hCG concentration"
+      },
+      {
+        "letter": "C",
+        "text": "Fetal ultrasonography every 4 weeks"
+      },
+      {
+        "letter": "D",
+        "text": "Chorionic villus sampling within 2 weeks"
+      },
+      {
+        "letter": "E",
+        "text": "Recommend termination of the pregnancy"
+      }
+    ],
+    "explanation": "Oral contraceptive use early in pregnancy has not been found to significantly increase the risk for birth defects. This patient is presenting for her first prenatal visit with vital signs within normal limits and a pelvic ultrasonography confirming an intrauterine pregnancy at 8 weeks' gestation. The most appropriate next step in management is reassurance and routine supervision of the pregnancy.\n\nIncorrect Answers: B, C, D, and E."
+  },
+  {
+    "id": 7,
+    "correct": "B",
+    "stem": "A 32-year-old woman, gravida 2, para 1, at 18 weeks' gestation comes to the physician for a routine prenatal visit. She feels well, and her pregnancy has been uncomplicated. She reports that her 8-year-old child recently received the diagnosis of erythema infectiosum (fifth disease). The patient's vital signs are within normal limits. Physical examination shows no abnormalities. Which of the following is the most appropriate next step to determine infection in this patient?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Maternal complete blood count"
+      },
+      {
+        "letter": "B",
+        "text": "Maternal serum IgG and IgM titers"
+      },
+      {
+        "letter": "C",
+        "text": "Maternal viral cultures"
+      },
+      {
+        "letter": "D",
+        "text": "Fetal ultrasonography"
+      },
+      {
+        "letter": "E",
+        "text": "Amniocentesis"
+      }
+    ],
+    "explanation": "Maternal serum IgG and IgM titers are the most appropriate next step to determine whether this patient has been infected by parvovirus B19, the cause of erythema infectiosum. Parvovirus B19 has a tropism for bone marrow, where it infects erythroid progenitor cells; maternal infection during pregnancy can lead to fetal anemia, hydrops, high-output heart failure, and death. IgM antibodies reflect current or recent infection within weeks, whereas the presence of IgG with the absence of IgM reflects prior infection and immunity.\n\nIncorrect Answers: A, C, D, and E."
+  },
+  {
+    "id": 8,
+    "correct": "B",
+    "stem": "A 20-year-old primigravid woman at 7 weeks' gestation comes to the office because of a 4-day history of progressive swelling, redness, and warmth of her right elbow and forearm. Four days ago, she noticed a small sore over her forearm, and now there is a dark scar over that site. Her boyfriend told her it might be a spider bite. During the past 3 days, she has been taking his cephalexin left over from a prior prescription, but the symptoms have not resolved. Her temperature is 38.1°C (100.6°F), pulse is 96/min, respirations are 16/min, and blood pressure is 110/76 mm Hg. Examination shows bright erythema and tender induration from the right lower forearm to just above the elbow. Passive flexion and extension of the elbow does not cause pain. Which of the following is the most appropriate pharmacotherapy?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Intravenous cefazolin"
+      },
+      {
+        "letter": "B",
+        "text": "Intravenous clindamycin"
+      },
+      {
+        "letter": "C",
+        "text": "Intravenous levofloxacin"
+      },
+      {
+        "letter": "D",
+        "text": "Oral doxycycline"
+      },
+      {
+        "letter": "E",
+        "text": "Oral levofloxacin"
+      }
+    ],
+    "explanation": "This patient, presenting with fever and progressive erythema and induration of the skin, likely has cellulitis. Cellulitis is frequently caused by gram-positive bacteria, including staphylococcal and streptococcal species. This patient has already failed a trial of cephalexin, raising concern for methicillin-resistant Staphylococcus aureus (MRSA). She should be prescribed an antibiotic that covers MRSA. Given her pregnancy and lack of response to oral antibiotics, intravenous administration of clindamycin in a monitored setting is most appropriate to confirm clinical response.\n\nIncorrect Answers: A, C, D, and E."
+  },
+  {
+    "id": 9,
+    "correct": "D",
+    "stem": "A 28-year-old woman with gestational diabetes delivers a 4500-g (10-lb) newborn at 37 weeks' gestation. She had postprandial serum glucose concentrations of 180–200 mg/dL during the last half of pregnancy. Respiratory distress syndrome of the newborn develops in the infant. The fetal macrosomia and pulmonary disease are most likely related to an increased fetal serum concentration of which of the following?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Cortisol"
+      },
+      {
+        "letter": "B",
+        "text": "Growth hormone"
+      },
+      {
+        "letter": "C",
+        "text": "Human placental lactogen"
+      },
+      {
+        "letter": "D",
+        "text": "Insulin"
+      },
+      {
+        "letter": "E",
+        "text": "Reverse triiodothyronine (rT3)"
+      }
+    ],
+    "explanation": "Gestational diabetes occurs in the second half of pregnancy when the patient is unable to overcome the insulin resistance that develops due to human placental lactogen produced by the placenta. This leads to increased glucose in the maternal and subsequently the fetal circulation. Fetal hyperglycemia causes the fetus to produce excess insulin. Insulin acts as a growth factor, leading to macrosomia, and it inhibits the production of surfactant, which leads to respiratory distress syndrome, as seen in this case. After birth, continued excess insulin production without maternal glucose leads to neonatal hypoglycemia.\n\nIncorrect Answers: A, B, C, and E."
+  },
+  {
+    "id": 10,
+    "correct": "E",
+    "stem": "A 27-year-old primigravid woman at 37 weeks' gestation is brought to the emergency department after her car rolled over during a collision; she was the unrestrained driver. Her pulse is 120/min, and blood pressure is 140/88 mm Hg. She is alert and oriented, and the remainder of the examination shows no abnormalities. Abdominal examination shows an enlarged, firm uterus that is tender to palpation. There is no vaginal bleeding, and the cervix is closed. Contractions occur every 2 minutes. The fetal heart rate is 210/min. Which of the following is the most appropriate next step in management?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Nonstress test"
+      },
+      {
+        "letter": "B",
+        "text": "X-ray of the abdomen"
+      },
+      {
+        "letter": "C",
+        "text": "Induction of labor with oxytocin"
+      },
+      {
+        "letter": "D",
+        "text": "Amniocentesis"
+      },
+      {
+        "letter": "E",
+        "text": "Cesarean delivery"
+      }
+    ],
+    "explanation": "This patient, with uterine tenderness, firmness, contractions, and fetal tachycardia following blunt trauma, is likely experiencing abruptio placentae, a premature separation of the placenta from the uterus. It typically presents with vaginal bleeding, severe uterine pain, and tetanic contractions, though bleeding may be concealed. Because of the compromised fetal blood supply, abruptio placentae represents an obstetric emergency. Treatment includes supportive care, fluid resuscitation, emergent cesarean delivery, and Rho(D) immune globulin if the mother is Rh(D)-negative.\n\nIncorrect Answers: A, B, C, and D."
+  },
+  {
+    "id": 11,
+    "correct": "B",
+    "stem": "A 35-year-old woman, gravida 4, para 3, at 36 weeks' gestation comes to the physician because of a 2-day history of headache, blurred vision, and mild nausea. She reports normal fetal movement. She has not had vaginal bleeding, loss of fluid, or uterine contractions. Her temperature is 36.5°C (97.7°F), pulse is 88/min, respirations are 14/min, and blood pressure is 156/96 mm Hg. The lungs are clear to auscultation. There is no abdominal tenderness. Urine dipstick shows 2+ protein. The patient is admitted to the hospital. Platelet and complete blood counts, measurements of AST activity, and uric acid and creatinine concentrations are ordered. Which of the following is the most appropriate next step in management?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Intravenous administration of labetalol and monitoring for 24 hours"
+      },
+      {
+        "letter": "B",
+        "text": "Intravenous administration of magnesium sulfate and induction of labor"
+      },
+      {
+        "letter": "C",
+        "text": "Oral administration of hydralazine and 24-hour urine collection for measurement of protein concentration"
+      },
+      {
+        "letter": "D",
+        "text": "Oral administration of methyldopa and monitoring for 24 hours"
+      }
+    ],
+    "explanation": "This patient is presenting with headache, blurred vision, nausea, hypertension, and proteinuria — findings consistent with preeclampsia with severe features. Preeclampsia usually presents in the second or third trimester after 20 weeks' gestation and, if untreated, can progress to eclampsia with maternal seizures and other adverse outcomes. In a patient at 36 weeks' gestation with signs of end-organ damage, treatment is antihypertensive therapy, seizure prophylaxis with magnesium sulfate, and delivery of the fetus and placenta.\n\nIncorrect Answers: A, C, and D."
+  },
+  {
+    "id": 12,
+    "correct": "C",
+    "stem": "A 32-year-old woman, gravida 3, para 2, at 30 weeks' gestation, is admitted to the hospital in labor. Contractions are mild and have been occurring every 3 minutes and lasting 45 seconds for the past 4 hours. Her pregnancy has been complicated by Rh isoimmunization since a serum antibody assay showed an anti-D titer of 1:64; she has been evaluated weekly for signs of fetal hydrops. She has no other history of serious illness, and her only medication is a prenatal vitamin. Pulse is 100/min, respirations are 20/min, and blood pressure is 120/70 mm Hg. Fundal height is 32 cm. The fetus is in a vertex presentation. The fetal heart rate is 200/min with absent variability. The cervix is 2 cm dilated and 50% effaced; the vertex is at −3 station. Which of the following is the most likely cause of the fetal tachycardia?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Abruptio placentae"
+      },
+      {
+        "letter": "B",
+        "text": "Acidosis"
+      },
+      {
+        "letter": "C",
+        "text": "Anemia"
+      },
+      {
+        "letter": "D",
+        "text": "Chorioamnionitis"
+      },
+      {
+        "letter": "E",
+        "text": "Hypoxemia"
+      }
+    ],
+    "explanation": "Rh isoimmunization occurs when an Rh-negative pregnant patient produces antibodies against Rh-positive fetal red blood cells. These antibodies cross the placenta and lead to destruction of fetal red blood cells, causing anemia. To compensate for the decreased oxygen-carrying capacity, the fetal heart rate increases. Severe reactions can lead to hydrops fetalis. The severe anemia impairs autonomic regulation, causing absent variability in the fetal heart rate, a concerning sign of fetal distress. Management may include intrauterine transfusion or delivery depending on the time of presentation.\n\nIncorrect Answers: A, B, D, and E."
+  },
+  {
+    "id": 13,
+    "correct": "D",
+    "stem": "A 22-year-old primigravid woman at 24 weeks' gestation comes to the office for a routine prenatal visit. She has no history of serious illness and takes no medications. She works as a classroom aide in a day-care center. She reports exposure to sick children throughout her pregnancy but says she has not been ill. Pulse is 80/min, respirations are 20/min, and blood pressure is 100/70 mm Hg. Examination shows a fundal height of 30 cm. The fetal heart rate is 160/min. Laboratory studies show:[[LAB_TABLE]]\n\nUltrasonography shows an increased amniotic fluid index and fetal hydrops. Which of the following is the most likely cause of the fetal condition?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Aneuploidy"
+      },
+      {
+        "letter": "B",
+        "text": "Heart failure"
+      },
+      {
+        "letter": "C",
+        "text": "Isoimmunization"
+      },
+      {
+        "letter": "D",
+        "text": "Myeloid suppression"
+      },
+      {
+        "letter": "E",
+        "text": "Placentomegaly"
+      }
+    ],
+    "explanation": "This patient's laboratory studies show positive parvovirus B19 IgM and IgG, indicating recent infection, likely acquired from the sick children at the day-care center. Parvovirus B19 has a tropism for the bone marrow, where it infects and suppresses erythroid progenitor cells (myeloid/marrow suppression). This causes profound fetal anemia, which can lead to high-output heart failure, hydrops fetalis, and an increased amniotic fluid index, as seen in this patient. The underlying cause of the hydrops is the parvovirus-induced marrow suppression of red-cell production.\n\nIncorrect Answers: A, B, C, and E.",
+    "labValues": [
+      {
+        "label": "Hematocrit",
+        "value": "36%"
+      },
+      {
+        "label": "Leukocyte count",
+        "value": "8900/mm3"
+      },
+      {
+        "label": "Platelet count",
+        "value": "150,000/mm3"
+      },
+      {
+        "label": "Blood group",
+        "value": "A, Rh-positive"
+      },
+      {
+        "label": "Serum",
+        "value": ""
+      },
+      {
+        "label": "Cytomegalovirus IgM",
+        "value": "negative"
+      },
+      {
+        "label": "IgG",
+        "value": "4 mg/dL (N<0.9)"
+      },
+      {
+        "label": "Parvovirus IgM",
+        "value": "positive"
+      },
+      {
+        "label": "Parvovirus IgG",
+        "value": "positive"
+      },
+      {
+        "label": "Toxoplasmosis IgM",
+        "value": "negative"
+      },
+      {
+        "label": "Toxoplasmosis IgG",
+        "value": "negative"
+      },
+      {
+        "label": "Rapid plasma reagin",
+        "value": "negative"
+      },
+      {
+        "label": "Rubella antibody",
+        "value": "immune"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "correct": "A",
+    "stem": "A 37-year-old woman, gravida 5, para 2, aborta 3, comes to the physician for counseling prior to conception. Her first pregnancy ended in cesarean delivery at 32 weeks' gestation when she presented with a 6-cm dilated cervix and a prolapsed fetal foot. Her second child was born by cesarean delivery at 28 weeks' gestation after similar presentation. Her third pregnancy ended in spontaneous abortion at 22 weeks' gestation, and her fourth and fifth pregnancies ended in spontaneous abortions during the first trimester. The patient has methylenetetrahydrofolate reductase heterozygosity and takes folic acid daily. She has smoked one-half pack of cigarettes daily for 7 years. Examination shows no abnormalities. Which of the following is the most likely explanation for this patient's obstetric history?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Cervical insufficiency"
+      },
+      {
+        "letter": "B",
+        "text": "Chromosomal translocation"
+      },
+      {
+        "letter": "C",
+        "text": "Maternal age"
+      },
+      {
+        "letter": "D",
+        "text": "Smoking history"
+      },
+      {
+        "letter": "E",
+        "text": "Thrombophilia"
+      }
+    ],
+    "explanation": "Cervical insufficiency is the inability of the cervix to retain a pregnancy without contractions or labor, typically during the second or early third trimester. Risk factors include a history of cervical insufficiency in past pregnancies and prior cervical procedures. This patient's history of painless cervical dilation with a prolapsed fetal part and second-trimester losses is classic. Treatment when indicated is cervical cerclage, placement of a suture to narrow the cervical canal, removed near term.\n\nIncorrect Answers: B, C, D, and E."
+  },
+  {
+    "id": 15,
+    "correct": "A",
+    "stem": "A 22-year-old primigravid woman at 38 weeks' gestation is admitted to the hospital in labor. Her pregnancy has been uncomplicated. She has no history of serious illness, and her only medication is a prenatal vitamin. Fetal heart rate is 140/min with moderate variability, accelerations, and no decelerations. Contractions occur every 3 minutes and last 60 seconds; the patient appears uncomfortable. Two hours later, contractions are moderate, occur every 2 to 3 minutes, and last 60 seconds. The cervix is 5 cm dilated and 100% effaced; the vertex is at +1 station. The patient requests pain therapy. Which of the following is the most appropriate pharmacotherapy?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Epidural analgesia"
+      },
+      {
+        "letter": "B",
+        "text": "General anesthesia"
+      },
+      {
+        "letter": "C",
+        "text": "Intravenous nonsteroidal anti-inflammatory drug"
+      },
+      {
+        "letter": "D",
+        "text": "Oral narcotic"
+      },
+      {
+        "letter": "E",
+        "text": "Pudendal nerve block"
+      }
+    ],
+    "explanation": "Epidural analgesia is the preferred pharmacotherapy for pain management in labor and delivery, as it has been shown to be safe and effective in patients without contraindications. Contraindications for neuraxial analgesia include thrombocytopenia, coagulopathy, hemodynamic instability, and increased intracranial pressure. This patient has had an uncomplicated pregnancy and has no stated contraindications to epidural analgesia, making it the most appropriate choice.\n\nIncorrect Answers: B, C, D, and E."
+  },
+  {
+    "id": 16,
+    "correct": "E",
+    "stem": "A 25-year-old primigravid woman at 39 weeks' gestation is admitted to the hospital in labor 2 hours after spontaneous rupture of membranes. Pregnancy has been uncomplicated, and her only medication is a prenatal vitamin. The cervix is 6 cm dilated and 90% effaced; the vertex is at 0 station. Four hours later, contractions occur every 6 minutes and last 45 seconds. Cervical examination findings are unchanged. Which of the following is the most appropriate next step in management?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Cervical ripening"
+      },
+      {
+        "letter": "B",
+        "text": "Cesarean delivery"
+      },
+      {
+        "letter": "C",
+        "text": "Epidural administration of analgesia"
+      },
+      {
+        "letter": "D",
+        "text": "Forceps assisted vaginal delivery"
+      },
+      {
+        "letter": "E",
+        "text": "Labor augmentation with oxytocin"
+      }
+    ],
+    "explanation": "During the active phase of labor, contractions typically occur every 3 to 5 minutes and cervical dilation progresses at about 1 cm per hour. For nulliparous patients, failure to progress is often defined as no cervical change after 4 hours of adequate contractions or 6 hours of inadequate contractions despite oxytocin augmentation. This patient shows failure to progress with no cervical change at 4 hours and inadequate contractions occurring every 6 minutes. At this time, oxytocin augmentation to strengthen contractions and assist labor progression is most appropriate.\n\nIncorrect Answers: A, B, C, and D."
+  },
+  {
+    "id": 17,
+    "correct": "D",
+    "stem": "A 27-year-old primigravid woman at 38 weeks' gestation is brought to the emergency department because of contractions every 3 to 5 minutes during the past 4 hours. Her pregnancy has been uncomplicated. On examination 1 week ago, the cervix was 2 cm dilated, 30% effaced, firm, and posterior. On examination today, the fetus is in a vertex presentation. Fetal heart tones are 140/min and reactive. External fetal monitoring shows mild contractions occurring every 3 to 6 minutes and lasting 30 seconds. The cervix is 2 cm dilated, 40% effaced, moderately soft, and in mid position; the vertex is at −3 station. Ultrasonography shows a posterior placenta and an amniotic fluid index of 13.4 cm (N=10–20). This patient's presentation is most consistent with which of the following?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Arrest of descent"
+      },
+      {
+        "letter": "B",
+        "text": "Braxton-Hicks contractions"
+      },
+      {
+        "letter": "C",
+        "text": "Hypotonic contractions"
+      },
+      {
+        "letter": "D",
+        "text": "Latent phase of labor"
+      },
+      {
+        "letter": "E",
+        "text": "Preterm labor"
+      },
+      {
+        "letter": "F",
+        "text": "Protracted active labor"
+      }
+    ],
+    "explanation": "Labor's first stage is divided into latent and active phases. During the latent phase, the cervix dilates from 0 to 6 cm, which can take up to 20 hours in nulliparous patients, with mild, irregular contractions. This patient is having mild contractions with a cervix that is only 2 cm dilated and minimally effaced; her presentation is most consistent with the latent phase of labor. The active phase, with more frequent, intense contractions and faster dilation from 6 to 10 cm, has not yet begun.\n\nIncorrect Answers: A, B, C, E, and F."
+  },
+  {
+    "id": 18,
+    "correct": "C",
+    "stem": "A 24-year-old primigravid woman at 41 weeks' gestation calls the physician to report that she has had painful contractions occurring every 3 to 7 minutes for 3 hours; they have now subsided. She had a similar episode 20 hours ago. Which of the following is the most likely diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Arrest of labor"
+      },
+      {
+        "letter": "B",
+        "text": "Arrest of latent phase"
+      },
+      {
+        "letter": "C",
+        "text": "False labor"
+      },
+      {
+        "letter": "D",
+        "text": "Premature labor"
+      },
+      {
+        "letter": "E",
+        "text": "Prolonged latent phase"
+      }
+    ],
+    "explanation": "False labor, also known as Braxton Hicks contractions, involves irregular, nonrhythmic uterine contractions that can occur in the second or third trimester. Unlike true labor, these contractions do not lead to cervical dilation and are often sporadic and less painful. A distinguishing feature is that the contractions often subside, as seen in this patient, sometimes with changes in activity or position. In contrast, true labor contractions become progressively stronger and more regular and do not ease with rest.\n\nIncorrect Answers: A, B, D, and E."
+  },
+  {
+    "id": 19,
+    "correct": "B",
+    "stem": "A 20-year-old woman has just delivered her first child after a prolonged labor with oxytocin augmentation of uterine contractions. After cord traction and removal of the placenta, a round fleshy mass is noted at the introitus. Which of the following is the most likely diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Cystocele"
+      },
+      {
+        "letter": "B",
+        "text": "Inverted uterus"
+      },
+      {
+        "letter": "C",
+        "text": "Submucosal leiomyoma uteri"
+      },
+      {
+        "letter": "D",
+        "text": "Twin gestation"
+      },
+      {
+        "letter": "E",
+        "text": "Vaginal hematoma"
+      }
+    ],
+    "explanation": "Uterine inversion is a rare but serious complication of vaginal delivery. It occurs when the uterine fundus inverts into the endometrial or vaginal canal, often caused by excessive traction on the cord during delivery of the placenta. Presentation includes inability to palpate the fundus abdominally, severe lower abdominal pain, a strong bearing-down sensation, sudden-onset postpartum hemorrhage, and hemorrhagic shock that may be disproportionate to the apparent blood loss. A fleshy mass may be visible at the introitus, as in this patient. Urgent manual reduction of the uterus is paramount, followed by uterotonic medications.\n\nIncorrect Answers: A, C, D, and E."
+  },
+  {
+    "id": 20,
+    "correct": "E",
+    "stem": "A 30-year-old woman, gravida 2, para 1, delivers a healthy full-term 3200-g (7-lb 1-oz) newborn. Apgar scores are 8 and 10 at 1 and 5 minutes, respectively. The pregnancy was uncomplicated. The second stage of labor lasted 90 minutes, and the third stage lasted 22 minutes. A midline episiotomy was done. During the first 5 days after delivery, she uses six to eight sanitary pads daily because of vaginal bleeding. Which of the following is the most likely explanation for the bleeding?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Cervical laceration"
+      },
+      {
+        "letter": "B",
+        "text": "Poor uterine contraction"
+      },
+      {
+        "letter": "C",
+        "text": "Retained placental fragments"
+      },
+      {
+        "letter": "D",
+        "text": "Vaginal laceration"
+      },
+      {
+        "letter": "E",
+        "text": "Normal lochia"
+      }
+    ],
+    "explanation": "Normal postpartum vaginal discharge (lochia) may last for 4 to 8 weeks. Following delivery, the basal portion of the decidua is shed along with endometrial blood; the early discharge is termed lochia rubra. Concern for late postpartum hemorrhage occurs when bleeding soaks a menstrual pad in less than 1 hour, persists past 8 weeks postpartum, or when the patient is symptomatically hypovolemic. This patient, who is 5 days postpartum, is experiencing normal postpartum vaginal bleeding, and observation is appropriate.\n\nIncorrect Answers: A, B, C, and D."
+  },
+  {
+    "id": 21,
+    "correct": "B",
+    "stem": "A 37-year-old woman, gravida 4, para 3, at 33 weeks' gestation is brought to the emergency department because of a 6-hour history of contractions every 2 minutes. Her pregnancy has been uncomplicated. Her first two pregnancies ended in cesarean deliveries at term; her most recent pregnancy was complicated by delivery at 35 weeks' gestation. Her only medication is a prenatal vitamin. Temperature is 37.1°C (98.7°F), pulse is 98/min, respirations are 16/min, and blood pressure is 128/72 mm Hg. Fetal heart rate is 150/min. The cervix is 10 cm dilated and 100% effaced; the vertex is at +2 station. Twenty minutes after admission, the patient has spontaneous rupture of membranes yielding clear fluid. She vaginally delivers a 1950-g (4-lb 5-oz) male newborn 5 minutes later. Apgar scores are 6 and 9 at 1 and 5 minutes, respectively. The placenta is delivered with difficulty 15 minutes later. Acute hemorrhage occurs. Examination of the maternal surface of the placenta shows a jagged surface with irregular borders. The membranes are normal in appearance. There is a 3-vessel umbilical cord with central insertion into the placental disc. She continues to hemorrhage. Which of the following is the most likely diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Abruptio placentae"
+      },
+      {
+        "letter": "B",
+        "text": "Retained placenta"
+      },
+      {
+        "letter": "C",
+        "text": "Succenturiate placenta"
+      },
+      {
+        "letter": "D",
+        "text": "Uterine inversion"
+      }
+    ],
+    "explanation": "This patient's postpartum hemorrhage is most likely caused by retained placental fragments (retained products of conception). RPOC presents with immediate postpartum vaginal bleeding and cramping. The jagged maternal placental surface with irregular borders indicates that a portion of the placenta remains in the uterus. Risk factors include prior cesarean delivery or uterine surgery, increased maternal age, and multiparity, all present in this patient. The retained fragments must be urgently removed to promote uterine contraction and decrease hemorrhage.\n\nIncorrect Answers: A, C, and D."
+  },
+  {
+    "id": 22,
+    "correct": "E",
+    "stem": "A 27-year-old woman, gravida 1, para 1, is evaluated because of moderate shortness of breath and incisional pain 72 hours after cesarean delivery of twins at 36 weeks' gestation. She was on bed rest from 26 weeks' gestation to 34 weeks' gestation because of preterm cervical dilation. Current medications are oxycodone and acetaminophen. Her temperature is 36.9°C (98.4°F), pulse is 106/min and regular, respirations are 34/min, and blood pressure is 110/60 mm Hg. Pulse oximetry on room air shows an oxygen saturation of 88%. Examination shows mild breast tenderness and induration. Breath sounds are slightly decreased in the lower lung fields. The incision site is clean and dry. The lower portion of the uterus is mildly tender. A urine sample obtained from a urinary catheter shows multiple RBCs. Which of the following is the most appropriate next step in diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Serum d-dimer assay"
+      },
+      {
+        "letter": "B",
+        "text": "Urine culture"
+      },
+      {
+        "letter": "C",
+        "text": "Pulmonary function tests"
+      },
+      {
+        "letter": "D",
+        "text": "Pelvic ultrasonography"
+      },
+      {
+        "letter": "E",
+        "text": "Spiral CT scan of the chest"
+      }
+    ],
+    "explanation": "This patient's dyspnea, tachycardia, tachypnea, and hypoxia are highly suggestive of pulmonary embolism (PE), given her prolonged recent bed rest, surgery, and the hypercoagulable state of pregnancy. Pregnancy overexpresses several coagulation factors while underexpressing protein S, and venous stasis increases the risk for deep vein thrombosis and subsequent PE. In a patient with this high pretest probability, imaging with a spiral CT scan of the chest is preferred to confirm the diagnosis, rather than a d-dimer assay.\n\nIncorrect Answers: A, B, C, and D."
+  },
+  {
+    "id": 23,
+    "correct": "F",
+    "stem": "A 15-year-old primigravid patient at 20 weeks' gestation comes to the physician because of intermittent episodes of sudden, sharp, abdominal pain in the right and left lower quadrants over the past 2 weeks. Her temperature is 37°C (98.6°F), pulse is 80/min, respirations are 20/min, and blood pressure is 90/60 mm Hg. Examination shows focal tenderness in the fundus of the uterus. Fetal heart tones are heard. Which of the following is the most likely diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Abruptio placentae"
+      },
+      {
+        "letter": "B",
+        "text": "Appendicitis"
+      },
+      {
+        "letter": "C",
+        "text": "Degenerated leiomyomata uteri"
+      },
+      {
+        "letter": "D",
+        "text": "Preterm labor"
+      },
+      {
+        "letter": "E",
+        "text": "Renal calculi"
+      },
+      {
+        "letter": "F",
+        "text": "Round ligament pain"
+      },
+      {
+        "letter": "G",
+        "text": "Torsion of adnexa"
+      }
+    ],
+    "explanation": "The round ligament originates from the cornu of the uterus and connects to the tissues of the labia majora and mons pubis. Pain may develop as the uterus enlarges during pregnancy, causing stretching of the round ligament. Round ligament pain is physiologic in pregnancy and is often described as a sharp, stabbing, or stretching sensation in the lower abdomen and groin. This patient's sharp, sudden lower-quadrant pain without significant vital sign abnormalities, vaginal bleeding, or urinary symptoms is most consistent with round ligament pain.\n\nIncorrect Answers: A, B, C, D, E, and G."
+  },
+  {
+    "id": 24,
+    "correct": "A",
+    "stem": "A previously healthy 32-year-old primigravid woman at 18 weeks' gestation comes to the physician because of a 4-week history of increasing pain of the hands at night. At the end of the workday her thumb, index, and middle fingers of both hands feel numb. During examination, percussion over each median nerve at the wrist produces paresthesias. Nerve conduction studies show slowing of conduction of the median nerves across the wrists. In addition to ergonomic modification at the workplace, which of the following is the most appropriate next step in management of this patient?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Neutral splints"
+      },
+      {
+        "letter": "B",
+        "text": "Corticosteroid injections of the median nerves"
+      },
+      {
+        "letter": "C",
+        "text": "Neurontin therapy"
+      },
+      {
+        "letter": "D",
+        "text": "Oral diuretic therapy"
+      },
+      {
+        "letter": "E",
+        "text": "Endoscopic carpal tunnel release"
+      }
+    ],
+    "explanation": "Carpal tunnel syndrome (CTS) results from compression of the median nerve within the carpal tunnel of the wrist. Patients present with pain and paresthesia in the median nerve distribution, and nerve conduction studies may show conduction slowing. Pregnancy is a known risk factor, hypothesized to result from fluid retention that expands the synovium within the tunnel. Conservative management should be pursued in pregnancy with neutral wrist splints, especially overnight, as CTS often resolves after delivery. Corticosteroid injections or carpal tunnel release are reserved for severe or refractory cases.\n\nIncorrect Answers: B, C, D, and E."
+  },
+  {
+    "id": 25,
+    "correct": "C",
+    "stem": "A 27-year-old woman, gravida 1, para 1, comes to the physician 19 days after delivery because of a 2-day history of temperatures to 37.7°C (99.9°F), chills, malaise, and breast tenderness. She is unable to breast-feed from the left breast because her newborn has difficulty latching onto the left nipple. She appears flushed and is in moderate distress. Her temperature is 38°C (100.4°F). Examination of the left breast shows an erythematous and warm lower outer quadrant; there is no fluctuance. Deep palpation of the area produces severe pain. Normal-appearing milk is dripping from the nipple. Examination of the right breast shows engorgement and no abnormalities. Which of the following is the most likely diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Breast abscess"
+      },
+      {
+        "letter": "B",
+        "text": "Fat necrosis"
+      },
+      {
+        "letter": "C",
+        "text": "Mastitis"
+      },
+      {
+        "letter": "D",
+        "text": "Milk fever"
+      },
+      {
+        "letter": "E",
+        "text": "Occluded milk duct"
+      }
+    ],
+    "explanation": "This patient's presentation is consistent with mastitis, which refers to cellulitis of the breast tissue, usually due to bacterial introduction at the nipple. It presents with erythema and induration in an area of tender, warm skin, along with fever and malaise. It classically occurs in breast-feeding mothers as a consequence of nipple trauma leading to inoculation from cutaneous or oral flora. If untreated, mastitis can develop into a breast abscess. Treatment is continuation of breast-feeding and oral antibiotics such as dicloxacillin.\n\nIncorrect Answers: A, B, D, and E."
+  },
+  {
+    "id": 26,
+    "correct": "E",
+    "stem": "A previously healthy 21-year-old woman comes to the office because of increasing right breast tenderness during the past 3 months. Her mother and two maternal aunts have a history of postmenopausal breast cancer. Physical examination of the patient shows a 2-cm, well-circumscribed, mobile mass at the 9-o'clock position in the right breast. There is no axillary lymphadenopathy. Which of the following is the most appropriate next step in diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Examination of the breast"
+      },
+      {
+        "letter": "B",
+        "text": "Mammography"
+      },
+      {
+        "letter": "C",
+        "text": "MRI of the breast"
+      },
+      {
+        "letter": "D",
+        "text": "Testing for BRCA1 mutation"
+      },
+      {
+        "letter": "E",
+        "text": "Ultrasonography of the breast"
+      }
+    ],
+    "explanation": "This premenopausal patient presents with a small, well-circumscribed, mobile mass, which is likely a benign finding, but thorough evaluation of any breast mass is necessary. Further evaluation includes diagnostic imaging with either ultrasonography (for patients younger than 35 years) or mammography (for patients older than 35 years). Because this patient is younger than 35 years, ultrasonography of the breast is the most appropriate next step, as younger breast tissue is often too dense to adequately assess with mammography.\n\nIncorrect Answers: A, B, C, and D."
+  },
+  {
+    "id": 27,
+    "correct": "D",
+    "stem": "A 27-year-old woman comes to the office for her routine 6-week postpartum examination. She is found to have a minimally tender 3 × 5-cm mass in the upper outer quadrant of the left breast. She says that this mass is intermittent. She prefers to breast-feed her baby on the right breast because she is left-handed and can do more while he is feeding. There are no other masses, and no axillary nodes are palpable. Which of the following is the most likely diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Breast abscess"
+      },
+      {
+        "letter": "B",
+        "text": "Fibroadenoma of the breast"
+      },
+      {
+        "letter": "C",
+        "text": "Fibrocystic changes of the breast"
+      },
+      {
+        "letter": "D",
+        "text": "Galactocele"
+      },
+      {
+        "letter": "E",
+        "text": "Mastitis"
+      },
+      {
+        "letter": "F",
+        "text": "Mastodynia"
+      }
+    ],
+    "explanation": "A galactocele is a benign cyst of the mammary glands caused by obstruction to lactiferous duct outflow. Galactoceles occur in lactating women (or women who recently stopped lactating) and present with a firm, fluctuant mass that is painless or mildly tender, most commonly in the subareolar region. Diagnosis is typically clinical, but ultrasonography may show a cystic mass with a fluid-milk level. This patient's preference to breast-feed on the right breast may have increased the risk for developing a left galactocele. They are generally self-limiting but can be aspirated if symptomatic.\n\nIncorrect Answers: A, B, C, E, and F."
+  },
+  {
+    "id": 28,
+    "correct": "C",
+    "stem": "A 32-year-old woman, gravida 3, para 2, at 26 weeks' gestation comes to the physician 4 weeks after noticing a lump in her left breast during self-examination. She is concerned because her mother was diagnosed with breast cancer at the age of 52 years. The patient says that she has not had discharge, redness, or skin changes of the breast. She has no history of serious illness, and pregnancy has been uncomplicated. Examination of the breasts shows engorgement and no skin changes. There is no axillary or supraclavicular lymphadenopathy. A 3.5-cm firm, mobile, nontender mass is palpated in the upper outer quadrant of the left breast. Examination of the right breast shows no abnormalities. Which of the following is the most appropriate next step in management?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Serial examination of the mass"
+      },
+      {
+        "letter": "B",
+        "text": "Mammography"
+      },
+      {
+        "letter": "C",
+        "text": "Ultrasonography of the left breast"
+      },
+      {
+        "letter": "D",
+        "text": "MRI of the left breast"
+      },
+      {
+        "letter": "E",
+        "text": "Surgical excision of the mass"
+      }
+    ],
+    "explanation": "The workup of a breast mass in a pregnant patient requires a careful approach to ensure the safety of both mother and fetus. The primary imaging modality recommended is breast ultrasonography, which is safe and effective in distinguishing between cystic and solid lesions during pregnancy. If ultrasonography shows a suspicious lesion, a core needle biopsy is the next step. This patient's palpable mass and family history necessitate imaging evaluation, and ultrasonography of the left breast is the most appropriate next step.\n\nIncorrect Answers: A, B, D, and E."
+  },
+  {
+    "id": 29,
+    "correct": "B",
+    "stem": "An otherwise healthy 27-year-old nulligravid woman comes to the physician because of a 2-year history of increasingly severe pelvic pain with menses. Menses occur at regular 28-day intervals. Her last menstrual period was 1 week ago. She is sexually active and uses an oral contraceptive. Her temperature is 37°C (98.6°F), pulse is 80/min, respirations are 20/min, and blood pressure is 120/80 mm Hg. Abdominal examination shows right lower quadrant tenderness. Pelvic examination shows a 5-cm, tender, right adnexal mass. Laboratory studies show:[[LAB_TABLE]]\n\nA pregnancy test is negative. Ultrasonography shows a 5-cm right adnexal mass containing low-level, homogeneous, internal echoes. Which of the following is the most likely diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Ectopic pregnancy"
+      },
+      {
+        "letter": "B",
+        "text": "Endometrioma"
+      },
+      {
+        "letter": "C",
+        "text": "Paratubal cyst"
+      },
+      {
+        "letter": "D",
+        "text": "Theca lutein cyst"
+      },
+      {
+        "letter": "E",
+        "text": "Tubo-ovarian abscess"
+      }
+    ],
+    "explanation": "Endometriomas, also known as ovarian endometriotic cysts (\"chocolate cysts\"), are a manifestation of endometriosis in which ectopic endometrial tissue forms cystic structures within the ovary. They classically present in a patient with progressive dysmenorrhea and a tender adnexal mass. On ultrasonography, an endometrioma characteristically appears as a cyst containing low-level, homogeneous, internal echoes, as seen in this patient. The normal leukocyte count and ESR argue against an infectious cause such as tubo-ovarian abscess.\n\nIncorrect Answers: A, C, D, and E.",
+    "labValues": [
+      {
+        "label": "Hemoglobin",
+        "value": "12 g/dL"
+      },
+      {
+        "label": "Leukocyte count",
+        "value": "9000/mm3"
+      },
+      {
+        "label": "Segmented neutrophils",
+        "value": "60%"
+      },
+      {
+        "label": "Bands",
+        "value": "5%"
+      },
+      {
+        "label": "Eosinophils",
+        "value": "3%"
+      },
+      {
+        "label": "Lymphocytes",
+        "value": "32%"
+      },
+      {
+        "label": "Erythrocyte sedimentation rate",
+        "value": "15 mm/h"
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "correct": "A",
+    "stem": "Twenty-four hours after low-transverse cesarean delivery for breech presentation at 35 weeks' gestation, a 37-year-old woman has a temperature of 38.5°C (101.3°F). Rupture of membranes lasted 12 hours. Pulse is 110/min, respirations are 18/min, and blood pressure is 120/72 mm Hg. Breath sounds are decreased at the lung bases bilaterally. Physical examination discloses a soft, distended abdomen with involuntary guarding and no rebound; there is mild tenderness of the uterine fundus. The incision is clean, dry, and intact with no erythema. There is no cyanosis, clubbing, or edema of the extremities. Laboratory studies show:[[LAB_TABLE]]\n\nShe is receiving intravenous fluids, and a urinary catheter is in place. Which of the following is the most important factor for the development of her condition?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Cesarean delivery"
+      },
+      {
+        "letter": "B",
+        "text": "Fetal presentation"
+      },
+      {
+        "letter": "C",
+        "text": "Maternal age"
+      },
+      {
+        "letter": "D",
+        "text": "Preterm gestation"
+      },
+      {
+        "letter": "E",
+        "text": "Prolonged rupture of membranes"
+      }
+    ],
+    "explanation": "This recent postpartum patient with fever and uterine fundal tenderness has endometritis, an acute, typically polymicrobial infection of the uterine endometrium. Risk factors include premature or prolonged rupture of membranes, prolonged labor, cesarean delivery, bacterial vaginosis, group B streptococcal colonization, frequent vaginal examinations, and manual removal of the placenta. Of these, route of delivery (cesarean delivery) is the single most important risk factor. Treatment is broad-spectrum antibiotics such as clindamycin and gentamicin.\n\nIncorrect Answers: B, C, D, and E.",
+    "labValues": [
+      {
+        "label": "Urine",
+        "value": ""
+      },
+      {
+        "label": "RBC",
+        "value": "1+"
+      },
+      {
+        "label": "WBC",
+        "value": "1+"
+      },
+      {
+        "label": "Epithelial cells",
+        "value": "none"
+      },
+      {
+        "label": "Leukocyte esterase",
+        "value": "trace"
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "correct": "E",
+    "stem": "A 32-year-old woman comes to the office because of a mild pruritic vaginal discharge for 5 days and burning during urination for 3 days. The burning begins when the urine touches the vulva. Examination shows no abnormalities except for a markedly erythematous vulva. Which of the following is the most appropriate next step in management?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Allergy skin testing"
+      },
+      {
+        "letter": "B",
+        "text": "Glucose tolerance test"
+      },
+      {
+        "letter": "C",
+        "text": "Sitz baths"
+      },
+      {
+        "letter": "D",
+        "text": "Punch biopsy of vulvar skin"
+      },
+      {
+        "letter": "E",
+        "text": "Wet mount preparation with KOH"
+      }
+    ],
+    "explanation": "This patient's vaginal pruritus, vulvar erythema, and discharge are suggestive of vulvovaginitis, most commonly caused by Candida albicans. Candida can be identified on a wet mount preparation with KOH, showing budding yeast with or without pseudohyphae. Risk factors include use of antibiotics or oral contraceptives, intravaginal contraceptives or IUDs, and an immunocompromised state. Wet mount preparation with KOH is the most appropriate next step to confirm the diagnosis before treating with an antifungal agent.\n\nIncorrect Answers: A, B, C, and D."
+  },
+  {
+    "id": 32,
+    "correct": "E",
+    "stem": "A previously healthy 18-year-old woman comes to the physician because of a 5-day history of vulvovaginal itching and increasingly heavy, green vaginal discharge with no odor. She has not had fever, pelvic pain, or pain during sexual intercourse. She has been sexually active with her boyfriend for 2 months, and they use condoms inconsistently. She is 168 cm (5 ft 6 in) tall and weighs 75 kg (165 lb); BMI is 27 kg/m2. Vital signs are within normal limits. Abdominal examination shows no masses or tenderness. Pelvic examination shows erythema at the vaginal introitus; a large amount of frothy, green discharge coating the vaginal mucosa; and a markedly erythematous cervix that bleeds easily. A photograph of the cervix is shown. The pH of the discharge is 5.0. Which of the following is the most likely causal organism?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Candida albicans"
+      },
+      {
+        "letter": "B",
+        "text": "Chlamydia trachomatis"
+      },
+      {
+        "letter": "C",
+        "text": "Gardnerella vaginalis"
+      },
+      {
+        "letter": "D",
+        "text": "Lactobacillus acidophilus"
+      },
+      {
+        "letter": "E",
+        "text": "Trichomonas vaginalis"
+      }
+    ],
+    "explanation": "This patient's frothy, malodorous green discharge, elevated vaginal pH (>4.5), and a markedly erythematous, friable cervix (\"strawberry cervix\") are classic for infection with Trichomonas vaginalis, a flagellated protozoan and sexually transmitted pathogen. Diagnosis is confirmed by saline wet mount showing motile trichomonads or by nucleic acid amplification testing. Treatment is metronidazole for the patient and her sexual partner(s).\n\nIncorrect Answers: A, B, C, and D.",
+    "image": "assets/item32_cervix.jpg"
+  },
+  {
+    "id": 33,
+    "correct": "B",
+    "stem": "A 19-year-old woman comes to student health services requesting advice regarding contraception. She has had one male partner since becoming sexually active 1 year ago. Menses occur at regular 28-day intervals. She has no history of serious illness or operative procedures and takes no medications. She has never had a gynecologic examination. Physical examination shows no abnormalities. In addition to discussing contraceptive options with this patient, which of the following is the most appropriate screening test to perform at this visit?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Pap smear"
+      },
+      {
+        "letter": "B",
+        "text": "Testing for Chlamydia trachomatis"
+      },
+      {
+        "letter": "C",
+        "text": "Testing for human papillomavirus"
+      },
+      {
+        "letter": "D",
+        "text": "Testing for Treponema pallidum"
+      },
+      {
+        "letter": "E",
+        "text": "Urine pregnancy test"
+      }
+    ],
+    "explanation": "Screening for Chlamydia trachomatis is recommended for all sexually active women 24 years and younger, and for women 25 years and older who are at increased risk for infection. C. trachomatis can cause cervicitis, urethritis, and pelvic inflammatory disease. Testing for C. trachomatis is the most appropriate screening test for this 19-year-old patient. Cervical cancer screening with a Pap smear is not recommended until age 21.\n\nIncorrect Answers: A, C, D, and E."
+  },
+  {
+    "id": 34,
+    "correct": "B",
+    "stem": "A 25-year-old woman comes to the office because of abdominal pain, nausea, and constipation for 5 days and fever for 2 days. Her last menstrual period was 3 weeks ago. She uses an IUD for contraception. Abdominal examination shows marked tenderness with guarding in the right lower quadrant and tenderness on the right side of the rectal vault; bowel sounds are decreased. The cervix bleeds easily, and there is cervical motion tenderness. The right adnexa is enlarged and markedly tender. Test of the stool for occult blood is negative. A pregnancy test is negative. Which of the following is the most likely diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Diverticulitis"
+      },
+      {
+        "letter": "B",
+        "text": "Pelvic inflammatory disease"
+      },
+      {
+        "letter": "C",
+        "text": "Peptic ulcer disease"
+      },
+      {
+        "letter": "D",
+        "text": "Ruptured ectopic pregnancy"
+      },
+      {
+        "letter": "E",
+        "text": "Torsion of the right ovary"
+      }
+    ],
+    "explanation": "Pelvic inflammatory disease is characterized by inflammation of the upper genital tract from migration of a bacterial infection from the lower genital tract. Clinical manifestations include abnormal uterine bleeding, cervical and vaginal discharge, cervical motion tenderness, and uterine and adnexal tenderness, as seen in this patient. Adnexal enlargement and tenderness may indicate a tubo-ovarian abscess. PID is commonly caused by Neisseria gonorrhoeae or Chlamydia trachomatis. Treatment includes antimicrobial therapy such as ceftriaxone and doxycycline.\n\nIncorrect Answers: A, C, D, and E."
+  },
+  {
+    "id": 35,
+    "correct": "C",
+    "stem": "A 32-year-old woman comes to the physician because of a 2-day history of burning with urination that began after sexual intercourse. She has had two urinary tract infections during the past 2 years. She underwent tubal ligation 5 years ago. Her temperature is 36.3°C (97.4°F), pulse is 70/min, and blood pressure is 128/65 mm Hg. Physical examination shows no flank or suprapubic tenderness. There is tenderness to palpation of the distal anterior vaginal wall. Urinalysis shows:[[LAB_TABLE]]\n\nWhich of the following is the most likely cause of this patient's symptoms?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Cervicitis"
+      },
+      {
+        "letter": "B",
+        "text": "Chemical cystitis"
+      },
+      {
+        "letter": "C",
+        "text": "Urethritis"
+      },
+      {
+        "letter": "D",
+        "text": "Vestibulitis"
+      },
+      {
+        "letter": "E",
+        "text": "Vulvovaginitis"
+      }
+    ],
+    "explanation": "This patient has symptoms of urethritis, including dysuria and tenderness along the distal anterior vaginal wall (overlying the urethra). Urethritis is inflammation of the urethra and is typically caused by sexually transmitted infections. Urinalysis often shows a WBC count greater than 10/hpf and positive leukocyte esterase with few or no bacteria on culture (sterile pyuria), as in this patient. A nucleic acid amplification test can identify gonorrhea or chlamydia. Treatment is azithromycin or doxycycline with ceftriaxone.\n\nIncorrect Answers: A, B, D, and E.",
+    "labValues": [
+      {
+        "label": "RBC",
+        "value": "2/hpf"
+      },
+      {
+        "label": "WBC",
+        "value": "10/hpf"
+      },
+      {
+        "label": "Leukocyte esterase",
+        "value": "positive"
+      },
+      {
+        "label": "Bacteria",
+        "value": "2–3 colonies/mL"
+      }
+    ]
+  },
+  {
+    "id": 36,
+    "correct": "D",
+    "stem": "A 23-year-old woman comes to the emergency department because of a 2-day history of increasingly severe pain and swelling on the left side of her vagina. During the past 2 years, she has had similar symptoms twice and both episodes resolved after treatment with sitz baths. She has no other history of serious illness and has not sustained any recent trauma. She takes no medications. Her temperature is 38.3°C (101°F), pulse is 98/min, and respirations are 20/min. Examination shows a 3-cm, erythematous, fluctuant mass in the left inferior aspect of the vaginal introitus. Which of the following is the most appropriate next step in management?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Antibiotic therapy"
+      },
+      {
+        "letter": "B",
+        "text": "Excision of the gland"
+      },
+      {
+        "letter": "C",
+        "text": "Marsupialization"
+      },
+      {
+        "letter": "D",
+        "text": "Placement of a drainage catheter into the mass"
+      }
+    ],
+    "explanation": "A Bartholin gland abscess occurs when a Bartholin gland becomes obstructed and infected. The gland is located on each side of the introitus and provides secretions that lubricate the vagina. Abscesses are commonly polymicrobial. Bartholin gland abscesses measuring 3 cm or larger are treated with incision and drainage, often with placement of a catheter (Word catheter) to promote complete evacuation, followed by antibiotics. Antibiotics with conservative management alone may be appropriate for small abscesses less than 2 cm, but this 3-cm abscess warrants drainage catheter placement.\n\nIncorrect Answers: A, B, and C."
+  },
+  {
+    "id": 37,
+    "correct": "E",
+    "stem": "An otherwise healthy 15-year-old girl is brought to the physician 2 days after she noted a painless bump in her genital area while bathing. She has been sexually active for 1 year and has had three partners. She used an oral contraceptive until her prescription ran out 6 weeks ago. Pelvic examination shows a painless vulvar ulcer and nontender inguinal adenopathy. Which of the following is the most likely causal organism?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Chlamydia trachomatis"
+      },
+      {
+        "letter": "B",
+        "text": "Haemophilus ducreyi"
+      },
+      {
+        "letter": "C",
+        "text": "Human papillomavirus"
+      },
+      {
+        "letter": "D",
+        "text": "Molluscum contagiosum"
+      },
+      {
+        "letter": "E",
+        "text": "Treponema pallidum"
+      }
+    ],
+    "explanation": "Syphilis is caused by infection with the spirochete Treponema pallidum. Primary syphilis presents with a painless chancre (ulcer) and possible nontender regional lymphadenopathy, as seen in this patient. Secondary syphilis presents with fever, a diffuse maculopapular rash over the palms and soles, and condylomata lata; tertiary syphilis includes tabes dorsalis, aortitis, and gummata. First-line treatment for syphilis is penicillin. A painless ulcer with nontender adenopathy distinguishes syphilis from the painful ulcers of Haemophilus ducreyi (chancroid).\n\nIncorrect Answers: A, B, C, and D."
+  },
+  {
+    "id": 38,
+    "correct": "E",
+    "stem": "A 23-year-old woman comes to the office because of a 2-day history of suprapubic pain with urination. She says that the pain is worse when her bladder is full. Drinking more fluids has not relieved her symptoms. She has not had increased frequency of urination, low back pain, fever, chills, or vaginal discharge. Her menses occur at regular intervals; her last menstrual period ended 3 days ago. Her last Pap smear 18 months ago was normal. Vital signs are within normal limits. Abdominal examination shows no abnormalities. Bimanual pelvic examination shows mild tenderness and a vague fullness in the left adnexa. Urinalysis shows:[[LAB_TABLE]]\n\nA transvaginal ultrasonography shows a 12-cm complex cyst with internal echoes. Which of the following is the most appropriate next step in management?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Measure 24-hour urine protein excretion"
+      },
+      {
+        "letter": "B",
+        "text": "Measure serum CA 125 concentration"
+      },
+      {
+        "letter": "C",
+        "text": "Obtain a CT scan of the abdomen and pelvis"
+      },
+      {
+        "letter": "D",
+        "text": "Repeat transvaginal ultrasonography in 6 weeks"
+      },
+      {
+        "letter": "E",
+        "text": "Schedule exploratory laparoscopy"
+      }
+    ],
+    "explanation": "The 12-cm complex cyst found on transvaginal ultrasonography is likely causing this patient's symptoms. Adnexal masses can be identified with transvaginal ultrasonography or other imaging. Management depends on the patient's age, symptoms, and the mass size and characteristics. In the presence of a symptomatic complex cyst measuring greater than 10 cm, the most appropriate next step in management is to schedule an exploratory laparoscopy for surgical evaluation and management.\n\nIncorrect Answers: A, B, C, and D.",
+    "labValues": [
+      {
+        "label": "Specific gravity",
+        "value": "1.025"
+      },
+      {
+        "label": "Glucose",
+        "value": "negative"
+      },
+      {
+        "label": "Protein",
+        "value": "trace +"
+      },
+      {
+        "label": "Nitrites",
+        "value": "negative"
+      },
+      {
+        "label": "Leukocyte esterase",
+        "value": "negative"
+      }
+    ]
+  },
+  {
+    "id": 39,
+    "correct": "B",
+    "stem": "A 32-year-old nulligravid woman comes to the physician because she has been unable to conceive for 2 years despite six cycles of clomiphene. Menses occur at irregular 45- to 60-day intervals. She is 165 cm (5 ft 5 in) tall and weighs 104 kg (230 lb); BMI is 38 kg/m2. Her blood pressure is 130/80 mm Hg. Physical examination shows mild hirsutism. Pelvic examination shows no abnormalities. Without treatment, this patient is at increased risk for which of the following?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Diabetes insipidus"
+      },
+      {
+        "letter": "B",
+        "text": "Endometrial hyperplasia"
+      },
+      {
+        "letter": "C",
+        "text": "Hyperprolactinemia"
+      },
+      {
+        "letter": "D",
+        "text": "Hyperthyroidism"
+      },
+      {
+        "letter": "E",
+        "text": "Premature ovarian failure"
+      }
+    ],
+    "explanation": "This patient is presenting with signs of polycystic ovary syndrome (PCOS): irregular menses, infertility, hirsutism, and increased body weight. PCOS is associated with chronic anovulation, which leads to prolonged exposure of the endometrium to unopposed estrogen without the protective effect of progesterone. A potential complication of long-standing PCOS is therefore endometrial hyperplasia and possible endometrial cancer. Treatment includes weight loss and combined oral contraceptives for menstrual regulation.\n\nIncorrect Answers: A, C, D, and E."
+  },
+  {
+    "id": 40,
+    "correct": "C",
+    "stem": "A 72-year-old woman comes to the physician because of a 1-month history of progressive vaginal itching. She has type 2 diabetes mellitus treated with an oral hypoglycemic agent and chronic hypertension treated with a calcium-channel blocking agent. Her blood pressure is 130/80 mm Hg. A photograph of the vulva is shown. The remainder of the physical examination, including pelvic examination, shows no abnormalities. Which of the following is the most likely diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Hemangioma"
+      },
+      {
+        "letter": "B",
+        "text": "Lichen sclerosus"
+      },
+      {
+        "letter": "C",
+        "text": "Melanoma"
+      },
+      {
+        "letter": "D",
+        "text": "Vitiligo"
+      },
+      {
+        "letter": "E",
+        "text": "Vulvar atrophy"
+      }
+    ],
+    "explanation": "The photograph shows an irregular, asymmetric, darkly pigmented vulvar lesion with variegated color and irregular borders, findings concerning for vulvar melanoma. Vulvar melanoma is a rare but aggressive malignancy that arises from melanocytes and may present with a new or changing pigmented lesion, pruritus, or bleeding. Any suspicious pigmented vulvar lesion warrants excisional biopsy for diagnosis and staging. The dark, irregular pigmentation seen here distinguishes melanoma from the pale, atrophic changes of lichen sclerosus or vulvar atrophy.\n\nIncorrect Answers: A, B, D, and E.",
+    "image": "assets/item40_vulva.jpg"
+  },
+  {
+    "id": 41,
+    "correct": "C",
+    "stem": "A 27-year-old nulligravid woman has been unable to conceive for 3 years. Menses occur at regular intervals. Basal body temperatures are biphasic. A postcoital test and her husband's semen analysis show normal findings. Which of the following is the most appropriate next step in diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Measurement of serum follicle-stimulating hormone concentration"
+      },
+      {
+        "letter": "B",
+        "text": "Hamster egg penetration test"
+      },
+      {
+        "letter": "C",
+        "text": "Hysterosalpingography"
+      },
+      {
+        "letter": "D",
+        "text": "Laparoscopy"
+      },
+      {
+        "letter": "E",
+        "text": "Day 25 endometrial biopsy"
+      }
+    ],
+    "explanation": "Evaluation of female infertility begins with a history and physical examination, hormonal profile, and a semen analysis for the male partner. This patient has regular menses and biphasic basal body temperatures, indicating ovulation, and a normal postcoital test and normal semen analysis, which rule out ovulatory and male factors. The next step is hysterosalpingography to assess fallopian tube patency and the shape of the uterine cavity, which are common causes of infertility when the initial assessment is otherwise normal.\n\nIncorrect Answers: A, B, D, and E."
+  },
+  {
+    "id": 42,
+    "correct": "E",
+    "stem": "A 47-year-old woman, gravida 3, para 3, comes to the office for an annual follow-up examination 1 year after she underwent a total vaginal hysterectomy for menorrhagia. She feels well. Prior to the hysterectomy, Pap tests showed no abnormalities. Pelvic examination today shows no abnormalities. Which of the following is the most appropriate recommendation regarding future cervical cancer screening in this patient?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "High-risk human papillomavirus testing at this visit and then every 3 years"
+      },
+      {
+        "letter": "B",
+        "text": "Pap test and high-risk human papillomavirus testing at this visit and every 5 years"
+      },
+      {
+        "letter": "C",
+        "text": "Pap test at this visit and then annually"
+      },
+      {
+        "letter": "D",
+        "text": "Pap test at this visit and then every 3 years"
+      },
+      {
+        "letter": "E",
+        "text": "No longer indicated"
+      }
+    ],
+    "explanation": "Patients who have undergone a total hysterectomy (removal of the uterus and cervix) for benign reasons, such as menorrhagia, and who have no history of cervical intraepithelial neoplasia (CIN) 2 or higher or cervical cancer, do not require further cervical cancer screening. Because this patient no longer has a cervix and had normal prior Pap tests, cervical cancer screening is no longer indicated.\n\nIncorrect Answers: A, B, C, and D."
+  },
+  {
+    "id": 43,
+    "correct": "B",
+    "stem": "A 37-year-old nulligravid woman has a 3-week history of intermittent episodes of increasingly severe pain in the right lower quadrant of the abdomen. She has a 2-year history of coital pain with deep penetration and pain on defecation. Her last menstrual period was 3 weeks ago. Her temperature is 37°C (98.6°F), pulse is 96/min, respirations are 18/min, and blood pressure is 120/70 mm Hg. Examination shows a 6-cm, firm, fixed, tender, right adnexal mass and tender nodularity in the posterior cul-de-sac. Her leukocyte count is 9000/mm3, and erythrocyte sedimentation rate is 15 mm/h. Ultrasonography of the pelvis confirms a 6-cm, right adnexal mass with complex echogenicity and a normal-sized uterus. Which of the following is the most likely diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Ectopic pregnancy"
+      },
+      {
+        "letter": "B",
+        "text": "Endometriosis"
+      },
+      {
+        "letter": "C",
+        "text": "Functional ovarian cyst"
+      },
+      {
+        "letter": "D",
+        "text": "Ovarian cancer"
+      },
+      {
+        "letter": "E",
+        "text": "Tubo-ovarian abscess"
+      }
+    ],
+    "explanation": "Endometriosis refers to the presence of endometrial tissue outside of the uterus, and classically presents with dysmenorrhea, dyspareunia, and dyschezia (painful defecation), as in this patient. On physical examination, signs of ectopic endometrial tissue and fibrosis include palpable nodularity of the posterior cul-de-sac and fixation of the uterus and adnexa. Endometriomas of the ovary may occur and appear as complex adnexal masses. The gold standard for diagnosis is diagnostic laparoscopy. The normal leukocyte count and ESR argue against tubo-ovarian abscess.\n\nIncorrect Answers: A, C, D, and E."
+  },
+  {
+    "id": 44,
+    "correct": "D",
+    "stem": "A 23-year-old nulligravid woman comes to the physician because of a 6-month history of irregular menses occurring at 35- to 42-day intervals and a 3-month history of progressive facial hair growth. Her last menstrual period was 2 weeks ago. She is not sexually active. Neither of her two sisters has increased hair growth. She is 165 cm (5 ft 5 in) tall and weighs 91 kg (200 lb); BMI is 33 kg/m2. Examination shows coarse terminal hair over the upper lip and chin. There is mild hair growth over the chest and around the nipples. Pelvic examination shows mild enlargement of the ovaries. The remainder of the examination shows no abnormalities. Measurement of which of the following serum concentrations is the most appropriate next step in diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Estradiol"
+      },
+      {
+        "letter": "B",
+        "text": "Follicle-stimulating hormone"
+      },
+      {
+        "letter": "C",
+        "text": "Progesterone"
+      },
+      {
+        "letter": "D",
+        "text": "Testosterone"
+      },
+      {
+        "letter": "E",
+        "text": "Thyroid-stimulating hormone"
+      }
+    ],
+    "explanation": "Hirsutism is characterized by excessive hair growth in androgen-sensitive areas such as the face, chest, and back. The pathophysiology involves increased concentrations of androgens, primarily testosterone, which can originate from the ovaries, adrenal glands, or peripheral conversion. Common causes include polycystic ovary syndrome, adrenal hyperplasia, and androgen-secreting tumors. Workup includes measuring serum testosterone (and DHEA-S and 17-hydroxyprogesterone). Measurement of the serum testosterone concentration is the most appropriate next step to evaluate this patient's hirsutism.\n\nIncorrect Answers: A, B, C, and E."
+  },
+  {
+    "id": 45,
+    "correct": "E",
+    "stem": "A 23-year-old nulligravid woman is brought to the emergency department because of a 10-day history of heavy vaginal bleeding and moderately severe lower abdominal cramps. Menses occur at irregular intervals with heavy flow. Her last menstrual period was 4 months ago. She has no other history of serious illness and takes no medications except retinoic acid for facial acne. She is not sexually active. She is 165 cm (5 ft 5 in) tall and weighs 82 kg (180 lb); BMI is 30 kg/m2. Her temperature is 37°C (98.6°F), pulse is 82/min, respirations are 20/min, and blood pressure is 135/85 mm Hg. Physical examination, including breast and abdominal examinations, shows no abnormalities. Speculum examination shows dark red blood and clots in the vagina and a steady flow of blood from the cervical os. A urine pregnancy test is negative. Which of the following is the most likely diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Adenomyosis"
+      },
+      {
+        "letter": "B",
+        "text": "Endometriosis"
+      },
+      {
+        "letter": "C",
+        "text": "Hyperparathyroidism"
+      },
+      {
+        "letter": "D",
+        "text": "Hyperprolactinemia"
+      },
+      {
+        "letter": "E",
+        "text": "Polycystic ovarian syndrome"
+      }
+    ],
+    "explanation": "Polycystic ovary syndrome (PCOS) presents with irregular menses, infertility, and hirsutism, often in patients with increased body weight, as in this patient. It requires two of the following for diagnosis: oligo-/anovulation, polycystic ovaries on ultrasonography, and clinical or biochemical signs of hyperandrogenism. Due to chronic anovulation, menses can be markedly heavy from overgrowth of the endometrium between cycles. A long interval since the last menstrual period followed by heavy bleeding, as seen here, is characteristic. A potential complication is endometrial cancer from unopposed estrogen exposure.\n\nIncorrect Answers: A, B, C, and D."
+  },
+  {
+    "id": 46,
+    "correct": "E",
+    "stem": "A 16-year-old girl is brought to the physician by her mother because of a 10-month history of severe pain with her menstrual periods. She misses two days of school each month because of the pain. Menarche was at the age of 15 years, and menses occur at regular 28-day intervals. Her last menstrual period was 2 weeks ago. She has no history of serious illness. She is not sexually active. She appears well nourished and in no distress. She is 165 cm (5 ft 5 in) tall and weighs 54 kg (120 lb); BMI is 20 kg/m2. Her pulse is 54/min, and blood pressure is 110/60 mm Hg. Abdominal examination shows no tenderness or palpable masses. The external genitalia, vagina, and cervix are normal. Bimanual examination shows a small uterus with no adnexal masses or tenderness. Which of the following is the most likely diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Adenomyosis"
+      },
+      {
+        "letter": "B",
+        "text": "Chronic pelvic pain"
+      },
+      {
+        "letter": "C",
+        "text": "Endometriosis"
+      },
+      {
+        "letter": "D",
+        "text": "Premenstrual syndrome"
+      },
+      {
+        "letter": "E",
+        "text": "Primary dysmenorrhea"
+      }
+    ],
+    "explanation": "Primary dysmenorrhea is menstrual pain that accompanies each menstrual cycle but is not associated with any underlying pathology. To diagnose it, causes of secondary dysmenorrhea (endometriosis, leiomyomata uteri, adenomyosis, pelvic inflammatory disease) must be ruled out, and in this patient the pelvic examination is normal. Primary dysmenorrhea is attributed to uterine vasoconstriction from excess prostaglandin. Treatment targets this pathway with NSAIDs and heat therapy; combined oral contraceptives or a progestin IUD may be used for persistent symptoms.\n\nIncorrect Answers: A, B, C, and D."
+  },
+  {
+    "id": 47,
+    "correct": "D",
+    "stem": "A 48-year-old woman, gravida 4, para 4, comes to the physician because of moderate pain during sexual intercourse. She has not had abnormal vaginal discharge or urinary or bowel symptoms. Use of over-the-counter lubricant provides minimal relief. She has type 2 diabetes mellitus well controlled with metformin. Menses occur at irregular 60- to 90-day intervals and last 3 to 4 days. All her pregnancies ended in uncomplicated vaginal deliveries. She underwent tubal ligation at the age of 29 years. After 7 years of abstinence, she recently became sexually active with one male partner; they use condoms consistently. Physical examination shows no abnormalities. Vulvar examination shows pale epithelium with decreased elasticity. Pelvic examination shows a cystocele. Which of the following is the most appropriate next step in management?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Kegel exercises"
+      },
+      {
+        "letter": "B",
+        "text": "Placement of a pessary"
+      },
+      {
+        "letter": "C",
+        "text": "Topical clobetasol therapy"
+      },
+      {
+        "letter": "D",
+        "text": "Topical estrogen cream"
+      },
+      {
+        "letter": "E",
+        "text": "Topical miconazole therapy"
+      },
+      {
+        "letter": "F",
+        "text": "Vulvar biopsy"
+      }
+    ],
+    "explanation": "Vaginal (vulvovaginal) atrophy is common in perimenopausal patients, characterized by thinning, drying, and loss of elasticity of the vaginal and vulvar epithelium as a result of decreased estrogen. It presents with dyspareunia, dryness, and pale epithelium with decreased elasticity, as in this patient with irregular menses suggesting the menopausal transition. First-line treatment is nonhormonal lubricants and moisturizers; for persistent symptoms, local (topical) estrogen therapy effectively restores vaginal tissue integrity and moisture.\n\nIncorrect Answers: A, B, C, E, and F."
+  },
+  {
+    "id": 48,
+    "correct": "B",
+    "stem": "A 20-year-old nulligravid woman comes to the office because she has not had a menstrual period for 15 months. She also has a 2-year history of increasing hair loss over her scalp and increasing facial acne. She has had increasing growth of thick, coarse, dark hair over her face and body. She says the hair is physically unattractive and embarrassing. She has not had nipple discharge, fatigue, or weight gain. Menarche was at the age of 16 years. Menses previously occurred at regular 28-day intervals until 3 years ago with her first episode of amenorrhea. Her last menstrual period was induced by oral progestin therapy 15 months ago. She currently takes no medications. She is 163 cm (5 ft 4 in) tall and weighs 109 kg (240 lb); BMI is 41 kg/m2. Abdominal examination shows central obesity. Pelvic examination shows no abnormalities. Her serum testosterone concentration is 2.1 nmol/L (N<3.5), and morning fasting serum 17α-hydroxyprogesterone concentration is 340 µg/dL (N=20–300). Transvaginal ultrasonography shows no abnormalities. Which of the following is the most likely diagnosis?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Acromegaly"
+      },
+      {
+        "letter": "B",
+        "text": "Congenital adrenal hyperplasia"
+      },
+      {
+        "letter": "C",
+        "text": "Granulosa cell tumor"
+      },
+      {
+        "letter": "D",
+        "text": "Polycystic ovary syndrome"
+      },
+      {
+        "letter": "E",
+        "text": "Sertoli-Leydig cell tumor"
+      }
+    ],
+    "explanation": "Congenital adrenal hyperplasia (CAH) is a defect in adrenal steroid biosynthesis, most commonly due to 21-hydroxylase deficiency. Lack of this enzyme prevents conversion of 17-hydroxyprogesterone to downstream precursors, shunting them toward androgen production. This patient's elevated 17α-hydroxyprogesterone with virilization (hirsutism), amenorrhea, and a normal-range testosterone points to nonclassic CAH rather than PCOS. Nonclassic 21-hydroxylase deficiency can present with hirsutism and amenorrhea in young adult female patients. Treatment is exogenous glucocorticoid (and mineralocorticoid) supplementation.\n\nIncorrect Answers: A, C, D, and E."
+  },
+  {
+    "id": 49,
+    "correct": "C",
+    "stem": "A 25-year-old woman comes to the emergency department 3 hours after being raped; the sexual assault included vaginal penetration and ejaculation. Which of the following antibiotic regimens is most effective in preventing a sexually transmitted infection in this patient?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Ampicillin and doxycycline"
+      },
+      {
+        "letter": "B",
+        "text": "Ampicillin and metronidazole"
+      },
+      {
+        "letter": "C",
+        "text": "Ceftriaxone and doxycycline"
+      },
+      {
+        "letter": "D",
+        "text": "Penicillin and doxycycline"
+      },
+      {
+        "letter": "E",
+        "text": "Penicillin and metronidazole"
+      }
+    ],
+    "explanation": "The most effective prophylactic regimen for this patient following sexual assault includes ceftriaxone and doxycycline. The CDC recommends ceftriaxone to treat Neisseria gonorrhoeae, doxycycline to treat Chlamydia trachomatis, and metronidazole to cover Trichomonas vaginalis. Of the options offered, ceftriaxone and doxycycline provides the broadest coverage against the common pathogens transmitted during sexual assault; ampicillin and penicillin do not provide adequate coverage for N. gonorrhoeae because of widespread resistance. HIV prophylaxis should also be offered.\n\nIncorrect Answers: A, B, D, and E."
+  },
+  {
+    "id": 50,
+    "correct": "B",
+    "stem": "A 77-year-old woman comes to the physician with her son and daughter 8 days after undergoing core needle biopsy of a 2.5-cm lesion in her left breast. The patient does not speak English. The patient's children approach the physician privately and say they do not want their mother to know that she has cancer if the pathology report indicates a malignancy. They say that their mother will cooperate with any treatment necessary, but the word \"cancer\" should not be mentioned. The patient has hypertension treated with hydrochlorothiazide and type 2 diabetes mellitus controlled with diet. She is alert and cooperative with the examination. Her temperature is 37°C (98.6°F), pulse is 78/min, respirations are 16/min, and blood pressure is 142/88 mm Hg. Examination of the breast shows a well-healing biopsy site; there is no erythema. Which of the following is the most appropriate next step in management?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Ask the patient, with the assistance of her children, what information she would like to have"
+      },
+      {
+        "letter": "B",
+        "text": "Ask the patient, with the assistance of a hospital translator, what information she would like to have"
+      },
+      {
+        "letter": "C",
+        "text": "Inform the children that it is the physician's ethical obligation to discuss biopsy results and treatment options with the patient"
+      },
+      {
+        "letter": "D",
+        "text": "Inform the children that it is the physician's legal obligation to discuss biopsy results and treatment options with the patient"
+      },
+      {
+        "letter": "E",
+        "text": "Share the biopsy results with the children only so treatment can be planned"
+      }
+    ],
+    "explanation": "This patient, who does not speak English, has brought her adult children to discuss the results of a recent biopsy, and the children have asked the physician to withhold a possible diagnosis of malignancy. The ethically appropriate course is to prioritize the patient's autonomy and right to be fully informed. Using a neutral hospital translator (rather than the children, who may bias the communication), the physician should ask the patient directly what information she would like to have about her health condition. This respects her autonomy and lets her decide how much she wishes to know.\n\nIncorrect Answers: A, C, D, and E."
+  }
+];
+  // === CONTENT:QUESTIONS:END ===
+  const TOTAL_ITEMS = QUESTIONS.length;
+
+  // Must match this exam's own `subject` value in the hub's EXAMS array
+  // (see assets/practice_exam_hub.html and references/adding-questions.md) —
+  // used by "Save and Exit" to jump straight to this exam's subject page
+  // when leaving mid-attempt (no score yet to hand the hub, so there's no
+  // examFile/correct/total/pct round-trip to drive that the way "End
+  // Review" gets for a finished exam). Set this to the real subject string
+  // when building an actual exam from this template.
+  // === CONTENT:SUBJECT:START ===
+  const SUBJECT = "OB/GYN";
+  // === CONTENT:SUBJECT:END ===
+
+  let currentIndex = 0; // zero-based
+  let stateByItem = {}; // { idx: { selected, struck:Set, marked:bool } }
+  QUESTIONS.forEach((q,i)=>{ stateByItem[i] = { selected:null, struck:new Set(), marked:false, highlights:[] }; });
+  let showIncompleteHighlight = false; // set true after a rejected End Block attempt with unanswered items
+  let reviewMode = false; // true once "Review Test" has been clicked on the results screen
+  let lastScore = null; // {correct, total, pct} — set once finishBlock() runs
+
+  /* =========================================================
+     SIDEBAR
+  ==========================================================*/
+  const sidebarList = document.getElementById('sidebar-list');
+  function renderSidebar(){
+    sidebarList.innerHTML = '';
+    QUESTIONS.forEach((q,i)=>{
+      const st = stateByItem[i];
+      const row = document.createElement('div');
+      const isIncomplete = showIncompleteHighlight && !st.selected;
+      row.className = 'sidebar-item' + (i===currentIndex ? ' current' : '') + (isIncomplete ? ' incomplete' : '');
+      if(reviewMode){
+        const mark = document.createElement('span');
+        mark.className = 'review-mark';
+        mark.innerHTML = (st.selected === q.correct) ? ICON.reviewCorrect : ICON.reviewIncorrect;
+        row.appendChild(mark);
+      } else {
+        const dot = document.createElement('span');
+        dot.className = 'dot' + (st.selected ? '' : ' unanswered');
+        row.appendChild(dot);
+      }
+      const label = document.createElement('span');
+      label.textContent = (i+1);
+      row.appendChild(label);
+      if(st.marked){
+        const flag = document.createElement('span');
+        flag.className = 'flag';
+        flag.innerHTML = ICON.flagFilled;
+        row.appendChild(flag);
+      }
+      row.addEventListener('click', ()=> loadItem(i));
+      sidebarList.appendChild(row);
+    });
+  }
+
+  /* =========================================================
+     RENDER QUESTION
+  ==========================================================*/
+  const stemEl = document.getElementById('question-stem');
+  const answersEl = document.getElementById('answers');
+  const markCheckbox = document.getElementById('mark-checkbox');
+  const itemLine = document.getElementById('item-line');
+  const navCounter = document.getElementById('nav-counter');
+  const qaImage = document.getElementById('qa-image');
+  const questionImg = document.getElementById('question-img');
+  function formatExplanation(raw){
+    if(!raw) return 'Explanation not yet added for this item.';
+    let text = raw;
+    // Make "Incorrect Answers:" and "Educational Objective:" start their own
+    // paragraph (exactly one blank line before them), unless already at the
+    // very start of the explanation.
+    text = text.replace(/[ \t]*\n*[ \t]*(Incorrect Answers:)/g, '\n\n$1');
+    text = text.replace(/[ \t]*\n*[ \t]*(Educational Objective:)/g, '\n\n$1');
+    text = text.replace(/^\n+/, '');
+    // Escape HTML special characters before injecting our own <strong> tags.
+    text = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    // Bold any "(Choice X)" / "(Choices X and Y)" style mentions.
+    text = text.replace(/\(Choice[s]?\s+[^)]*\)/g, m => '<strong>' + m + '</strong>');
+    // Bold the two section labels.
+    text = text.replace(/Incorrect Answers:/g, '<strong>Incorrect Answers:</strong>');
+    text = text.replace(/Educational Objective:/g, '<strong>Educational Objective:</strong>');
+    return text;
+  }
+
+  const explanationBody = document.getElementById('explanation-body');
+
+  /* =========================================================
+     VIGNETTE HIGHLIGHTING — select text in the stem to highlight it
+     yellow; click a highlighted patch to remove just that patch.
+     Scoped to #question-stem only (the rest of the app keeps
+     user-select:none, same as the real interface).
+
+     Highlights persist per question through the block: rather than
+     mutating the DOM directly and hoping it survives re-renders, each
+     question's highlights are stored as plain character-offset ranges
+     (stateByItem[i].highlights = [{start,end}, ...]) against that
+     question's stem text. loadItem() rebuilds the stem's HTML from the
+     raw text + those ranges every time, so navigating away and back
+     reproduces the exact same highlights. Overlapping/adjacent ranges
+     are merged into one on add, so a highlight is always one discrete,
+     contiguous block — matching what clicking it removes.
+  ==========================================================*/
+  function getFlatOffset(root, node, offset){
+    const preRange = document.createRange();
+    preRange.selectNodeContents(root);
+    preRange.setEnd(node, offset);
+    return preRange.toString().length;
+  }
+  function addHighlightRange(idx, start, end){
+    const st = stateByItem[idx];
+    st.highlights.push({start, end});
+    st.highlights.sort((a,b)=> a.start - b.start);
+    const merged = [];
+    st.highlights.forEach(r=>{
+      if(merged.length && r.start <= merged[merged.length-1].end){
+        merged[merged.length-1].end = Math.max(merged[merged.length-1].end, r.end);
+      } else {
+        merged.push({start:r.start, end:r.end});
+      }
+    });
+    st.highlights = merged;
+  }
+  // Lab-value tables: a question's `stem` can contain this literal marker
+  // token exactly once, at the point where a centered label/value table
+  // should render (e.g. right after "Serum studies show:"), paired with a
+  // `labValues` array of {label, value} objects on the same question
+  // object. Purely additive/optional — a stem with no marker and no
+  // labValues renders exactly as it always has. Kept as a placeholder
+  // *inside* the same flat `stem` string (rather than splitting `stem`
+  // into two separate fields) specifically so the existing highlight
+  // system keeps working unchanged: highlight ranges are plain character
+  // offsets into one flat string, and that's preserved here too — the
+  // marker is simply stripped out of the string used for both offset
+  // computation and rendering, and the table is spliced in as a real DOM
+  // node at the position the marker used to occupy.
+  // Matches [[LAB_TABLE]] (panel 1 / field "labValues"), [[LAB_TABLE_2]]
+  // (panel 2 / field "labValues2"), [[LAB_TABLE_3]] (panel 3 / field
+  // "labValues3"), etc. — a single stem can contain more than one panel
+  // (e.g. "Serum studies show: ... Arterial blood gas analysis shows: ...").
+  const LAB_TABLE_MARKER_RE = /\[\[LAB_TABLE(_(\d+))?\]\]/g;
+
+  function renderStemWithHighlights(){
+    const q = QUESTIONS[currentIndex];
+    // Build an ordered list of "runs" — each one either a stretch of plain
+    // prose or a single lab-table cell's text — in exactly the order they'll
+    // be concatenated in the live DOM. This matters because getFlatOffset()
+    // below measures a real selection's start/end against the ACTUAL
+    // rendered DOM via Range.toString(), which walks every text node in
+    // document order with zero inserted separators — including text inside
+    // a <table>, since a lab table is a real child of #question-stem, not
+    // some opaque/unselectable island. So the highlight-offset space here
+    // must reproduce that same concatenation exactly (prose runs and cell
+    // runs, back to back, no separators) or a highlight that starts in
+    // prose and ends inside a table cell — or sits entirely inside one —
+    // would be stored against offsets that don't match what was actually
+    // selected. A marker whose corresponding labValues field is missing/
+    // empty is left as literal visible text rather than silently swallowed,
+    // same as before this rewrite.
+    LAB_TABLE_MARKER_RE.lastIndex = 0;
+    const runs = []; // {text, kind:'text'|'cell', tableIdx, start, end}
+    let lastEnd = 0;
+    let m;
+    let tableIdx = 0;
+    while((m = LAB_TABLE_MARKER_RE.exec(q.stem)) !== null){
+      const panelNum = m[2] ? parseInt(m[2], 10) : 1;
+      const field = panelNum === 1 ? 'labValues' : ('labValues' + panelNum);
+      const hasData = Array.isArray(q[field]) && q[field].length > 0;
+      const before = q.stem.slice(lastEnd, m.index);
+      if(before) runs.push({ text: before, kind: 'text' });
+      if(hasData){
+        const thisTable = tableIdx++;
+        // A row is normally {label, value} (one value column). A row may
+        // instead carry {label, values:[...]} for a multi-column panel (e.g.
+        // a time-series lab table with "At 36 Hours of Age" / "Now" columns),
+        // and may set header:true so its cells render as bold column titles.
+        // The first cell pushed for each row (the label) is tagged rowStart so
+        // the table builder below can start a new <tr> there regardless of how
+        // many value cells follow — this is what makes variable column counts
+        // work without the builder hard-coding "2 runs per row".
+        q[field].forEach(row=>{
+          const cells = Array.isArray(row.values) ? row.values : [row.value];
+          const isHeader = !!row.header;
+          runs.push({ text: row.label || '', kind: 'cell', tableIdx: thisTable, rowStart: true, isHeader });
+          cells.forEach(c=>{
+            runs.push({ text: c == null ? '' : String(c), kind: 'cell', tableIdx: thisTable, rowStart: false, isHeader });
+          });
+        });
+      } else {
+        runs.push({ text: m[0], kind: 'text' });
+      }
+      lastEnd = m.index + m[0].length;
+    }
+    const tail = q.stem.slice(lastEnd);
+    if(tail) runs.push({ text: tail, kind: 'text' });
+
+    let pos = 0;
+    runs.forEach(r=>{ r.start = pos; r.end = pos + r.text.length; pos += r.text.length; });
+
+    const ranges = stateByItem[currentIndex].highlights; // sorted, non-overlapping
+
+    // Slices one run's text against every highlight range that overlaps it
+    // (clipped to this run's local coordinates), returning an ordered list
+    // of Text/<mark> nodes. Each <mark> carries the FULL (unclipped) range's
+    // start/end — not this run's local slice — so clicking any fragment of
+    // a highlight that spans multiple cells (or prose-into-a-cell) removes
+    // the one logical highlight, exactly like a single-run highlight always
+    // has: see the click handler below, which only ever matches on
+    // start/end, never on which DOM node was actually clicked.
+    function sliceRun(r){
+      const nodes = [];
+      let cursor = 0;
+      ranges.forEach(rg=>{
+        const rs = Math.max(rg.start, r.start) - r.start;
+        const re = Math.min(rg.end, r.end) - r.start;
+        if(re <= rs) return;
+        if(rs > cursor) nodes.push(document.createTextNode(r.text.slice(cursor, rs)));
+        const mark = document.createElement('mark');
+        mark.className = 'highlighted';
+        mark.dataset.start = rg.start;
+        mark.dataset.end = rg.end;
+        mark.textContent = r.text.slice(rs, re);
+        nodes.push(mark);
+        cursor = re;
+      });
+      if(cursor < r.text.length) nodes.push(document.createTextNode(r.text.slice(cursor)));
+      return nodes;
+    }
+
+    stemEl.innerHTML = '';
+    let i = 0;
+    while(i < runs.length){
+      const r = runs[i];
+      if(r.kind === 'text'){
+        sliceRun(r).forEach(n => stemEl.appendChild(n));
+        i++;
+        continue;
+      }
+      // r.kind === 'cell' — rebuild this table by consuming every
+      // consecutive cell run that belongs to it, running each cell's text
+      // through the same sliceRun() prose uses so a highlight renders
+      // identically whether it's in the vignette or a lab table. Rows are
+      // delimited by the rowStart flag (set on each row's label cell), so a
+      // panel can mix row widths / carry more than one value column without
+      // this loop assuming a fixed cell count. A header row's cells render as
+      // <th>; every other cell is a <td>. The label column (first cell) stays
+      // left-aligned; extra value columns get centered via .multicol so a
+      // time-series panel's numbers sit under their column titles.
+      const thisTable = r.tableIdx;
+      const table = document.createElement('table');
+      table.className = 'stem-lab-table'; // NOT 'lab-table' — see the CSS comment above for why
+      let maxCells = 0, cellsInRow = 0, tr = null;
+      while(i < runs.length && runs[i].kind === 'cell' && runs[i].tableIdx === thisTable){
+        const cellRun = runs[i];
+        if(cellRun.rowStart){
+          if(cellsInRow > maxCells) maxCells = cellsInRow;
+          cellsInRow = 0;
+          tr = document.createElement('tr');
+          table.appendChild(tr);
+        }
+        const cell = document.createElement(cellRun.isHeader ? 'th' : 'td');
+        sliceRun(cellRun).forEach(n => cell.appendChild(n));
+        tr.appendChild(cell);
+        cellsInRow++;
+        i++;
+      }
+      if(cellsInRow > maxCells) maxCells = cellsInRow;
+      if(maxCells > 2) table.classList.add('multicol');
+      stemEl.appendChild(table);
+    }
+  }
+  document.addEventListener('mouseup', ()=>{
+    const sel = window.getSelection();
+    if(!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+    const range = sel.getRangeAt(0);
+    if(!stemEl.contains(range.commonAncestorContainer)){ return; }
+    const start = getFlatOffset(stemEl, range.startContainer, range.startOffset);
+    const end = getFlatOffset(stemEl, range.endContainer, range.endOffset);
+    sel.removeAllRanges();
+    if(end <= start) return;
+    addHighlightRange(currentIndex, start, end);
+    renderStemWithHighlights();
+  });
+  stemEl.addEventListener('click', (e)=>{
+    const mark = e.target.closest('mark.highlighted');
+    if(!mark || !stemEl.contains(mark)) return;
+    const start = parseInt(mark.dataset.start, 10);
+    const end = parseInt(mark.dataset.end, 10);
+    const st = stateByItem[currentIndex];
+    st.highlights = st.highlights.filter(r => !(r.start===start && r.end===end));
+    renderStemWithHighlights();
+  });
+
+  function loadItem(i){
+    currentIndex = i;
+    const q = QUESTIONS[i];
+    const st = stateByItem[i];
+
+    itemLine.textContent = `Item: ${i+1} of ${TOTAL_ITEMS}`;
+    navCounter.textContent = `${i+1} / ${TOTAL_ITEMS}`;
+    markCheckbox.checked = st.marked;
+
+    renderStemWithHighlights();
+
+    if(q.image){
+      questionImg.src = q.image;
+      qaImage.classList.add('show');
+    } else {
+      questionImg.src = '';
+      qaImage.classList.remove('show');
+    }
+
+    answersEl.innerHTML = '';
+    q.choices.forEach(choice=>{
+      const row = document.createElement('div');
+      row.className = 'answer-row' + (st.selected === choice.letter ? ' selected' : '');
+      row.dataset.letter = choice.letter;
+
+      const radio = document.createElement('span');
+      radio.className = 'answer-radio';
+
+      const isStruck = st.struck.has(choice.letter);
+      const isSelected = st.selected === choice.letter;
+
+      const letterSpan = document.createElement('span');
+      letterSpan.className = 'answer-letter' + (isStruck ? ' struck' : '');
+      letterSpan.textContent = choice.letter + '.';
+
+      const textSpan = document.createElement('span');
+      textSpan.className = 'answer-text' + (isStruck ? ' struck' : '');
+      textSpan.textContent = choice.text;
+
+      const strikeIcon = document.createElement('span');
+      strikeIcon.className = 'strike-icon' + (isStruck ? ' on' : '') + ((isSelected || reviewMode) ? ' disabled' : '');
+      strikeIcon.textContent = 'ab';
+      strikeIcon.title = isSelected ? 'Deselect this answer to strike it out' : 'Strike out this choice';
+      strikeIcon.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        if(reviewMode) return; // answers are frozen in review mode
+        if(isSelected) return; // can't strike the currently selected answer
+        if(st.struck.has(choice.letter)){
+          st.struck.delete(choice.letter);
+        } else {
+          st.struck.add(choice.letter);
+        }
+        loadItem(currentIndex);
+      });
+
+      // REVIEW MODE: green check on the correct choice; red X on the
+      // selected choice if it was wrong (selected+correct just gets the
+      // check). Sits to the left of the radio, matching the reference UI.
+      // Rows with no mark still get an empty spacer so every radio stays
+      // aligned in the same column.
+      if(reviewMode){
+        const isCorrectChoice = choice.letter === q.correct;
+        const isSelectedWrong = isSelected && choice.letter !== q.correct;
+        const mark = document.createElement('span');
+        mark.className = 'review-answer-mark';
+        if(isCorrectChoice || isSelectedWrong){
+          mark.innerHTML = isCorrectChoice ? ICON.reviewCorrect : ICON.reviewIncorrect;
+        }
+        row.appendChild(mark);
+      }
+
+      row.appendChild(radio);
+      row.appendChild(letterSpan);
+      row.appendChild(textSpan);
+      row.appendChild(strikeIcon);
+
+      row.addEventListener('click', ()=>{
+        if(reviewMode) return; // answers are frozen in review mode
+        st.selected = choice.letter;
+        st.struck.delete(choice.letter); // selecting clears any strikethrough on this answer
+        loadItem(currentIndex);
+        renderSidebar();
+      });
+
+      answersEl.appendChild(row);
+    });
+
+    // "Proceed to next item" is a scoring workflow control — hidden once
+    // the block is over and the exam is in read-only review mode.
+    document.getElementById('proceed-btn').style.display = reviewMode ? 'none' : '';
+
+    // Explanation panel content — plain text only (no tables), per item.
+    // Real explanations get pasted in later; placeholder text until then.
+    if(reviewMode){
+      explanationBody.innerHTML = formatExplanation(q.explanation);
+    }
+
+    // restore notes for this item
+    notesText.value = notesByItem[currentIndex] || '';
+
+    renderSidebar();
+  }
+
+  markCheckbox.addEventListener('change', ()=>{
+    stateByItem[currentIndex].marked = markCheckbox.checked;
+    renderSidebar();
+  });
+
+  document.getElementById('btn-prev').addEventListener('click', ()=>{
+    if(currentIndex>0) loadItem(currentIndex-1);
+  });
+  document.getElementById('btn-next').addEventListener('click', ()=>{
+    if(currentIndex<TOTAL_ITEMS-1) loadItem(currentIndex+1);
+  });
+
+  document.getElementById('proceed-btn').addEventListener('click', ()=>{
+    if(currentIndex < TOTAL_ITEMS - 1){
+      loadItem(currentIndex + 1);
+    }
+  });
+
+  /* =========================================================
+     TIMER — counts up every second, HH:MM:SS
+  ==========================================================*/
+  let elapsedSeconds = 0;
+  let examPaused = false;
+  let blockEnded = false;
+  const timeEl = document.getElementById('time-elapsed');
+  function formatElapsed(s){
+    const h = Math.floor(s/3600);
+    const m = Math.floor((s%3600)/60);
+    const sec = s%60;
+    return String(h).padStart(2,'0')+":"+String(m).padStart(2,'0')+":"+String(sec).padStart(2,'0');
+  }
+
+  /* Time-limit warnings: fire once each at 60 min elapsed (15 min "left") and
+     70 min elapsed (5 min "left"). These are soft warnings only — reaching the
+     limit never ends the block or stops the timer; the test-taker keeps going.
+     Because elapsedSeconds only increments while not paused/ended (see the
+     interval below), time spent paused never counts toward these thresholds. */
+  const TIME_WARNINGS = [
+    { atSeconds: 60*60, minutesLeft: 15 },
+    { atSeconds: 70*60, minutesLeft: 5 }
+  ];
+  let nextWarningIndex = 0;
+  const timeWarningOverlay = document.getElementById('time-warning-overlay');
+  const timeWarningText = document.getElementById('time-warning-text');
+  function showTimeWarning(minutesLeft){
+    timeWarningText.textContent = "The exam has " + minutesLeft + " minutes left. This is just a warning. The exam won't end once the time limit is reached.";
+    timeWarningOverlay.classList.add('open');
+  }
+  document.getElementById('btn-time-warning-close').addEventListener('click', ()=>{
+    timeWarningOverlay.classList.remove('open');
+  });
+
+  /* Count Up / Count Down display toggle (via the button next to the timer,
+     previously non-functional). elapsedSeconds itself always keeps counting
+     up from exam start no matter which display mode is active — it's the
+     one source of truth everything else (warnings above, saveExamState,
+     restoreExamStateIfPresent) is built on. Switching modes only changes
+     how that same number is *rendered*, so flipping to Count Down at, say,
+     5 minutes elapsed shows 70:00 remaining (75 total minus 5 elapsed) and
+     keeps ticking down from there — nothing about the underlying
+     timekeeping changes. */
+  const TOTAL_TIME_SECONDS = 75 * 60;
+  let timerMode = 'countup'; // 'countup' | 'countdown'
+  function updateTimerDisplay(){
+    const displaySeconds = timerMode === 'countdown'
+      ? Math.max(0, TOTAL_TIME_SECONDS - elapsedSeconds)
+      : elapsedSeconds;
+    timeEl.textContent = formatElapsed(displaySeconds);
+    // Same underlying moment either way — 75 minutes elapsed is both
+    // "counted all the way up" and "counted all the way down" — just turns
+    // the clock slightly red as a passive cue. Nothing else happens: no
+    // overlay, no forced end, same as the soft warnings above.
+    timeEl.classList.toggle('time-limit-reached', elapsedSeconds >= TOTAL_TIME_SECONDS);
+  }
+  const timerModeMenu = document.getElementById('timer-mode-menu');
+  function setTimerMode(mode){
+    timerMode = mode;
+    timerModeMenu.querySelectorAll('button').forEach(b=>{
+      b.classList.toggle('active', b.dataset.mode === mode);
+    });
+    updateTimerDisplay();
+  }
+  document.getElementById('list-icon').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    timerModeMenu.classList.toggle('open');
+  });
+  timerModeMenu.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      setTimerMode(btn.dataset.mode);
+      timerModeMenu.classList.remove('open');
+    });
+  });
+  document.addEventListener('click', ()=> timerModeMenu.classList.remove('open'));
+  setTimerMode('countup');
+
+  setInterval(()=>{
+    if(examPaused || blockEnded) return;
+    elapsedSeconds++;
+    updateTimerDisplay();
+    if(nextWarningIndex < TIME_WARNINGS.length && elapsedSeconds === TIME_WARNINGS[nextWarningIndex].atSeconds){
+      showTimeWarning(TIME_WARNINGS[nextWarningIndex].minutesLeft);
+      nextWarningIndex++;
+    }
+  },1000);
+
+  /* =========================================================
+     PAUSE / RESUME
+  ==========================================================*/
+  const pauseOverlay = document.getElementById('pause-overlay');
+  document.getElementById('btn-pause').addEventListener('click', ()=>{
+    if(blockEnded) return;
+    examPaused = true;
+    pauseOverlay.classList.add('open');
+  });
+  document.getElementById('btn-resume').addEventListener('click', ()=>{
+    examPaused = false;
+    pauseOverlay.classList.remove('open');
+  });
+
+  /* =========================================================
+     END BLOCK — confirm, check completeness, then score & show results
+  ==========================================================*/
+  const endblockConfirmOverlay = document.getElementById('endblock-confirm-overlay');
+  const resultsOverlay = document.getElementById('results-overlay');
+  const incompleteOverlay = document.getElementById('incomplete-overlay');
+  const incompleteText = document.getElementById('incomplete-text');
+  let unansweredIndices = [];
+  document.getElementById('btn-endblock-cancel').addEventListener('click', ()=>{
+    endblockConfirmOverlay.classList.remove('open');
+  });
+  document.getElementById('btn-incomplete-close').addEventListener('click', ()=>{
+    incompleteOverlay.classList.remove('open');
+    if(unansweredIndices.length){
+      loadItem(unansweredIndices[0]);
+    }
+  });
+  document.getElementById('btn-end-anyway').addEventListener('click', ()=>{
+    incompleteOverlay.classList.remove('open');
+    finishBlock();
+  });
+
+  // Scores against the answer key already stored per question (q.correct).
+  // An unanswered item's `selected` is null, which never matches a letter,
+  // so it's automatically counted as incorrect — no special-casing needed.
+  function finishBlock(){
+    let correctCount = 0;
+    QUESTIONS.forEach((q,i)=>{
+      if(stateByItem[i].selected === q.correct) correctCount++;
+    });
+    const pct = Math.round((correctCount / TOTAL_ITEMS) * 100);
+
+    document.getElementById('results-score').textContent = `${pct}%`;
+    document.getElementById('results-fraction').textContent = `${correctCount}/${TOTAL_ITEMS}`;
+
+    lastScore = { correct: correctCount, total: TOTAL_ITEMS, pct: pct };
+
+    // Save to this exam file's own localStorage too. Every local file://
+    // URL gets isolated storage, so the hub page can't read this directly —
+    // the score actually reaches the hub via the URL params "End Review"
+    // sends it with (see the btn-endblock handler below). This local copy
+    // just means if this same exam file is ever reopened directly, its own
+    // last result is still on hand.
+    try{
+      const key = 'nbmeExamScore:' + location.pathname.split('/').pop();
+      localStorage.setItem(key, JSON.stringify({ correct: correctCount, total: TOTAL_ITEMS, pct: pct, ts: Date.now() }));
+    }catch(e){ /* storage disabled entirely (e.g. private/incognito mode) */ }
+
+    showIncompleteHighlight = false;
+    blockEnded = true;
+    resultsOverlay.classList.add('open');
+  }
+
+  // Full exam-state persistence. Called two ways: with `finished=true` when
+  // "End Review" is clicked (exam already scored, lastScore included so a
+  // reopen boots straight back into Review Mode), and with `finished=false`
+  // (or no argument) from "Save and Exit" mid-attempt, which stores the
+  // in-progress answers/strikes/flags/highlights and the current item index
+  // WITHOUT scoring anything, so reopening resumes the live attempt right
+  // where it was left instead of restarting. This is deliberately a separate,
+  // richer key from the score-only one finishBlock() writes above: this one
+  // carries every per-item answer/strike/flag/highlight so the whole attempt
+  // (finished or not) can be reconstructed, not just the final percentage.
+  function saveExamState(finished){
+    try{
+      const key = 'nbmeExamState:' + location.pathname.split('/').pop();
+      const serializedState = {};
+      QUESTIONS.forEach((q,i)=>{
+        const st = stateByItem[i];
+        serializedState[i] = {
+          selected: st.selected,
+          struck: Array.from(st.struck),
+          marked: st.marked,
+          highlights: st.highlights
+        };
+      });
+      localStorage.setItem(key, JSON.stringify({
+        stateByItem: serializedState,
+        currentIndex: currentIndex,
+        elapsedSeconds: elapsedSeconds,
+        finished: !!finished,
+        lastScore: finished ? lastScore : null,
+        ts: Date.now()
+      }));
+    }catch(e){ /* storage disabled entirely (e.g. private/incognito mode) — never let this throw */ }
+  }
+
+  // Called once at startup, before restoreExamStateIfPresent. The hub's
+  // per-exam "Reset" button can't reach into this file's own localStorage
+  // directly — file:// URLs each get isolated storage — so instead it
+  // navigates here with ?reset=1 as a signal to wipe this exam's own saved
+  // score/state and start over. Strips the param afterward so a later
+  // refresh doesn't keep re-triggering it.
+  function clearExamStateIfResetRequested(){
+    try{
+      const params = new URLSearchParams(location.search);
+      if(params.get('reset') !== '1') return;
+      const file = location.pathname.split('/').pop();
+      localStorage.removeItem('nbmeExamState:' + file);
+      localStorage.removeItem('nbmeExamScore:' + file);
+      history.replaceState(null, '', location.pathname);
+      // If this reset was triggered by the hub's hidden background iframe
+      // (see resetExamStateInBackground() in practice_exam_hub.html), let
+      // it know the wipe is done so it can tear the iframe down right away
+      // instead of waiting out its fallback timeout. No-op when this file
+      // is opened normally (window.parent === window.self).
+      if(window.parent && window.parent !== window.self){
+        window.parent.postMessage({ type: 'nbmeResetDone', file: file }, '*');
+      }
+    }catch(e){ /* storage disabled entirely (e.g. private/incognito mode) */ }
+  }
+
+  // Called once at startup (see INIT at the bottom), before the initial
+  // loadItem(). Restores whatever was last saved, whether that's a finished,
+  // reviewed exam (saved.finished === true — boots straight back into Review
+  // Mode) or an in-progress attempt saved via "Save and Exit" mid-block
+  // (saved.finished === false — every answer/strike/flag/highlight comes
+  // back, but the attempt stays live and unscored). Returns the item index
+  // to resume at (0 if nothing was saved), which INIT passes to loadItem()
+  // instead of always starting at item 0.
+  function restoreExamStateIfPresent(){
+    let saved = null;
+    try{
+      const key = 'nbmeExamState:' + location.pathname.split('/').pop();
+      const raw = localStorage.getItem(key);
+      if(raw) saved = JSON.parse(raw);
+    }catch(e){ return 0; /* storage disabled or corrupt saved data — fall back to a fresh attempt */ }
+    if(!saved || !saved.stateByItem) return 0;
+
+    QUESTIONS.forEach((q,i)=>{
+      const s = saved.stateByItem[i];
+      if(!s) return;
+      stateByItem[i] = {
+        selected: s.selected || null,
+        struck: new Set(s.struck || []),
+        marked: !!s.marked,
+        highlights: s.highlights || []
+      };
+    });
+
+    if(typeof saved.elapsedSeconds === 'number' && saved.elapsedSeconds >= 0){
+      elapsedSeconds = saved.elapsedSeconds;
+      updateTimerDisplay();
+      // Skip re-firing any time warning whose threshold is already behind
+      // the restored elapsed time, so reopening a long-running attempt
+      // doesn't immediately replay a warning that already fired before
+      // Save and Exit.
+      nextWarningIndex = TIME_WARNINGS.filter(w => w.atSeconds <= elapsedSeconds).length;
+    }
+
+    if(saved.finished){
+      lastScore = saved.lastScore || null;
+      reviewMode = true;
+      blockEnded = true;
+      document.getElementById('app').classList.add('review-mode');
+      document.getElementById('explanation-panel').classList.add('open');
+      document.getElementById('endblock-label').textContent = 'End Review';
+    }
+
+    return saved.currentIndex || 0;
+  }
+
+  document.getElementById('btn-endblock-confirm').addEventListener('click', ()=>{
+    endblockConfirmOverlay.classList.remove('open');
+
+    unansweredIndices = [];
+    QUESTIONS.forEach((q,i)=>{
+      if(!stateByItem[i].selected) unansweredIndices.push(i);
+    });
+
+    if(unansweredIndices.length > 0){
+      showIncompleteHighlight = true;
+      renderSidebar();
+      const n = unansweredIndices.length;
+      incompleteText.textContent = "You have " + n + " unanswered question" + (n===1?"":"s") + ". " +
+        "Unanswered items are highlighted in red in the Question Status list, and will be scored as incorrect if you end the block now.";
+      incompleteOverlay.classList.add('open');
+      return;
+    }
+
+    finishBlock();
+  });
+  document.getElementById('btn-review-test').addEventListener('click', ()=>{
+    resultsOverlay.classList.remove('open');
+    reviewMode = true;
+    document.getElementById('app').classList.add('review-mode');
+    document.getElementById('explanation-panel').classList.add('open');
+    document.getElementById('endblock-label').textContent = 'End Review';
+    loadItem(0);
+  });
+
+  /* =========================================================
+     LAB VALUES PANEL
+  ==========================================================*/
+  const labPanel = document.getElementById('lab-panel');
+  const labBody = document.getElementById('lab-body');
+
+  /* Horizontal drag-to-resize, UWorld-style. The panel is docked to the
+     right edge (right:0), so widening it means moving its LEFT edge left —
+     dragging the handle left increases width. Content underneath (the lab
+     table) is already width:100% with no fixed pixel widths, so it reflows
+     on its own as the panel's width changes; no extra work needed there. */
+  (function(){
+    const handle = document.getElementById('lab-resize-handle');
+    const contentWrap = document.getElementById('content-wrap');
+    let resizing = false, startX = 0, startWidth = 0;
+    const MIN_WIDTH = 320;      // lab panel never gets narrower than this
+    const CONTENT_MIN = 280;    // question vignette always keeps at least this much room
+    handle.addEventListener('mousedown', (e)=>{
+      resizing = true;
+      startX = e.clientX;
+      startWidth = labPanel.getBoundingClientRect().width;
+      handle.classList.add('dragging');
+      document.body.style.cursor = 'ew-resize';
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', (e)=>{
+      if(!resizing) return;
+      const delta = startX - e.clientX;
+      // Cap against the actual space available in content-wrap (not the
+      // whole window), so the vignette always keeps CONTENT_MIN of room —
+      // #content is flex:1, so it reflows to fill whatever's left in
+      // real time as labPanel's width changes below.
+      const wrapWidth = contentWrap.getBoundingClientRect().width;
+      const maxWidth = Math.max(MIN_WIDTH, wrapWidth - CONTENT_MIN);
+      let newWidth = Math.min(maxWidth, Math.max(MIN_WIDTH, startWidth + delta));
+      labPanel.style.maxWidth = 'none';
+      labPanel.style.width = newWidth + 'px';
+    });
+    document.addEventListener('mouseup', ()=>{
+      if(!resizing) return;
+      resizing = false;
+      handle.classList.remove('dragging');
+      document.body.style.cursor = '';
+    });
+  })();
+
+  /* Same drag-to-resize behavior as the Lab Values panel, applied to the
+     Explanation panel (review mode). Docked right edge; dragging left
+     widens it, capped so the vignette keeps CONTENT_MIN of room. */
+  (function(){
+    const handle = document.getElementById('explanation-resize-handle');
+    const panel = document.getElementById('explanation-panel');
+    const contentWrap = document.getElementById('content-wrap');
+    let resizing = false, startX = 0, startWidth = 0;
+    const MIN_WIDTH = 320;
+    const CONTENT_MIN = 280;
+    handle.addEventListener('mousedown', (e)=>{
+      resizing = true;
+      startX = e.clientX;
+      startWidth = panel.getBoundingClientRect().width;
+      handle.classList.add('dragging');
+      document.body.style.cursor = 'ew-resize';
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', (e)=>{
+      if(!resizing) return;
+      const delta = startX - e.clientX;
+      const wrapWidth = contentWrap.getBoundingClientRect().width;
+      const maxWidth = Math.max(MIN_WIDTH, wrapWidth - CONTENT_MIN);
+      let newWidth = Math.min(maxWidth, Math.max(MIN_WIDTH, startWidth + delta));
+      panel.style.maxWidth = 'none';
+      panel.style.width = newWidth + 'px';
+    });
+    document.addEventListener('mouseup', ()=>{
+      if(!resizing) return;
+      resizing = false;
+      handle.classList.remove('dragging');
+      document.body.style.cursor = '';
+    });
+  })();
+
+  function row(label, value, opts){
+    opts = opts || {};
+    const cls = ['group','sub','section-title'].filter(c=>opts[c]).join(' ');
+    const lblClass = opts.sub ? 'lbl' : '';
+    return `<tr class="${cls}"><td class="${lblClass}">${label}</td><td class="val">${value||''}</td></tr>`;
+  }
+
+  const labData = {
+    'lab-serum': `
+      <table class="lab-table">
+        ${row('Serum','Reference Range',{'section-title':true})}
+        ${row('Alanine aminotransferase (ALT)','10-40 U/L')}
+        ${row('Aspartate aminotransferase (AST)','12-38 U/L')}
+        ${row('Alkaline phosphatase','25-100 U/L')}
+        ${row('Amylase','25-125 U/L')}
+        ${row('Bilirubin', '', {group:true})}
+        ${row('Total','0.1-1.0 mg/dL',{sub:true})}
+        ${row('Direct','0.0-0.3 mg/dL',{sub:true})}
+        ${row('Calcium','8.4-10.2 mg/dL')}
+        ${row('Cholesterol','',{group:true})}
+        ${row('Total, Normal','&lt;200 mg/dL',{sub:true})}
+        ${row('Total, High','&gt;240mg/dL',{sub:true})}
+        ${row('HDL','40-60 mg/dL',{sub:true})}
+        ${row('LDL','&lt;160 mg/dL',{sub:true})}
+        ${row('Triglycerides','',{group:true})}
+        ${row('Normal','&lt;150 mg/dL',{sub:true})}
+        ${row('Borderline','151-199 mg/dL',{sub:true})}
+        ${row('Cortisol','',{group:true})}
+        ${row('0800 h','5-23 &micro;g/dL',{sub:true})}
+        ${row('1600 h','3-15 &micro;g/dL',{sub:true})}
+        ${row('2000 h','&lt;50% of 0800 h',{sub:true})}
+        ${row('Creatine kinase','',{group:true})}
+        ${row('Male','25-90 U/L',{sub:true})}
+        ${row('Female','10-70 U/L',{sub:true})}
+        ${row('Creatinine','0.6-1.2 mg/dL')}
+        ${row('Urea nitrogen','7-18 mg/dL')}
+        ${row('Electrolytes, serum','',{group:true})}
+        ${row('Sodium (Na&#8314;)','136-146 mEq/L',{sub:true})}
+        ${row('Potassium (K&#8314;)','3.5-5.0 mEq/L',{sub:true})}
+        ${row('Chloride (Cl&#8315;)','95-105 mEq/L',{sub:true})}
+        ${row('Bicarbonate (HCO3&#8315;)','22-28 mEq/L',{sub:true})}
+        ${row('Magnesium (Mg2&#8314;)','1.5-2.0 mEq/L',{sub:true})}
+        ${row('Ferritin','',{group:true})}
+        ${row('Male','20-250 ng/mL',{sub:true})}
+        ${row('Female','10-120 ng/mL',{sub:true})}
+        ${row('Follicle-stimulating hormone','',{group:true})}
+        ${row('Male','4-25 mIU/mL',{sub:true})}
+        ${row('Female','',{sub:true})}
+        ${row('premenopause','4-30 mIU/mL',{sub:true})}
+        ${row('midcycle peak','10-90 mIU/mL',{sub:true})}
+        ${row('postmenopause','40-250 mIU/mL',{sub:true})}
+        ${row('Glucose','',{group:true})}
+        ${row('Fasting','70-110 mg/dL',{sub:true})}
+        ${row('Random, non-fasting','&lt;140 mg/dL',{sub:true})}
+        ${row('Growth hormone- arginine stimulation','',{group:true})}
+        ${row('Fasting','&lt;5 ng/mL',{sub:true})}
+        ${row('Provocative stimuli','&gt;7 ng/mL',{sub:true})}
+        ${row('Iron','',{group:true})}
+        ${row('Male','65-175 &micro;g/dL',{sub:true})}
+        ${row('Female','50-170 &micro;g/dL',{sub:true})}
+        ${row('Total iron-binding capacity','250-400 &micro;g/dL')}
+        ${row('Transferrin','200-360 mg/dL')}
+        ${row('Lactate dehydrogenase','45-200 U/L')}
+        ${row('Luteinizing hormone','',{group:true})}
+        ${row('Male','6-23 mIU/mL',{sub:true})}
+        ${row('Female','',{sub:true})}
+        ${row('follicular phase','5-30 mIU/mL',{sub:true})}
+        ${row('midcycle','75-150 mIU/mL',{sub:true})}
+        ${row('postmenopause','30-200 mIU/mL',{sub:true})}
+        ${row('Osmolality','275-295 mOsmol/kg H2O')}
+        ${row('Intact parathyroid hormone (PTH)','10-60 pg/mL')}
+        ${row('Phosphorus (inorganic)','3.0-4.5 mg/dL')}
+        ${row('Prolactin (hPRL)','',{group:true})}
+        ${row('Male','&lt;17 ng/mL',{sub:true})}
+        ${row('Female','&lt;25 ng/mL',{sub:true})}
+        ${row('Proteins','',{group:true})}
+        ${row('Total','6.0-7.8 g/dL',{sub:true})}
+        ${row('Albumin','3.5-5.5 g/dL',{sub:true})}
+        ${row('Globulin','2.3-3.5 g/dL',{sub:true})}
+        ${row('Troponin I','&lt;0.04 ng/dL')}
+        ${row('TSH','0.4-4.0 &micro;U/mL')}
+        ${row('Thyroidal iodine (123I) uptake','8%-30% of administered dose/24 h')}
+        ${row('Thyroxine (T4)','5-12 &micro;g/dL')}
+        ${row('Free (T4)','0.9-1.7 ng/dL')}
+        ${row('Triiodothyronine (T3) (RIA)','100-200 ng/dL')}
+        ${row('Triiodothyronine (T3) resin uptake','25%-35%')}
+        ${row('Uric acid','3.0-8.2 mg/dL')}
+        ${row('Immunoglobulins','',{group:true})}
+        ${row('IgA','76-390 mg/dL',{sub:true})}
+        ${row('IgE','0-380 IU/mL',{sub:true})}
+        ${row('IgG','650-1500 mg/dL',{sub:true})}
+        ${row('IgM','50-300 mg/dL',{sub:true})}
+        ${row('Gases, arterial blood (room air)','',{group:true})}
+        ${row('pH','7.35-7.45',{sub:true})}
+        ${row('Pco2','33-45 mm Hg',{sub:true})}
+        ${row('Po2','75-105 mm Hg',{sub:true})}
+      </table>`,
+    'lab-csf': `
+      <table class="lab-table">
+        ${row('Cerebrospinal Fluid','Reference Range',{'section-title':true})}
+        ${row('Cell count','0-5/mm3')}
+        ${row('Chloride','118-132 mEq/L')}
+        ${row('Gamma globulin','3%-12% total proteins')}
+        ${row('Glucose','40-70 mg/dL')}
+        ${row('Pressure','70-180 mm H2O')}
+        ${row('Proteins, total','&lt;40 mg/dL')}
+      </table>`,
+    'lab-blood': `
+      <table class="lab-table">
+        ${row('Hematologic','Reference Range',{'section-title':true})}
+        ${row('Erythrocyte count','',{group:true})}
+        ${row('Male','4.3-5.9 million/mm3',{sub:true})}
+        ${row('Female','3.5-5.5 million/mm3',{sub:true})}
+        ${row('Erythrocyte sedimentation rate (Westergren)','',{group:true})}
+        ${row('Male','0-15 mm/h',{sub:true})}
+        ${row('Female','0-20 mm/h',{sub:true})}
+        ${row('Hematocrit','',{group:true})}
+        ${row('Male','41%-53%',{sub:true})}
+        ${row('Female','36%-46%',{sub:true})}
+        ${row('Hemoglobin, blood','',{group:true})}
+        ${row('Male','13.5-17.5 g/dL',{sub:true})}
+        ${row('Female','12.0-16.0 g/dL',{sub:true})}
+        ${row('Hemoglobin A1c','&le;6%')}
+        ${row('Hemoglobin, plasma','&lt;4 mg/dL')}
+        ${row('Leukocyte count (WBC)','4500-11,000/mm3')}
+        ${row('Neutrophils, segmented','54%-62%')}
+        ${row('Neutrophils, bands','3%-5%')}
+        ${row('Eosinophils','1%-3%')}
+        ${row('Basophils','0%-0.75%')}
+        ${row('Lymphocytes','25%-33%')}
+        ${row('Monocytes','3%-7%')}
+        ${row('CD4+ T-lymphocyte count','&ge;500/mm3')}
+        ${row('Platelet count','150,000-400,000/mm3')}
+        ${row('Reticulocyte count','0.5%-1.5%')}
+        ${row('D-Dimer','&le;250 ng/mL')}
+        ${row('Partial thromboplastin time (PTT)(activated)','25-40 seconds')}
+        ${row('Prothrombin time (PT)','11-15 seconds')}
+        ${row('Mean corpuscular hemoglobin (MCH)','25-35 pg/cell')}
+        ${row('Mean corpuscular hemoglobin concentration (MCHC)','31%-36% Hb/cell')}
+        ${row('Mean corpuscular volume (MCV)','80-100 &micro;m3')}
+        ${row('Volume','',{group:true})}
+        ${row('Plasma','',{sub:true})}
+        ${row('Male','25-43 mL/kg',{sub:true})}
+        ${row('Female','28-45 mL/kg',{sub:true})}
+        ${row('Red cell','',{sub:true})}
+        ${row('Male','20-36 mL/kg',{sub:true})}
+        ${row('Female','19-31 mL/kg',{sub:true})}
+      </table>`,
+    'lab-urine': `
+      <table class="lab-table">
+        ${row('Urine','Reference Range',{'section-title':true})}
+        ${row('Calcium','100-300 mg/24 h')}
+        ${row('Creatinine clearance','',{group:true})}
+        ${row('Male','97-137 mL/min',{sub:true})}
+        ${row('Female','88-128 mL/min',{sub:true})}
+        ${row('Osmolality','50-1200 mOsmol/kg H2O')}
+        ${row('Oxalate','8-40 &micro;g/mL')}
+        ${row('Proteins, total','&lt;150 mg/24 h')}
+        ${row('17-Hydroxycorticosteroids','',{group:true})}
+        ${row('Male','3.0-10.0 mg/24 h',{sub:true})}
+        ${row('Female','2.0-8.0 mg/24 h',{sub:true})}
+        ${row('17-Ketosteroids, total','',{group:true})}
+        ${row('Male','8-20 mg/24 h',{sub:true})}
+        ${row('Female','6-15 mg/24 h',{sub:true})}
+        ${row('Body Mass Index (BMI)','Adult: 19-25 kg/m2',{group:true})}
+      </table>`
+  };
+
+  function renderLabPanels(){
+    labBody.innerHTML = '';
+    Object.keys(labData).forEach((key, idx)=>{
+      const div = document.createElement('div');
+      div.className = 'lab-panel-content' + (idx===0 ? ' active' : '');
+      div.id = key;
+      div.innerHTML = labData[key];
+      labBody.appendChild(div);
+    });
+  }
+  renderLabPanels();
+
+  document.getElementById('btn-labs').addEventListener('click', ()=>{
+    // In review mode the Explanation panel shares the same slot as Lab
+    // Values, so opening one temporarily steps the other aside, and closing
+    // Lab Values brings Explanation back — whether closed via this button or
+    // via the panel's own close icon (lab-close below). Both paths must stay
+    // in sync: this button used to only handle the opening case, which left
+    // Explanation stuck hidden if Lab Values was closed by clicking this
+    // button again instead of the X icon.
+    const opening = !labPanel.classList.contains('open');
+    if(opening){
+      document.getElementById('explanation-panel').classList.remove('open');
+    } else if(reviewMode){
+      document.getElementById('explanation-panel').classList.add('open');
+    }
+    labPanel.classList.toggle('open');
+  });
+  document.getElementById('lab-close').addEventListener('click', ()=>{
+    labPanel.classList.remove('open');
+    if(reviewMode) document.getElementById('explanation-panel').classList.add('open');
+  });
+
+  document.querySelectorAll('.lab-tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.lab-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.lab-panel-content').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.panel).classList.add('active');
+      document.getElementById('lab-search').value = '';
+      filterLabRows('');
+    });
+  });
+
+  // search filter — filters rows within the active tab only
+  function filterLabRows(query){
+    const active = document.querySelector('.lab-panel-content.active');
+    if(!active) return;
+    const q = query.trim().toLowerCase();
+    active.querySelectorAll('tr').forEach(tr=>{
+      if(q === ''){ tr.classList.remove('hidden-row'); return; }
+      const text = tr.textContent.toLowerCase();
+      tr.classList.toggle('hidden-row', !text.includes(q));
+    });
+  }
+  document.getElementById('lab-search').addEventListener('input', (e)=>{
+    filterLabRows(e.target.value);
+  });
+
+  /* =========================================================
+     NOTES / CALCULATOR POPUPS
+  ==========================================================*/
+  let notesByItem = {};
+  const notesText = document.getElementById('notes-text');
+  notesText.addEventListener('input', ()=>{ notesByItem[currentIndex] = notesText.value; });
+
+  function openPopup(id){ document.getElementById(id).classList.add('open'); }
+  function closePopup(id){ document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('.close-x').forEach(x=>{
+    x.addEventListener('click', ()=> closePopup(x.dataset.close));
+  });
+  document.getElementById('btn-notes').addEventListener('click', ()=> openPopup('notes-popup'));
+  document.getElementById('btn-calc').addEventListener('click', ()=> openPopup('calc-popup'));
+  document.getElementById('btn-settings').addEventListener('click', ()=> alert('Settings — placeholder for future functionality.'));
+  document.getElementById('btn-endblock').addEventListener('click', ()=>{
+    if(reviewMode){
+      // "End Review" — the block is already scored. Persist the full
+      // exam state (every answer, strike-out, flag, and highlight) to
+      // this file's own localStorage before leaving, keyed by this
+      // exam's filename, so reopening this exam later — whether by
+      // double-clicking it directly or clicking its card on the hub —
+      // restores the finished review instead of starting over from a
+      // blank attempt. Then head back to the hub, still carrying the
+      // score in the URL too so the hub can show it immediately even
+      // when these are plain local files with no server.
+      //
+      // Standard project layout: the hub lives in the project root and
+      // every exam file lives one level down, in dependencies/ (see
+      // references/adding-questions.md). That means from an exam file's
+      // own location, the hub is "../practice_exam_hub.html" — NOT a
+      // same-folder relative link. If this exam is ever placed directly
+      // alongside the hub instead (no dependencies/ subfolder), change
+      // both this target and the examFile line below to drop the
+      // "../" and "dependencies/" pieces so they match the hub's actual
+      // EXAMS[].file value for this exam — the two must always agree,
+      // or the hub will show the exam as never completed.
+      saveExamState(true);
+      let target = '../practice_exam_hub.html';
+      if(lastScore){
+        const params = new URLSearchParams({
+          examFile: 'dependencies/' + location.pathname.split('/').pop(),
+          correct: lastScore.correct,
+          total: lastScore.total,
+          pct: lastScore.pct
+        });
+        target += '?' + params.toString();
+      }
+      window.location.href = target;
+      return;
+    }
+    document.getElementById('endblock-confirm-overlay').classList.add('open');
+  });
+
+  // "Save and Exit" — unlike End Block, leaving is never destructive
+  // (nothing is lost; reopening this file resumes exactly here via
+  // restoreExamStateIfPresent()), but a confirmation is still shown before
+  // actually navigating away, per the user's preference.
+  document.getElementById('btn-save-exit').addEventListener('click', ()=>{
+    document.getElementById('save-exit-confirm-overlay').classList.add('open');
+  });
+  document.getElementById('btn-save-exit-no').addEventListener('click', ()=>{
+    document.getElementById('save-exit-confirm-overlay').classList.remove('open');
+  });
+  // Works whether the exam is mid-attempt or already finished/reviewing.
+  // saveExamState() decides what to persist based on reviewMode: finished=
+  // true keeps the score and Review Mode state (same as "End Review" above)
+  // — the hub's own incoming-score handling already jumps to this exam's
+  // subject page in that case, since a real score and examFile are in the
+  // URL. finished=false just snapshots the live in-progress answers,
+  // current item, and elapsed timer, unscored — there's no score to hand
+  // the hub for that case, so this jumps straight to the subject page
+  // itself via the SUBJECT constant above (must match this exam's entry in
+  // the hub's EXAMS array, same as examFile/End Review already require),
+  // and also passes examFile + inProgress=1 (no score) so the hub marks
+  // this exam's card with a "Resume" indicator — see
+  // getIncomingProgressFromURL()/hasInProgress() in practice_exam_hub.html.
+  document.getElementById('btn-save-exit-yes').addEventListener('click', ()=>{
+    saveExamState(reviewMode);
+    let target;
+    if(reviewMode && lastScore){
+      const params = new URLSearchParams({
+        examFile: 'dependencies/' + location.pathname.split('/').pop(),
+        correct: lastScore.correct,
+        total: lastScore.total,
+        pct: lastScore.pct
+      });
+      target = '../practice_exam_hub.html?' + params.toString();
+    } else {
+      const params = new URLSearchParams({
+        examFile: 'dependencies/' + location.pathname.split('/').pop(),
+        inProgress: '1'
+      });
+      target = '../practice_exam_hub.html?' + params.toString() + '#subject/' + encodeURIComponent(SUBJECT);
+    }
+    window.location.href = target;
+  });
+
+  // Draggable popups
+  document.querySelectorAll('.popup-header').forEach(header=>{
+    const popup = header.parentElement;
+    let dragging=false, offX=0, offY=0;
+    header.addEventListener('mousedown', (e)=>{
+      if(e.target.classList.contains('close-x')) return;
+      dragging=true;
+      const rect = popup.getBoundingClientRect();
+      offX = e.clientX - rect.left;
+      offY = e.clientY - rect.top;
+      popup.style.transform = 'none';
+      popup.style.left = rect.left+'px';
+      popup.style.top = rect.top+'px';
+    });
+    document.addEventListener('mousemove', (e)=>{
+      if(!dragging) return;
+      popup.style.left = (e.clientX-offX)+'px';
+      popup.style.top = (e.clientY-offY)+'px';
+    });
+    document.addEventListener('mouseup', ()=> dragging=false);
+  });
+
+  // Calculator logic
+  const calcDisplay = document.getElementById('calc-display');
+  const calcGrid = document.getElementById('calc-grid');
+  let calcExpr = '';
+  ['7','8','9','/','4','5','6','*','1','2','3','-'].forEach(k=>{
+    const b = document.createElement('button');
+    b.textContent = k;
+    if(['/','*','-'].includes(k)) b.classList.add('op');
+    b.addEventListener('click', ()=> calcInput(k));
+    calcGrid.appendChild(b);
+  });
+  const zero = document.createElement('button');
+  zero.textContent='0'; zero.classList.add('zero');
+  zero.addEventListener('click', ()=> calcInput('0'));
+  calcGrid.appendChild(zero);
+  const dot = document.createElement('button');
+  dot.textContent='.';
+  dot.addEventListener('click', ()=> calcInput('.'));
+  calcGrid.appendChild(dot);
+  const plus = document.createElement('button');
+  plus.textContent='+'; plus.classList.add('op');
+  plus.addEventListener('click', ()=> calcInput('+'));
+  calcGrid.appendChild(plus);
+  const rowC = document.createElement('button');
+  rowC.textContent='C';
+  rowC.addEventListener('click', ()=>{ calcExpr=''; calcDisplay.value='0'; });
+  calcGrid.appendChild(rowC);
+  const rowEq = document.createElement('button');
+  rowEq.textContent='='; rowEq.classList.add('eq');
+  rowEq.addEventListener('click', ()=>{
+    try{
+      if(/^[0-9+\-*/.\s]+$/.test(calcExpr)){
+        calcDisplay.value = String(Function('"use strict";return ('+calcExpr+')')());
+        calcExpr = calcDisplay.value;
+      }
+    }catch(e){ calcDisplay.value = 'Error'; calcExpr=''; }
+  });
+  calcGrid.appendChild(rowEq);
+  function calcInput(k){
+    calcExpr += k;
+    calcDisplay.value = calcExpr;
+  }
+
+  /* =========================================================
+     INIT — resume exactly where the user left off: a finished review if
+     this exam was already completed, an in-progress attempt if "Save and
+     Exit" was used mid-block (see restoreExamStateIfPresent above), or a
+     fresh start at item 1 if nothing was ever saved.
+  ==========================================================*/
+  clearExamStateIfResetRequested();
+  const resumeIndex = restoreExamStateIfPresent();
+  loadItem(resumeIndex || 0);
+
+})();
+</script>
+</body>
+</html>

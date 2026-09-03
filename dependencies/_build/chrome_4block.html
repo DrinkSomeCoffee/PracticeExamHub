@@ -1,0 +1,2279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- CONTENT:TITLE:START -->
+<title>NBME-Style Practice Exam</title>
+<!-- CONTENT:TITLE:END -->
+<style>
+  :root{
+    --navy:#004977;
+    --navy-dark:#00395e;
+    --btn-navy:#0068a9;
+    --border-navy:#004977;
+    --panel-border:#c9ccd3;
+    --text-dark:#000000;
+    --row-line:#e2e4ea;
+    --answered-dot:#000;
+    --sidebar-bg:#ffffff;
+    --sidebar-current:#004977;
+    --sidebar-hover:#eef0f4;
+    --lavender:#d7dcee;
+    --content-top:#fbfbfc;
+    --lab-header-gray:#d9d9d9;
+    --red:#ff0000;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    height:100%; margin:0; padding:0;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-dark);
+    background:#fff;
+    font-size:15px;
+    user-select:none;
+  }
+  #app{ display:flex; height:100vh; }
+
+  /* ============ LEFT SIDEBAR ============ */
+  #sidebar{
+    width:120px;
+    flex-shrink:0;
+    background:var(--sidebar-bg);
+    border-right:1px solid var(--panel-border);
+    display:flex;
+    flex-direction:column;
+  }
+  #sidebar-header{
+    font-weight:bold;
+    text-align:center;
+    padding:10px 6px;
+    border-bottom:2px solid var(--navy);
+    font-size:13.5px;
+    line-height:1.25;
+  }
+  #sidebar-list{ overflow-y:auto; flex:1; }
+  .sidebar-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 14px;
+    font-size:14px;
+    cursor:pointer;
+    border-bottom:1px solid #eee;
+  }
+  .sidebar-item:hover{ background:var(--sidebar-hover); }
+  .sidebar-item.current{ background:var(--navy); color:#fff; font-weight:normal; }
+  .sidebar-item .dot{
+    width:7px; height:7px; border-radius:50%; background:var(--answered-dot); flex-shrink:0;
+  }
+  .sidebar-item.current .dot{ background:#fff; }
+  .sidebar-item .dot.unanswered{ background:transparent; border:1.3px solid #666; }
+  .sidebar-item.current .dot.unanswered{ border-color:#fff; }
+  .sidebar-item .flag{ margin-left:auto; display:inline-flex; }
+  .sidebar-item .flag svg{ width:19px; height:19px; }
+  .sidebar-item.incomplete{ outline:2px solid var(--red); outline-offset:-2px; }
+
+  /* ============ RIGHT COLUMN ============ */
+  #main-col{ flex:1; display:flex; flex-direction:column; min-width:0; }
+
+  /* ===== TOP BAR ===== */
+  #topbar{
+    background:var(--navy);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    padding:8px 16px;
+    flex-shrink:0;
+    gap:20px;
+  }
+  #item-id-box{
+    background:#fff;
+    color:var(--text-dark);
+    border:1.5px solid #fff;
+    border-radius:2px;
+    padding:5px 12px;
+    font-size:13.5px;
+    line-height:1.3;
+  }
+  #item-id-box .l1{ font-weight:bold; }
+  #topbar-nav{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin:0 auto;
+    padding-left:60px;
+  }
+  .icon-btn{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    cursor:pointer;
+    color:#fff;
+    font-size:11px;
+    background:none;
+    border:none;
+    padding:0;
+  }
+  .icon-btn:hover .icon-circle, .icon-btn:hover .icon-square{ background:#eef2f8; }
+  .icon-circle{
+    width:34px; height:34px; border-radius:50%;
+    background:#fff; color:var(--navy);
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; font-weight:bold;
+  }
+  .icon-square{
+    width:34px; height:34px; border-radius:6px;
+    background:#fff; color:var(--navy);
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px;
+  }
+  .icon-square svg{ width:19px; height:19px; }
+  .icon-circle svg{ width:19px; height:19px; }
+  .icon-btn.active .icon-square{ background:#cfe0ff; }
+  .icon-badge{ width:34px; height:34px; display:flex; align-items:center; justify-content:center; }
+  .icon-badge svg{ width:30px; height:30px; }
+  .icon-badge-wrap{ position:relative; }
+  .icon-badge-wrap > span[data-icon]{ display:flex; align-items:center; justify-content:center; width:100%; height:100%; }
+  .badge-num{
+    position:absolute; bottom:-2px; right:-3px;
+    font-size:10px; font-weight:bold; font-style:normal;
+    color:var(--navy); background:#fff;
+    border-radius:3px; padding:0 2px; line-height:1.3;
+  }
+  #nav-counter{ font-size:14px; font-weight:bold; padding:0 2px; }
+  #toolbar-icons{ display:flex; align-items:center; gap:16px; margin-left:auto; }
+
+  /* ===== CONTENT ===== */
+  #content-wrap{ flex:1; display:flex; min-height:0; position:relative; }
+  #content{
+    flex:1;
+    overflow-y:auto;
+    padding:20px 34px 40px 34px;
+    min-width:280px;
+    background:linear-gradient(to bottom, var(--content-top), var(--lavender));
+  }
+  #mark-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:18px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    width:max-content;
+  }
+  #mark-row input{
+    appearance:none; -webkit-appearance:none;
+    width:17px; height:17px; cursor:pointer;
+    border:1.7px solid #4a4a4a; border-radius:2px;
+    background:#fff; position:relative; margin:0;
+  }
+  #mark-row input:checked{ background:var(--navy); border-color:var(--navy); }
+  #mark-row input:checked::after{
+    content:"";
+    position:absolute; left:4px; top:0px;
+    width:5px; height:9px;
+    border:solid #fff; border-width:0 2px 2px 0;
+    transform:rotate(40deg);
+  }
+  #mark-row .flag-icon{ font-size:15px; color:#333; display:inline-flex; }
+  #mark-row .flag-icon svg{ width:16px; height:16px; }
+
+  #qa-body{
+    display:flex;
+    gap:32px;
+    align-items:flex-start;
+  }
+  #qa-text{ flex:1; min-width:0; max-width:760px; }
+  #qa-image{
+    display:none;
+    flex:0 0 auto;
+    max-width:42%;
+  }
+  #qa-image.show{ display:block; }
+  #qa-image img{
+    max-width:100%;
+    display:block;
+    border:1px solid #999;
+  }
+
+  #question-stem{
+    line-height:1.65;
+    font-size:15px;
+    margin-bottom:20px;
+    white-space:pre-wrap;
+    user-select:text;
+    -webkit-user-select:text;
+  }
+  #question-stem .highlighted{ background:#ffeb3b; cursor:pointer; }
+
+  /* Lab-value tables (Serum studies show: / Urinalysis shows: / etc.) —
+     centered as a standalone block, label/value columns close together
+     and left-aligned to each other, matching the real NBME layout instead
+     of running the values inline with the surrounding prose. See
+     buildLabTable() and the LAB_TABLE_MARKER handling in
+     renderStemWithHighlights(). Selectable/highlightable exactly like the surrounding prose (see
+     "VIGNETTE HIGHLIGHTING" below) — a real NBME exam lets a test-taker
+     highlight lab values just as freely as the rest of the vignette, so
+     this should never be user-select:none again.
+
+     IMPORTANT: this uses `.stem-lab-table`, a name deliberately distinct
+     from the pre-existing `.lab-table` class used by the Lab Values
+     reference panel (the "Lab Values" toolbar button's popup, defined
+     further down). That class sets `width:100%` and a `border-bottom` on
+     every cell — exactly wrong for this feature (it stretches the table
+     to the full stem width, which both breaks centering and drags the
+     value column far from its label, and draws a line under every row).
+     Reusing that class name here was the actual bug behind all three
+     visual complaints (borders between rows, off-center table, wide
+     label/value gap) — the fix was giving this its own class, not tweaking
+     margins. Do not rename this back to `.lab-table` or merge the two;
+     they render two structurally different things (a full reference
+     panel vs. one compact inline table) and need different box models.
+  */
+  #question-stem table.stem-lab-table{
+    width:auto;
+    margin:14px auto;
+    border-collapse:collapse;
+    border:none;
+    white-space:normal;
+    user-select:text;
+    -webkit-user-select:text;
+  }
+  #question-stem table.stem-lab-table td,
+  #question-stem table.stem-lab-table th{
+    padding:1px 16px 1px 0;
+    border:none;
+    text-align:left;
+    vertical-align:top;
+    font-size:15px;
+    font-weight:normal;
+    width:auto;
+  }
+  #question-stem table.stem-lab-table td:last-child,
+  #question-stem table.stem-lab-table th:last-child{ padding-right:0; }
+  /* Multi-column panels (e.g. a time-series table with two reading columns):
+     the label column (first cell) stays left-aligned, but every value column
+     is centered and gets extra left padding so the numbers sit under their
+     bold column titles, matching the real NBME time-series lab table. */
+  #question-stem table.stem-lab-table.multicol td:not(:first-child),
+  #question-stem table.stem-lab-table.multicol th:not(:first-child){
+    text-align:center;
+    padding-left:28px;
+  }
+  #question-stem table.stem-lab-table.multicol th{ font-weight:bold; }
+
+  #answers{
+    border:2px solid var(--border-navy);
+    background:#fff;
+  }
+  .answer-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 14px;
+    border-bottom:1px solid var(--row-line);
+    cursor:pointer;
+    line-height:1.4;
+  }
+  .answer-row:last-child{ border-bottom:none; }
+  .answer-row:hover{ background:#f4f7fc; }
+  .answer-row.selected{ background:#dbe8ff; }
+  .answer-letter{ font-weight:normal; }
+  .answer-letter.struck{ text-decoration:line-through; color:#9a9a9a; }
+  .answer-radio{
+    width:16px;height:16px;
+    border-radius:50%;
+    border:1.5px solid #555;
+    flex-shrink:0;
+    position:relative;
+    background:#fff;
+  }
+  .answer-row.selected .answer-radio::after{
+    content:"";
+    position:absolute;
+    top:3px;left:3px;right:3px;bottom:3px;
+    background:var(--navy);
+    border-radius:50%;
+  }
+  .answer-text{ flex:1; }
+  .answer-text.struck{ text-decoration:line-through; color:#9a9a9a; }
+  .strike-icon{
+    font-size:13px;
+    color:#555;
+    padding:2px 6px;
+    cursor:pointer;
+    text-decoration:line-through;
+    user-select:none;
+    border-radius:3px;
+    flex-shrink:0;
+  }
+  .strike-icon:hover{ background:#e2e4ea; }
+  .strike-icon.on{ color:#555; }
+  .strike-icon.disabled{ opacity:.4; cursor:default; pointer-events:none; }
+
+  #proceed-btn{
+    margin-top:14px;
+    background:linear-gradient(180deg, #5889C4 0%, #3855A2 100%);
+    color:#fff;
+    border:1px solid #2f4f8c;
+    padding:4px 16px;
+    font-size:13px;
+    font-weight:600;
+    border-radius:4px;
+    cursor:pointer;
+    box-shadow:0 1px 2px rgba(0,0,0,0.15);
+  }
+  #proceed-btn:hover{ background:linear-gradient(180deg, #6796CE 0%, #4265AC 100%); }
+  #proceed-btn:active{ background:linear-gradient(180deg, #4E7EB8 0%, #33518F 100%); }
+
+  /* ===== LAB VALUES PANEL ===== */
+  #lab-panel{
+    position:relative;
+    width:62%;
+    max-width:900px;
+    flex-shrink:0;
+    background:#fff;
+    box-shadow:-4px 0 18px rgba(0,0,0,.25);
+    display:none;
+    flex-direction:column;
+    z-index:50;
+    border-left:1px solid #bbb;
+  }
+  #lab-panel.open{ display:flex; }
+  #lab-resize-handle{
+    position:absolute;
+    left:-3px; top:0; bottom:0;
+    width:7px;
+    cursor:ew-resize;
+    z-index:51;
+    background:transparent;
+  }
+  #lab-resize-handle:hover, #lab-resize-handle.dragging{ background:rgba(0,73,119,.28); }
+  #lab-header{
+    background:var(--lab-header-gray);
+    padding:14px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-shrink:0;
+  }
+  #lab-header .title{ font-size:19px; font-weight:600; display:flex; align-items:center; gap:8px; }
+  #lab-header .title svg{ width:20px; height:20px; }
+  #lab-close{ cursor:pointer; font-size:18px; background:none; border:none; color:var(--text-dark); }
+  #lab-close svg{ width:17px; height:17px; }
+  #lab-controls{
+    padding:16px 20px 0 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-shrink:0;
+  }
+  #lab-search{
+    border:1px solid #888;
+    border-radius:2px;
+    padding:7px 10px;
+    font-size:14px;
+    width:220px;
+  }
+  #lab-si{ font-size:14px; display:flex; align-items:center; gap:6px; }
+  #lab-tabs{
+    display:flex;
+    gap:8px;
+    padding:14px 20px 12px 20px;
+    flex-shrink:0;
+  }
+  .lab-tab{
+    padding:7px 14px;
+    font-size:14px;
+    border:1px solid #999;
+    border-radius:3px;
+    background:#fff;
+    cursor:pointer;
+  }
+  .lab-tab.active{ background:var(--lavender); }
+  #lab-body{
+    flex:1;
+    overflow-y:auto;
+    background:var(--lavender);
+  }
+  .lab-panel-content{ display:none; }
+  .lab-panel-content.active{ display:block; }
+  .lab-table{ width:100%; border-collapse:collapse; }
+  .lab-table td{
+    padding:9px 24px;
+    font-size:15px;
+    border-bottom:1px solid #c5c8d4;
+    vertical-align:top;
+  }
+  .lab-table td.val{ text-align:left; width:40%; }
+  .lab-table tr.group td{ font-weight:bold; }
+  .lab-table tr.sub td.lbl{ padding-left:44px; }
+  .lab-table tr.section-title td{ font-weight:bold; font-size:15px; background:var(--lavender); }
+  .lab-table tr.hidden-row{ display:none; }
+
+  /* ===== NOTES POPUP ===== */
+  .popup{
+    position:fixed;
+    top:110px; left:50%;
+    transform:translateX(-50%);
+    background:#fff;
+    border:1px solid #888;
+    box-shadow:0 6px 24px rgba(0,0,0,.35);
+    z-index:500;
+    display:none;
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .popup.open{ display:block; }
+  .popup-header{
+    background:var(--navy);
+    color:#fff;
+    padding:8px 12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:move;
+    font-size:13px;
+    font-weight:bold;
+  }
+  .popup-header .close-x{ cursor:pointer; font-size:16px; line-height:1; padding:0 4px; }
+  .popup-body{ padding:14px; }
+  #notes-popup .popup-body{ width:340px; }
+  #notes-popup textarea{
+    width:100%; height:160px; resize:vertical;
+    font-family:inherit; font-size:13px; padding:8px;
+    border:1px solid #ccc; border-radius:3px;
+  }
+  #calc-popup .popup-body{ width:220px; }
+  #calc-display{
+    width:100%; box-sizing:border-box; text-align:right;
+    font-size:20px; padding:8px; margin-bottom:8px;
+    border:1px solid #ccc; background:#f9f9f9; border-radius:3px;
+  }
+  #calc-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+  #calc-grid button{
+    padding:12px 0; font-size:15px; border:1px solid #bbb;
+    background:#f4f5f7; border-radius:3px; cursor:pointer;
+  }
+  #calc-grid button:hover{ background:#e2e4e8; }
+  #calc-grid button.op{ background:#dbe8ff; }
+  #calc-grid button.eq{ background:var(--btn-navy); color:#fff; grid-column: span 2; }
+  #calc-grid button.zero{ grid-column: span 2; }
+
+  /* ===== BOTTOM BAR ===== */
+  #bottombar{
+    background:var(--navy);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:8px 16px;
+    flex-shrink:0;
+  }
+  #bottombar .left{ display:flex; align-items:center; gap:14px; }
+  #time-box{
+    background:#fff;
+    color:var(--text-dark);
+    border:1.5px solid #fff;
+    border-radius:2px;
+    padding:6px 12px;
+    font-size:13.5px;
+    font-weight:bold;
+  }
+  #list-icon{
+    width:30px; height:30px; border-radius:4px;
+    background:#fff; color:var(--navy);
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; cursor:pointer;
+    position:relative;
+  }
+  #timer-mode-menu{
+    position:absolute; bottom:40px; left:0;
+    background:#fff; color:var(--text-dark);
+    border:1px solid var(--panel-border);
+    border-radius:6px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.25);
+    display:none; flex-direction:column;
+    min-width:140px; overflow:hidden; z-index:50;
+    cursor:default;
+  }
+  #timer-mode-menu.open{ display:flex; }
+  #timer-mode-menu button{
+    background:none; border:none; text-align:left;
+    padding:10px 14px; font-size:13.5px; cursor:pointer; color:var(--text-dark);
+    font-family:inherit;
+  }
+  #timer-mode-menu button:hover{ background:#eef2f8; }
+  #timer-mode-menu button.active{ font-weight:700; color:var(--btn-navy); }
+  #time-elapsed.time-limit-reached{ color:#b3261e; }
+  #bottombar .right{ display:flex; align-items:center; gap:18px; }
+
+  /* ===== FULLSCREEN OVERLAYS (pause / end block / results) ===== */
+  .fullscreen-overlay{
+    position:fixed; inset:0;
+    background:rgba(10,18,30,.6);
+    z-index:1000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+  }
+  .fullscreen-overlay.open{ display:flex; }
+  .overlay-card{
+    background:#fff;
+    border-radius:6px;
+    padding:36px 44px;
+    text-align:center;
+    box-shadow:0 10px 40px rgba(0,0,0,.45);
+    min-width:340px;
+    max-width:480px;
+  }
+  .overlay-card h2{
+    margin:0 0 14px;
+    color:var(--navy);
+    font-size:22px;
+  }
+  .overlay-card p{
+    margin:0 0 22px;
+    font-size:14px;
+    line-height:1.5;
+    color:#333;
+  }
+  .overlay-btn{
+    background:var(--btn-navy);
+    color:#fff;
+    border:none;
+    padding:10px 26px;
+    border-radius:4px;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+  }
+  .overlay-btn:hover{ background:var(--navy-dark); }
+  .overlay-btn.secondary{
+    background:#e4e6ea;
+    color:#333;
+    margin-right:12px;
+  }
+  .overlay-btn.secondary:hover{ background:#d3d6dc; }
+  #results-overlay{
+    background:#fff;
+    flex-direction:column;
+  }
+  #results-overlay.open{ display:flex; }
+  .results-percent{
+    font-size:104px;
+    font-weight:bold;
+    color:#1a8a3d;
+    line-height:1;
+    margin-bottom:22px;
+  }
+  #results-breakdown{
+    display:flex;
+    gap:14px;
+    margin-bottom:40px;
+  }
+  .results-breakdown-item{
+    background:#fff;
+    border:1.5px solid var(--panel-border);
+    border-radius:8px;
+    padding:12px 22px;
+    text-align:center;
+    min-width:90px;
+  }
+  .results-breakdown-item .label{
+    font-size:12px;
+    font-weight:700;
+    color:#5a5f6b;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+  }
+  .results-breakdown-item .score{
+    font-size:20px;
+    font-weight:700;
+    color:var(--navy);
+    margin-top:4px;
+  }
+  .results-fraction{
+    font-size:30px;
+    font-weight:600;
+    color:#333;
+    margin-bottom:48px;
+  }
+
+  /* ===== REVIEW MODE ===== */
+  #app.review-mode .answer-row{ cursor:default; }
+  #app.review-mode .strike-icon{ cursor:default; }
+  .review-mark{ width:15px; height:15px; flex-shrink:0; display:inline-flex; }
+  .review-mark svg{ width:15px; height:15px; display:block; }
+  .review-answer-mark{ flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; }
+  .review-answer-mark svg{ width:18px; height:18px; display:block; }
+
+  /* ===== EXPLANATION PANEL (review mode) ===== */
+  #explanation-panel{
+    position:relative;
+    width:44%;
+    max-width:680px;
+    flex-shrink:0;
+    background:#fff;
+    box-shadow:-4px 0 18px rgba(0,0,0,.25);
+    display:none;
+    flex-direction:column;
+    z-index:50;
+    border-left:1px solid #bbb;
+  }
+  #explanation-panel.open{ display:flex; }
+  #explanation-resize-handle{
+    position:absolute;
+    left:-3px; top:0; bottom:0;
+    width:7px;
+    cursor:ew-resize;
+    z-index:51;
+    background:transparent;
+  }
+  #explanation-resize-handle:hover, #explanation-resize-handle.dragging{ background:rgba(0,73,119,.28); }
+  #explanation-tabs{
+    display:flex;
+    gap:8px;
+    padding:14px 20px 12px 20px;
+    flex-shrink:0;
+    border-bottom:1px solid #c5c8d4;
+  }
+  #explanation-body{
+    flex:1;
+    overflow-y:auto;
+    padding:18px 22px 30px 22px;
+    font-size:15px;
+    line-height:1.65;
+    white-space:pre-wrap;
+    color:#000;
+  }
+
+  ::selection{ background:#ffe58f; }
+
+  /* ===== DASHBOARD / BLOCK MENU SCREEN ===== */
+  #dashboard-screen{ display:none; min-height:100vh; flex-direction:column; background:linear-gradient(180deg,var(--content-top) 0%, var(--lavender) 100%); }
+  #dashboard-screen.open{ display:flex; }
+  #dash-topbar{ background:var(--navy); color:#fff; padding:22px 36px; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
+  #dash-topbar h1{ margin:0; font-size:22px; font-weight:700; letter-spacing:.2px; }
+  #dash-topbar p{ margin:4px 0 0; font-size:13.5px; color:#cfe0ec; }
+  #dash-wrap{ max-width:760px; margin:0 auto; padding:36px 24px 60px; width:100%; box-sizing:border-box; }
+  #dash-blocks{ display:flex; flex-direction:column; gap:14px; margin-bottom:28px; }
+  .block-card{ display:flex; align-items:center; justify-content:space-between; background:#fff; border:1px solid var(--panel-border); border-radius:8px; padding:18px 22px; }
+  .block-card.locked{ opacity:.55; }
+  .block-card-title{ font-size:16.5px; font-weight:700; color:var(--navy); }
+  .block-card-meta{ font-size:12.5px; color:#5a5f6b; margin-top:4px; }
+  .block-card-status{ font-size:12.5px; font-weight:700; margin-top:6px; display:inline-block; padding:2px 9px; border-radius:10px; }
+  .block-card-status.completed{ background:#e3f6e8; color:#1a8a3d; }
+  .block-card-status.in-progress{ background:#fff3d6; color:#8a6a1a; }
+  .block-card-status.locked-pill{ background:#eceef2; color:#7a7f8a; }
+  .block-card-btn{ background:var(--btn-navy); color:#fff; border:none; padding:9px 20px; border-radius:5px; font-size:13.5px; font-weight:700; cursor:pointer; }
+  .block-card-btn:hover{ background:var(--navy-dark); }
+  .block-card-btn:disabled{ background:#c9ccd3; cursor:default; }
+  .block-card-btn.secondary{ background:#fff; color:var(--btn-navy); border:1.5px solid var(--btn-navy); }
+  #dash-score-panel{ background:#fff; border:2px solid var(--navy); border-radius:8px; padding:24px 26px; text-align:center; margin-bottom:20px; }
+  #dash-score-panel h3{ margin:0 0 6px; color:var(--navy); font-size:16px; }
+  #dash-score-panel .big-score{ font-size:40px; font-weight:700; color:#1a8a3d; margin:6px 0; }
+  #dash-cta-row{ text-align:center; }
+  #dash-cta-row .overlay-btn{ padding:12px 32px; font-size:15px; }
+  .back-link{ display:block; text-align:center; font-size:16px; font-weight:700; color:var(--btn-navy); text-decoration:none; margin:28px 0 0; }
+  .back-link:hover{ text-decoration:underline; }
+</style>
+</head>
+<body>
+<div id="dashboard-screen">
+  <div id="dash-topbar">
+    <h1 id="dash-title">Practice Exam — 4-Block Self-Assessment</h1>
+    <p id="dash-subtitle">Take the 4 blocks in any order — leave and resume any of them freely. Your combined score is revealed once all 4 are complete.</p>
+  </div>
+  <div id="dash-wrap">
+    <div id="dash-blocks"></div>
+    <div id="dash-score-panel" style="display:none;">
+      <h3>Combined Score</h3>
+      <div class="big-score" id="dash-big-score"></div>
+      <div id="dash-big-fraction"></div>
+    </div>
+    <div id="dash-cta-row"></div>
+    <a href="#" id="dash-back-link" class="back-link">← Forms</a>
+  </div>
+</div>
+<div id="app">
+
+  <!-- LEFT SIDEBAR -->
+  <div id="sidebar">
+    <div id="sidebar-header">Question<br>Status</div>
+    <div id="sidebar-list"></div>
+  </div>
+
+  <div id="main-col">
+
+    <!-- TOP BAR -->
+    <div id="topbar">
+      <div id="item-id-box">
+        <div class="l1" id="item-line">Item: 1 of 1</div>
+      </div>
+
+      <div id="topbar-nav">
+        <button class="icon-btn" id="btn-prev">
+          <span class="icon-circle" data-icon="previous"></span>Previous
+        </button>
+        <span id="nav-counter">1 / 1</span>
+        <button class="icon-btn" id="btn-next">
+          <span class="icon-circle" data-icon="next"></span>Next
+        </button>
+      </div>
+
+      <div id="toolbar-icons">
+        <button class="icon-btn" id="btn-labs"><span class="icon-square" data-icon="flask"></span>Lab Values</button>
+        <button class="icon-btn" id="btn-notes"><span class="icon-square" data-icon="pencil"></span>Notes</button>
+        <button class="icon-btn" id="btn-calc"><span class="icon-square" data-icon="calc"></span>Calculator</button>
+        <button class="icon-btn" id="btn-settings"><span class="icon-square" data-icon="gear"></span>Settings</button>
+      </div>
+    </div>
+
+    <!-- CONTENT + LAB PANEL -->
+    <div id="content-wrap">
+      <div id="content">
+        <div id="mark-row">
+          <input type="checkbox" id="mark-checkbox">
+          <span class="flag-icon" data-icon="flag"></span>
+          <span>Mark Question</span>
+        </div>
+
+        <div id="qa-body">
+          <div id="qa-text">
+            <div id="question-stem"></div>
+            <div id="answers"></div>
+            <button id="proceed-btn">Proceed To Next Item</button>
+          </div>
+          <div id="qa-image"><img id="question-img" alt="Question image"></div>
+        </div>
+      </div>
+
+      <!-- LAB VALUES SLIDE-IN PANEL -->
+      <div id="lab-panel">
+        <div id="lab-resize-handle" title="Drag to resize"></div>
+        <div id="lab-header">
+          <span class="title"><span data-icon="flask"></span> Lab Values</span>
+          <button id="lab-close" title="Close"><span data-icon="expand"></span></button>
+        </div>
+        <div id="lab-controls">
+          <input type="text" id="lab-search" placeholder="Search...">
+          <label id="lab-si"><input type="checkbox" id="lab-si-check"> SI Reference Intervals</label>
+        </div>
+        <div id="lab-tabs">
+          <div class="lab-tab active" data-panel="lab-serum">Serum</div>
+          <div class="lab-tab" data-panel="lab-csf">Cerebrospinal</div>
+          <div class="lab-tab" data-panel="lab-blood">Blood</div>
+          <div class="lab-tab" data-panel="lab-urine">Urine and BMI</div>
+        </div>
+        <div id="lab-body"></div>
+      </div>
+
+      <!-- EXPLANATION PANEL (review mode only) -->
+      <div id="explanation-panel">
+        <div id="explanation-resize-handle" title="Drag to resize"></div>
+        <div id="explanation-tabs">
+          <div class="lab-tab active">Explanation</div>
+        </div>
+        <div id="explanation-body"></div>
+      </div>
+    </div>
+
+    <!-- BOTTOM BAR -->
+    <div id="bottombar">
+      <div class="left">
+        <div id="time-box">Block Time Elapsed: <span id="time-elapsed">00:00:00</span></div>
+        <div id="list-icon" title="Timer display — Count Up or Count Down">&#9776;
+          <div id="timer-mode-menu">
+            <button type="button" data-mode="countdown">Count Down</button>
+            <button type="button" data-mode="countup">Count Up</button>
+          </div>
+        </div>
+      </div>
+      <div class="right">
+        <button class="icon-btn" id="btn-save-exit"><span class="icon-square" data-icon="saveexit"></span>Save and Exit</button>
+        <button class="icon-btn" id="btn-pause"><span class="icon-square" data-icon="pause"></span>Pause</button>
+        <button class="icon-btn endblock" id="btn-endblock"><span class="icon-badge" data-icon="xmark"></span><span id="endblock-label">End Block</span></button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- NOTES POPUP -->
+<div class="popup" id="notes-popup">
+  <div class="popup-header">Notes<span class="close-x" data-close="notes-popup">&#10005;</span></div>
+  <div class="popup-body">
+    <textarea id="notes-text" placeholder="Type your notes for this item..."></textarea>
+  </div>
+</div>
+
+<!-- CALCULATOR POPUP -->
+<div class="popup" id="calc-popup">
+  <div class="popup-header">Calculator<span class="close-x" data-close="calc-popup">&#10005;</span></div>
+  <div class="popup-body">
+    <input id="calc-display" readonly value="0">
+    <div id="calc-grid"></div>
+  </div>
+</div>
+
+<!-- PAUSE OVERLAY -->
+<div class="fullscreen-overlay" id="pause-overlay">
+  <div class="overlay-card">
+    <h2>Exam Paused</h2>
+    <p>The timer has been paused. Click Resume when you're ready to continue your exam.</p>
+    <button class="overlay-btn" id="btn-resume">Resume</button>
+  </div>
+</div>
+
+<!-- END BLOCK CONFIRM OVERLAY -->
+<div class="fullscreen-overlay" id="endblock-confirm-overlay">
+  <div class="overlay-card">
+    <h2>End Block?</h2>
+    <p>Are you sure you want to end this block? Once ended, you will not be able to return to review or change your answers.</p>
+    <button class="overlay-btn secondary" id="btn-endblock-cancel">Cancel</button>
+    <button class="overlay-btn" id="btn-endblock-confirm">End Block</button>
+  </div>
+</div>
+
+<!-- SAVE AND EXIT CONFIRM OVERLAY -->
+<div class="fullscreen-overlay" id="save-exit-confirm-overlay">
+  <div class="overlay-card">
+    <h2>Save and Exit?</h2>
+    <p>Are you sure you want to Save and Exit?</p>
+    <button class="overlay-btn secondary" id="btn-save-exit-no">No</button>
+    <button class="overlay-btn" id="btn-save-exit-yes">Yes</button>
+  </div>
+</div>
+
+<!-- RESULTS FULL PAGE (placeholder scoring until a real answer key is wired up) -->
+<div class="fullscreen-overlay" id="results-overlay">
+  <div class="results-percent" id="results-score"></div>
+  <div class="results-fraction" id="results-fraction"></div>
+  <div id="results-breakdown"></div>
+  <button class="overlay-btn" id="btn-review-test">Review Test</button>
+</div>
+
+<!-- TIME WARNING OVERLAY -->
+<div class="fullscreen-overlay" id="time-warning-overlay">
+  <div class="overlay-card">
+    <h2>Time Warning</h2>
+    <p id="time-warning-text"></p>
+    <button class="overlay-btn" id="btn-time-warning-close">OK</button>
+  </div>
+</div>
+
+<!-- INCOMPLETE QUESTIONS OVERLAY -->
+<div class="fullscreen-overlay" id="incomplete-overlay">
+  <div class="overlay-card">
+    <h2>Incomplete Questions</h2>
+    <p id="incomplete-text"></p>
+    <button class="overlay-btn secondary" id="btn-incomplete-close">Return To Unanswered Item</button>
+    <button class="overlay-btn" id="btn-end-anyway">End Anyway</button>
+  </div>
+</div>
+
+<script>
+(function(){
+
+  const ICON = {
+    previous: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="6" y2="12"/><polyline points="11.2,6.3 5,12 11.2,17.7"/></svg>',
+    next: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="18" y2="12"/><polyline points="12.8,6.3 19,12 12.8,17.7"/></svg>',
+    flask: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14.3 2H9.7v6.4L4.1 19a2.1 2.1 0 0 0 1.9 3h12a2.1 2.1 0 0 0 1.9-3l-5.6-10.6z"/><rect x="10.5" y="2" width="1.15" height="6" fill="#fff"/><rect x="12.35" y="2" width="1.15" height="6" fill="#fff"/></svg>',
+    pencil: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.3 20.7l1.1-4.6 3.5 3.5-4.6 1.1z"/><path d="M5.3 15.1l10-10 3.6 3.6-10 10z"/><path d="M16 4.4l1.6-1.6a1.6 1.6 0 0 1 2.3 0l1.3 1.3a1.6 1.6 0 0 1 0 2.3L19.6 8z"/></svg>',
+    calc: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="4.5" y="2" width="15" height="20" rx="2.2"/><rect x="6.7" y="4.3" width="10.6" height="4" rx="0.6" fill="#fff"/><rect x="6.9" y="10.4" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="10.55" y="10.4" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="14.2" y="10.4" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="6.9" y="14.1" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="10.55" y="14.1" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="14.2" y="14.1" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="6.9" y="17.8" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="10.55" y="17.8" width="2.9" height="2.4" rx="0.5" fill="#fff"/><rect x="14.2" y="17.8" width="2.9" height="2.4" rx="0.5" fill="#fff"/></svg>',
+    gear: '<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="9.21,5.26 10.12,3.61 9.77,2.05 14.23,2.05 13.88,3.61 14.79,5.26 16.61,4.74 17.47,3.39 20.61,6.53 19.26,7.39 18.74,9.21 20.39,10.12 21.95,9.77 21.95,14.23 20.39,13.88 18.74,14.79 19.26,16.61 20.61,17.47 17.47,20.61 16.61,19.26 14.79,18.74 13.88,20.39 14.23,21.95 9.77,21.95 10.12,20.39 9.21,18.74 7.39,19.26 6.53,20.61 3.39,17.47 4.74,16.61 5.26,14.79 3.61,13.88 2.05,14.23 2.05,9.77 3.61,10.12 5.26,9.21 4.74,7.39 3.39,6.53 6.53,3.39 7.39,4.74"/><circle cx="12" cy="12" r="3.1" fill="#fff"/></svg>',
+    pause: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9.3"/><rect x="8.7" y="7.3" width="2.3" height="9.4" rx="0.5" fill="currentColor" stroke="none"/><rect x="13" y="7.3" width="2.3" height="9.4" rx="0.5" fill="currentColor" stroke="none"/></svg>',
+    saveexit: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h12.5L20 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><rect x="7" y="3" width="8" height="6" fill="#fff"/><rect x="6" y="13" width="12" height="7" fill="#fff"/></svg>',
+    xmark: '<svg viewBox="0 0 24 24"><path d="M8 2h8l6 6v8l-6 6H8l-6-6V8z" fill="#ff0000" stroke="#fff" stroke-width="1.5"/><path d="M8.7 8.7l6.6 6.6M15.3 8.7l-6.6 6.6" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/></svg>',
+    flag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M5 2.5v19"/><path d="M5 4Q8 2.5 10 4T15 4V10Q12 11.5 10 10T5 10Z"/></svg>',
+    flagFilled: '<svg viewBox="0 0 24 24"><path d="M5 2.5v19" stroke="#ff0000" stroke-width="2.4" stroke-linecap="round"/><path d="M5 4Q8 2.5 10 4T15 4V10Q12 11.5 10 10T5 10Z" fill="#ff0000"/></svg>',
+    expand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9.5 14.5l6-6"/><path d="M11 8.5h4.5V13"/></svg>',
+    reviewCorrect: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a8a3d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="4,13 9.5,18.5 20,6"/></svg>',
+    reviewIncorrect: '<svg viewBox="0 0 24 24" fill="none" stroke="#d32f2f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>'
+  };
+  function paintIcons(){
+    document.querySelectorAll('[data-icon]').forEach(el=>{
+      const name = el.getAttribute('data-icon');
+      if(ICON[name]) el.innerHTML = ICON[name];
+    });
+  }
+  paintIcons();
+
+  /* =========================================================
+     QUESTION DATA — 4 blocks of 50 items each. Replace every
+     BLOCK_QUESTIONS[n] array with the real question set for that
+     block — see references/adding-questions-4block.md. Each block's
+     items should use a distinct id range (e.g. block 1 -> 6001-6050,
+     block 2 -> 6051-6100, etc.) so every item across the whole exam
+     has a unique Question Id, matching the numbering convention used
+     throughout this project.
+  ==========================================================*/
+  function mc(letters, texts){
+    return letters.split(',').map((l,i)=>({letter:l, text:texts[i]}));
+  }
+
+  function placeholderBlock(blockNum){
+    const items = [];
+    for(let i=1;i<=50;i++){
+      items.push({
+        id: blockNum*1000 + i,
+        correct: "A",
+        stem: "PLACEHOLDER — Block " + blockNum + ", Item " + i + ". Replace BLOCK_QUESTIONS with the real question set.",
+        choices: mc("A,B,C,D,E", ["Placeholder choice A","Placeholder choice B","Placeholder choice C","Placeholder choice D","Placeholder choice E"]),
+        explanation: "PLACEHOLDER — replace with the real explanation."
+      });
+    }
+    return items;
+  }
+
+  // === CONTENT:BLOCK_QUESTIONS:START ===
+  // Replaced wholesale by scripts/generate_exam.py with the real 4-block
+  // question set from a content JSON file's "blocks" object (keys "1".."4",
+  // 50 items each) — see references/adding-questions-4block.md. Left here,
+  // unmodified, this placeholder keeps the file valid JS and renders
+  // something if the raw chrome file is ever opened directly.
+  const BLOCK_QUESTIONS = {
+    1: placeholderBlock(1),
+    2: placeholderBlock(2),
+    3: placeholderBlock(3),
+    4: placeholderBlock(4)
+  };
+  // === CONTENT:BLOCK_QUESTIONS:END ===
+  const ITEMS_PER_BLOCK = 50;
+  const NUM_BLOCKS = 4;
+  // Must match this exam's entry in the hub's EXAMS array (same requirement
+  // as the single-block SUBJECT constant) — used by the dashboard's bottom
+  // back-link to jump straight to this exam's subject page on the hub.
+  // === CONTENT:SUBJECT:START ===
+  const SUBJECT = "NBME Step 2 CK";
+  // === CONTENT:SUBJECT:END ===
+
+  /* =========================================================
+     STATE — one working set of the single-block engine's variables
+     (ACTIVE_QUESTIONS, stateByItem, notesByItem, elapsedSeconds, etc.),
+     reassigned to point at whichever block is currently active. This
+     is the same trick that lets the rest of this file reuse the
+     single-exam engine's rendering/interaction code almost verbatim —
+     every function below reads these through closure, so swapping
+     which block's data they point to is all enterBlock()/
+     enterBlockReview() have to do.
+  ==========================================================*/
+  function mkStateByItem(){
+    const s = {};
+    for(let i=0;i<ITEMS_PER_BLOCK;i++) s[i] = { selected:null, struck:new Set(), marked:false, highlights:[] };
+    return s;
+  }
+  function mkBlockState(initialStatus){
+    return { status:initialStatus, stateByItem: mkStateByItem(), score:null, elapsedSeconds:0, notes:{} };
+  }
+
+  // All 4 blocks start open — none are gated behind finishing an earlier one.
+  // Any block can be entered, left before finishing (see "Save and Exit" in
+  // loadItem/INIT below), and resumed later in any order.
+  let blockState = {
+    1: mkBlockState('not_started'),
+    2: mkBlockState('not_started'),
+    3: mkBlockState('not_started'),
+    4: mkBlockState('not_started')
+  };
+  let combinedScore = null; // {correct,total,pct} — set once the user views the combined score report
+
+  let examStage = 'dashboard'; // 'dashboard' | 'block'
+  let currentBlock = null; // 1-4 while examStage==='block'
+  let ACTIVE_QUESTIONS = [];
+  let currentIndex = 0;
+  let stateByItem = {};
+  let notesByItem = {};
+  let showIncompleteHighlight = false;
+  let reviewMode = false;
+  let blockEnded = false;
+  let examPaused = false;
+  let elapsedSeconds = 0;
+  let inBlockReviewFromDashboard = false;
+
+  const dashboardScreen = document.getElementById('dashboard-screen');
+  const appScreen = document.getElementById('app');
+  function showScreen(name){
+    if(name === 'dashboard'){
+      dashboardScreen.classList.add('open');
+      appScreen.style.display = 'none';
+    } else {
+      dashboardScreen.classList.remove('open');
+      appScreen.style.display = 'flex';
+    }
+  }
+
+  /* =========================================================
+     PERSISTENCE — one combined localStorage entry for all 4 blocks'
+     state plus the combined score, under the same key convention the
+     single-block template uses ('nbmeExamState:<filename>'), so the
+     hub's existing Reset-button mechanism (which just wipes that key
+     via a hidden ?reset=1 iframe load — see clearExamStateIfReset
+     Requested below) keeps working unmodified for this 4-block engine.
+  ==========================================================*/
+  function persistAll(){
+    try{
+      if(examStage === 'block' && currentBlock){
+        blockState[currentBlock].elapsedSeconds = elapsedSeconds;
+        blockState[currentBlock].notes = notesByItem;
+      }
+      const key = 'nbmeExamState:' + location.pathname.split('/').pop();
+      const serialized = {};
+      for(let n=1;n<=NUM_BLOCKS;n++){
+        const bs = blockState[n];
+        const sItems = {};
+        for(let i=0;i<ITEMS_PER_BLOCK;i++){
+          const st = bs.stateByItem[i];
+          sItems[i] = { selected: st.selected, struck: Array.from(st.struck), marked: st.marked, highlights: st.highlights };
+        }
+        serialized[n] = { status: bs.status, stateByItem: sItems, score: bs.score, elapsedSeconds: bs.elapsedSeconds, notes: bs.notes };
+      }
+      localStorage.setItem(key, JSON.stringify({ blockState: serialized, combinedScore: combinedScore, ts: Date.now() }));
+    }catch(e){ /* storage disabled entirely (e.g. private/incognito mode) — never let this throw */ }
+  }
+
+  // Same reset mechanism as the single-block template: the hub's Reset
+  // button loads this file in a hidden iframe with ?reset=1, this wipes
+  // the saved state, and (if running inside that iframe) posts back so
+  // the hub can tear the iframe down immediately.
+  function clearExamStateIfResetRequested(){
+    try{
+      const params = new URLSearchParams(location.search);
+      if(params.get('reset') !== '1') return;
+      const file = location.pathname.split('/').pop();
+      localStorage.removeItem('nbmeExamState:' + file);
+      localStorage.removeItem('nbmeExamScore:' + file);
+      history.replaceState(null, '', location.pathname);
+      if(window.parent && window.parent !== window.self){
+        window.parent.postMessage({ type: 'nbmeResetDone', file: file }, '*');
+      }
+    }catch(e){ /* storage disabled entirely */ }
+  }
+
+  // Called once at startup. Unlike the single-block template (which
+  // auto-jumps into a finished review), this always lands back on the
+  // dashboard — whether nothing has been started, some blocks are done,
+  // or the whole 4-block exam (and its combined score) is finished —
+  // since the dashboard is the one screen that always makes sense to
+  // land on for a multi-block exam.
+  function restoreExamStateIfPresent(){
+    try{
+      const key = 'nbmeExamState:' + location.pathname.split('/').pop();
+      const raw = localStorage.getItem(key);
+      if(!raw) return false;
+      const saved = JSON.parse(raw);
+      if(!saved || !saved.blockState) return false;
+      for(let n=1;n<=NUM_BLOCKS;n++){
+        const s = saved.blockState[n];
+        if(!s) continue;
+        const sItems = mkStateByItem();
+        for(let i=0;i<ITEMS_PER_BLOCK;i++){
+          const si = s.stateByItem && s.stateByItem[i];
+          if(!si) continue;
+          sItems[i] = { selected: si.selected || null, struck: new Set(si.struck||[]), marked: !!si.marked, highlights: si.highlights||[] };
+        }
+        blockState[n] = { status: s.status || 'not_started', stateByItem: sItems, score: s.score || null, elapsedSeconds: s.elapsedSeconds || 0, notes: s.notes || {} };
+      }
+      combinedScore = saved.combinedScore || null;
+      return true;
+    }catch(e){ return false; /* storage disabled or corrupt saved data — fall back to a fresh attempt */ }
+  }
+
+  /* =========================================================
+     DASHBOARD (block menu) — the screen the exam always opens to.
+     Blocks unlock sequentially: Block 1 starts open, each next block
+     unlocks only once the previous one is ended. Per-block scores stay
+     hidden until the combined score has been computed (no results are
+     shown right after an individual block — this exam only reveals
+     score once, combined out of 200, matching a real 4-block NBME
+     self-assessment).
+  ==========================================================*/
+  const dashBlocksEl = document.getElementById('dash-blocks');
+  const dashScorePanel = document.getElementById('dash-score-panel');
+  const dashCtaRow = document.getElementById('dash-cta-row');
+  const dashBackLink = document.getElementById('dash-back-link');
+  dashBackLink.textContent = '← ' + SUBJECT + ' Forms';
+  dashBackLink.addEventListener('click', (e)=>{
+    e.preventDefault();
+    window.location.href = '../practice_exam_hub.html#subject/' + encodeURIComponent(SUBJECT);
+  });
+
+  function blockHasProgress(n){
+    const bs = blockState[n];
+    for(let i=0;i<ITEMS_PER_BLOCK;i++){ if(bs.stateByItem[i].selected) return true; }
+    return false;
+  }
+  function allBlocksCompleted(){
+    for(let n=1;n<=NUM_BLOCKS;n++){ if(blockState[n].status !== 'completed') return false; }
+    return true;
+  }
+
+  function renderDashboard(){
+    dashBlocksEl.innerHTML = '';
+    for(let n=1;n<=NUM_BLOCKS;n++){
+      const bs = blockState[n];
+      const card = document.createElement('div');
+      card.className = 'block-card' + (bs.status==='locked' ? ' locked' : '');
+
+      const left = document.createElement('div');
+      const title = document.createElement('div');
+      title.className = 'block-card-title';
+      title.textContent = 'Block ' + n;
+      left.appendChild(title);
+
+      const meta = document.createElement('div');
+      meta.className = 'block-card-meta';
+      meta.textContent = ITEMS_PER_BLOCK + ' items';
+      left.appendChild(meta);
+
+      const statusPill = document.createElement('div');
+      if(bs.status === 'completed'){
+        statusPill.className = 'block-card-status completed';
+        statusPill.textContent = (combinedScore && bs.score) ? ('✓ ' + bs.score.correct + '/' + bs.score.total) : '✓ Completed';
+      } else if(bs.status === 'locked'){
+        statusPill.className = 'block-card-status locked-pill';
+        statusPill.textContent = 'Locked';
+      } else if(blockHasProgress(n)){
+        statusPill.className = 'block-card-status in-progress';
+        statusPill.textContent = 'In Progress';
+      } else {
+        statusPill.className = 'block-card-status locked-pill';
+        statusPill.textContent = 'Not Started';
+      }
+      left.appendChild(statusPill);
+      card.appendChild(left);
+
+      const btn = document.createElement('button');
+      btn.className = 'block-card-btn';
+      if(bs.status === 'locked'){
+        btn.textContent = 'Locked';
+        btn.disabled = true;
+      } else if(bs.status === 'completed'){
+        if(combinedScore){
+          btn.textContent = 'Review';
+          btn.className += ' secondary';
+          btn.addEventListener('click', ()=> enterBlockReview(n));
+        } else {
+          btn.textContent = '✓ Completed';
+          btn.disabled = true;
+        }
+      } else if(blockHasProgress(n)){
+        btn.textContent = 'Resume Block ' + n;
+        btn.addEventListener('click', ()=> enterBlock(n));
+      } else {
+        btn.textContent = 'Begin Block ' + n;
+        btn.addEventListener('click', ()=> enterBlock(n));
+      }
+      card.appendChild(btn);
+
+      dashBlocksEl.appendChild(card);
+    }
+
+    dashCtaRow.innerHTML = '';
+    if(combinedScore){
+      dashScorePanel.style.display = '';
+      document.getElementById('dash-big-score').textContent = combinedScore.pct + '%';
+      document.getElementById('dash-big-fraction').textContent = combinedScore.correct + ' / ' + combinedScore.total + ' correct';
+      const endReviewBtn = document.createElement('button');
+      endReviewBtn.className = 'overlay-btn';
+      endReviewBtn.textContent = 'End Review — Return to Hub';
+      endReviewBtn.addEventListener('click', endReviewToHub);
+      dashCtaRow.appendChild(endReviewBtn);
+    } else {
+      dashScorePanel.style.display = 'none';
+      if(allBlocksCompleted()){
+        const viewBtn = document.createElement('button');
+        viewBtn.className = 'overlay-btn';
+        viewBtn.textContent = 'View Combined Score Report';
+        viewBtn.addEventListener('click', showCombinedScoreReport);
+        dashCtaRow.appendChild(viewBtn);
+      }
+    }
+  }
+
+  function showCombinedScoreReport(){
+    let correct = 0;
+    for(let n=1;n<=NUM_BLOCKS;n++) correct += (blockState[n].score ? blockState[n].score.correct : 0);
+    const total = NUM_BLOCKS * ITEMS_PER_BLOCK;
+    const pct = Math.round((correct/total)*100);
+    combinedScore = { correct: correct, total: total, pct: pct };
+    try{
+      localStorage.setItem('nbmeExamScore:' + location.pathname.split('/').pop(), JSON.stringify({ correct: correct, total: total, pct: pct, ts: Date.now() }));
+    }catch(e){}
+    persistAll();
+    document.getElementById('results-score').textContent = pct + '%';
+    document.getElementById('results-fraction').textContent = correct + '/' + total;
+
+    // Per-block breakdown — one card per block showing that block's own
+    // x/50, alongside the combined total above.
+    const breakdownEl = document.getElementById('results-breakdown');
+    breakdownEl.innerHTML = '';
+    for(let n=1;n<=NUM_BLOCKS;n++){
+      const s = blockState[n].score;
+      const item = document.createElement('div');
+      item.className = 'results-breakdown-item';
+      const label = document.createElement('div');
+      label.className = 'label';
+      label.textContent = 'Block ' + n;
+      const score = document.createElement('div');
+      score.className = 'score';
+      score.textContent = s ? (s.correct + '/' + s.total) : '—';
+      item.appendChild(label);
+      item.appendChild(score);
+      breakdownEl.appendChild(item);
+    }
+
+    document.getElementById('results-overlay').classList.add('open');
+  }
+
+  function endReviewToHub(){
+    persistAll();
+    let target = '../practice_exam_hub.html';
+    if(combinedScore){
+      const params = new URLSearchParams({
+        examFile: 'dependencies/' + location.pathname.split('/').pop(),
+        correct: combinedScore.correct,
+        total: combinedScore.total,
+        pct: combinedScore.pct
+      });
+      target += '?' + params.toString();
+    }
+    window.location.href = target;
+  }
+
+  /* =========================================================
+     SIDEBAR
+  ==========================================================*/
+  const sidebarList = document.getElementById('sidebar-list');
+  const sidebarHeader = document.getElementById('sidebar-header');
+  function renderSidebar(){
+    sidebarList.innerHTML = '';
+    ACTIVE_QUESTIONS.forEach((q,i)=>{
+      const st = stateByItem[i];
+      const row = document.createElement('div');
+      const isIncomplete = showIncompleteHighlight && !st.selected;
+      row.className = 'sidebar-item' + (i===currentIndex ? ' current' : '') + (isIncomplete ? ' incomplete' : '');
+      if(reviewMode){
+        const mark = document.createElement('span');
+        mark.className = 'review-mark';
+        mark.innerHTML = (st.selected === q.correct) ? ICON.reviewCorrect : ICON.reviewIncorrect;
+        row.appendChild(mark);
+      } else {
+        const dot = document.createElement('span');
+        dot.className = 'dot' + (st.selected ? '' : ' unanswered');
+        row.appendChild(dot);
+      }
+      const label = document.createElement('span');
+      label.textContent = (i+1);
+      row.appendChild(label);
+      if(st.marked){
+        const flag = document.createElement('span');
+        flag.className = 'flag';
+        flag.innerHTML = ICON.flagFilled;
+        row.appendChild(flag);
+      }
+      row.addEventListener('click', ()=> loadItem(i));
+      sidebarList.appendChild(row);
+    });
+  }
+
+  /* =========================================================
+     RENDER QUESTION — same engine as the single-block template,
+     reading ACTIVE_QUESTIONS/stateByItem (reassigned per block) instead
+     of a fixed module-level QUESTIONS array.
+  ==========================================================*/
+  const stemEl = document.getElementById('question-stem');
+  const answersEl = document.getElementById('answers');
+  const markCheckbox = document.getElementById('mark-checkbox');
+  const itemLine = document.getElementById('item-line');
+  const navCounter = document.getElementById('nav-counter');
+  const qaImage = document.getElementById('qa-image');
+  const questionImg = document.getElementById('question-img');
+  function formatExplanation(raw){
+    if(!raw) return 'Explanation not yet added for this item.';
+    let text = raw;
+    // Make "Incorrect Answers:" and "Educational Objective:" start their own
+    // paragraph (exactly one blank line before them), unless already at the
+    // very start of the explanation.
+    text = text.replace(/[ \t]*\n*[ \t]*(Incorrect Answers:)/g, '\n\n$1');
+    text = text.replace(/[ \t]*\n*[ \t]*(Educational Objective:)/g, '\n\n$1');
+    text = text.replace(/^\n+/, '');
+    // Escape HTML special characters before injecting our own <strong> tags.
+    text = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    // Bold any "(Choice X)" / "(Choices X and Y)" style mentions.
+    text = text.replace(/\(Choice[s]?\s+[^)]*\)/g, m => '<strong>' + m + '</strong>');
+    // Bold the two section labels.
+    text = text.replace(/Incorrect Answers:/g, '<strong>Incorrect Answers:</strong>');
+    text = text.replace(/Educational Objective:/g, '<strong>Educational Objective:</strong>');
+    return text;
+  }
+
+  const explanationBody = document.getElementById('explanation-body');
+
+  function getFlatOffset(root, node, offset){
+    const preRange = document.createRange();
+    preRange.selectNodeContents(root);
+    preRange.setEnd(node, offset);
+    return preRange.toString().length;
+  }
+  function addHighlightRange(idx, start, end){
+    const st = stateByItem[idx];
+    st.highlights.push({start, end});
+    st.highlights.sort((a,b)=> a.start - b.start);
+    const merged = [];
+    st.highlights.forEach(r=>{
+      if(merged.length && r.start <= merged[merged.length-1].end){
+        merged[merged.length-1].end = Math.max(merged[merged.length-1].end, r.end);
+      } else {
+        merged.push({start:r.start, end:r.end});
+      }
+    });
+    st.highlights = merged;
+  }
+  // Lab-value tables: a question's `stem` can contain this literal marker
+  // token exactly once, at the point where a centered label/value table
+  // should render (e.g. right after "Serum studies show:"), paired with a
+  // `labValues` array of {label, value} objects on the same question
+  // object. Purely additive/optional — a stem with no marker and no
+  // labValues renders exactly as it always has. Kept as a placeholder
+  // *inside* the same flat `stem` string (rather than splitting `stem`
+  // into two separate fields) specifically so the existing highlight
+  // system keeps working unchanged: highlight ranges are plain character
+  // offsets into one flat string, and that's preserved here too — the
+  // marker is simply stripped out of the string used for both offset
+  // computation and rendering, and the table is spliced in as a real DOM
+  // node at the position the marker used to occupy.
+  // Matches [[LAB_TABLE]] (panel 1 / field "labValues"), [[LAB_TABLE_2]]
+  // (panel 2 / field "labValues2"), [[LAB_TABLE_3]] (panel 3 / field
+  // "labValues3"), etc. — a single stem can contain more than one panel
+  // (e.g. "Serum studies show: ... Arterial blood gas analysis shows: ...").
+  const LAB_TABLE_MARKER_RE = /\[\[LAB_TABLE(_(\d+))?\]\]/g;
+
+  function renderStemWithHighlights(){
+    const q = ACTIVE_QUESTIONS[currentIndex];
+    // Build an ordered list of "runs" — each one either a stretch of plain
+    // prose or a single lab-table cell's text — in exactly the order they'll
+    // be concatenated in the live DOM. This matters because getFlatOffset()
+    // below measures a real selection's start/end against the ACTUAL
+    // rendered DOM via Range.toString(), which walks every text node in
+    // document order with zero inserted separators — including text inside
+    // a <table>, since a lab table is a real child of #question-stem, not
+    // some opaque/unselectable island. So the highlight-offset space here
+    // must reproduce that same concatenation exactly (prose runs and cell
+    // runs, back to back, no separators) or a highlight that starts in
+    // prose and ends inside a table cell — or sits entirely inside one —
+    // would be stored against offsets that don't match what was actually
+    // selected. A marker whose corresponding labValues field is missing/
+    // empty is left as literal visible text rather than silently swallowed,
+    // same as before this rewrite.
+    LAB_TABLE_MARKER_RE.lastIndex = 0;
+    const runs = []; // {text, kind:'text'|'cell', tableIdx, start, end}
+    let lastEnd = 0;
+    let m;
+    let tableIdx = 0;
+    while((m = LAB_TABLE_MARKER_RE.exec(q.stem)) !== null){
+      const panelNum = m[2] ? parseInt(m[2], 10) : 1;
+      const field = panelNum === 1 ? 'labValues' : ('labValues' + panelNum);
+      const hasData = Array.isArray(q[field]) && q[field].length > 0;
+      const before = q.stem.slice(lastEnd, m.index);
+      if(before) runs.push({ text: before, kind: 'text' });
+      if(hasData){
+        const thisTable = tableIdx++;
+        // A row is normally {label, value} (one value column). A row may
+        // instead carry {label, values:[...]} for a multi-column panel (e.g.
+        // a time-series lab table with "At 36 Hours of Age" / "Now" columns),
+        // and may set header:true so its cells render as bold column titles.
+        // The first cell pushed for each row (the label) is tagged rowStart so
+        // the table builder below can start a new <tr> there regardless of how
+        // many value cells follow — this is what makes variable column counts
+        // work without the builder hard-coding "2 runs per row".
+        q[field].forEach(row=>{
+          const cells = Array.isArray(row.values) ? row.values : [row.value];
+          const isHeader = !!row.header;
+          runs.push({ text: row.label || '', kind: 'cell', tableIdx: thisTable, rowStart: true, isHeader });
+          cells.forEach(c=>{
+            runs.push({ text: c == null ? '' : String(c), kind: 'cell', tableIdx: thisTable, rowStart: false, isHeader });
+          });
+        });
+      } else {
+        runs.push({ text: m[0], kind: 'text' });
+      }
+      lastEnd = m.index + m[0].length;
+    }
+    const tail = q.stem.slice(lastEnd);
+    if(tail) runs.push({ text: tail, kind: 'text' });
+
+    let pos = 0;
+    runs.forEach(r=>{ r.start = pos; r.end = pos + r.text.length; pos += r.text.length; });
+
+    const ranges = stateByItem[currentIndex].highlights; // sorted, non-overlapping
+
+    // Slices one run's text against every highlight range that overlaps it
+    // (clipped to this run's local coordinates), returning an ordered list
+    // of Text/<mark> nodes. Each <mark> carries the FULL (unclipped) range's
+    // start/end — not this run's local slice — so clicking any fragment of
+    // a highlight that spans multiple cells (or prose-into-a-cell) removes
+    // the one logical highlight, exactly like a single-run highlight always
+    // has: see the click handler below, which only ever matches on
+    // start/end, never on which DOM node was actually clicked.
+    function sliceRun(r){
+      const nodes = [];
+      let cursor = 0;
+      ranges.forEach(rg=>{
+        const rs = Math.max(rg.start, r.start) - r.start;
+        const re = Math.min(rg.end, r.end) - r.start;
+        if(re <= rs) return;
+        if(rs > cursor) nodes.push(document.createTextNode(r.text.slice(cursor, rs)));
+        const mark = document.createElement('mark');
+        mark.className = 'highlighted';
+        mark.dataset.start = rg.start;
+        mark.dataset.end = rg.end;
+        mark.textContent = r.text.slice(rs, re);
+        nodes.push(mark);
+        cursor = re;
+      });
+      if(cursor < r.text.length) nodes.push(document.createTextNode(r.text.slice(cursor)));
+      return nodes;
+    }
+
+    stemEl.innerHTML = '';
+    let i = 0;
+    while(i < runs.length){
+      const r = runs[i];
+      if(r.kind === 'text'){
+        sliceRun(r).forEach(n => stemEl.appendChild(n));
+        i++;
+        continue;
+      }
+      // r.kind === 'cell' — rebuild this table by consuming every
+      // consecutive cell run that belongs to it, running each cell's text
+      // through the same sliceRun() prose uses so a highlight renders
+      // identically whether it's in the vignette or a lab table. Rows are
+      // delimited by the rowStart flag (set on each row's label cell), so a
+      // panel can mix row widths / carry more than one value column without
+      // this loop assuming a fixed cell count. A header row's cells render as
+      // <th>; every other cell is a <td>. The label column (first cell) stays
+      // left-aligned; extra value columns get centered via .multicol so a
+      // time-series panel's numbers sit under their column titles.
+      const thisTable = r.tableIdx;
+      const table = document.createElement('table');
+      table.className = 'stem-lab-table'; // NOT 'lab-table' — see the CSS comment above for why
+      let maxCells = 0, cellsInRow = 0, tr = null;
+      while(i < runs.length && runs[i].kind === 'cell' && runs[i].tableIdx === thisTable){
+        const cellRun = runs[i];
+        if(cellRun.rowStart){
+          if(cellsInRow > maxCells) maxCells = cellsInRow;
+          cellsInRow = 0;
+          tr = document.createElement('tr');
+          table.appendChild(tr);
+        }
+        const cell = document.createElement(cellRun.isHeader ? 'th' : 'td');
+        sliceRun(cellRun).forEach(n => cell.appendChild(n));
+        tr.appendChild(cell);
+        cellsInRow++;
+        i++;
+      }
+      if(cellsInRow > maxCells) maxCells = cellsInRow;
+      if(maxCells > 2) table.classList.add('multicol');
+      stemEl.appendChild(table);
+    }
+  }
+
+  document.addEventListener('mouseup', ()=>{
+    if(examStage !== 'block') return;
+    const sel = window.getSelection();
+    if(!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+    const range = sel.getRangeAt(0);
+    if(!stemEl.contains(range.commonAncestorContainer)){ return; }
+    const start = getFlatOffset(stemEl, range.startContainer, range.startOffset);
+    const end = getFlatOffset(stemEl, range.endContainer, range.endOffset);
+    sel.removeAllRanges();
+    if(end <= start) return;
+    addHighlightRange(currentIndex, start, end);
+    renderStemWithHighlights();
+  });
+  stemEl.addEventListener('click', (e)=>{
+    const mark = e.target.closest('mark.highlighted');
+    if(!mark || !stemEl.contains(mark)) return;
+    const start = parseInt(mark.dataset.start, 10);
+    const end = parseInt(mark.dataset.end, 10);
+    const st = stateByItem[currentIndex];
+    st.highlights = st.highlights.filter(r => !(r.start===start && r.end===end));
+    renderStemWithHighlights();
+  });
+
+  function loadItem(i){
+    currentIndex = i;
+    const q = ACTIVE_QUESTIONS[i];
+    const st = stateByItem[i];
+
+    itemLine.textContent = `Block ${currentBlock} — Item: ${i+1} of ${ITEMS_PER_BLOCK}`;
+    navCounter.textContent = `${i+1} / ${ITEMS_PER_BLOCK}`;
+    markCheckbox.checked = st.marked;
+
+    renderStemWithHighlights();
+
+    if(q.image){
+      questionImg.src = q.image;
+      qaImage.classList.add('show');
+    } else {
+      questionImg.src = '';
+      qaImage.classList.remove('show');
+    }
+
+    answersEl.innerHTML = '';
+    q.choices.forEach(choice=>{
+      const row = document.createElement('div');
+      row.className = 'answer-row' + (st.selected === choice.letter ? ' selected' : '');
+      row.dataset.letter = choice.letter;
+
+      const radio = document.createElement('span');
+      radio.className = 'answer-radio';
+
+      const isStruck = st.struck.has(choice.letter);
+      const isSelected = st.selected === choice.letter;
+
+      const letterSpan = document.createElement('span');
+      letterSpan.className = 'answer-letter' + (isStruck ? ' struck' : '');
+      letterSpan.textContent = choice.letter + '.';
+
+      const textSpan = document.createElement('span');
+      textSpan.className = 'answer-text' + (isStruck ? ' struck' : '');
+      textSpan.textContent = choice.text;
+
+      const strikeIcon = document.createElement('span');
+      strikeIcon.className = 'strike-icon' + (isStruck ? ' on' : '') + ((isSelected || reviewMode) ? ' disabled' : '');
+      strikeIcon.textContent = 'ab';
+      strikeIcon.title = isSelected ? 'Deselect this answer to strike it out' : 'Strike out this choice';
+      strikeIcon.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        if(reviewMode) return;
+        if(isSelected) return;
+        if(st.struck.has(choice.letter)){
+          st.struck.delete(choice.letter);
+        } else {
+          st.struck.add(choice.letter);
+        }
+        loadItem(currentIndex);
+      });
+
+      if(reviewMode){
+        const isCorrectChoice = choice.letter === q.correct;
+        const isSelectedWrong = isSelected && choice.letter !== q.correct;
+        const mark = document.createElement('span');
+        mark.className = 'review-answer-mark';
+        if(isCorrectChoice || isSelectedWrong){
+          mark.innerHTML = isCorrectChoice ? ICON.reviewCorrect : ICON.reviewIncorrect;
+        }
+        row.appendChild(mark);
+      }
+
+      row.appendChild(radio);
+      row.appendChild(letterSpan);
+      row.appendChild(textSpan);
+      row.appendChild(strikeIcon);
+
+      row.addEventListener('click', ()=>{
+        if(reviewMode) return;
+        st.selected = choice.letter;
+        st.struck.delete(choice.letter);
+        loadItem(currentIndex);
+        renderSidebar();
+      });
+
+      answersEl.appendChild(row);
+    });
+
+    document.getElementById('proceed-btn').style.display = reviewMode ? 'none' : '';
+
+    if(reviewMode){
+      explanationBody.innerHTML = formatExplanation(q.explanation);
+    }
+
+    notesText.value = notesByItem[currentIndex] || '';
+
+    renderSidebar();
+
+    if(examStage === 'block' && !reviewMode){
+      persistAll();
+    }
+  }
+
+  markCheckbox.addEventListener('change', ()=>{
+    stateByItem[currentIndex].marked = markCheckbox.checked;
+    renderSidebar();
+    persistAll();
+  });
+
+  document.getElementById('btn-prev').addEventListener('click', ()=>{
+    if(currentIndex>0) loadItem(currentIndex-1);
+  });
+  document.getElementById('btn-next').addEventListener('click', ()=>{
+    if(currentIndex<ITEMS_PER_BLOCK-1) loadItem(currentIndex+1);
+  });
+  document.getElementById('proceed-btn').addEventListener('click', ()=>{
+    if(currentIndex < ITEMS_PER_BLOCK - 1){
+      loadItem(currentIndex + 1);
+    }
+  });
+
+  /* =========================================================
+     TIMER — resets to 00:00:00 each time a fresh block begins, but
+     resuming an in-progress block continues from that block's own
+     saved elapsed time rather than restarting it.
+  ==========================================================*/
+  const timeEl = document.getElementById('time-elapsed');
+  function formatElapsed(s){
+    const h = Math.floor(s/3600);
+    const m = Math.floor((s%3600)/60);
+    const sec = s%60;
+    return String(h).padStart(2,'0')+":"+String(m).padStart(2,'0')+":"+String(sec).padStart(2,'0');
+  }
+  const TIME_WARNINGS = [
+    { atSeconds: 60*60, minutesLeft: 15 },
+    { atSeconds: 70*60, minutesLeft: 5 }
+  ];
+  let nextWarningIndex = 0;
+  const timeWarningOverlay = document.getElementById('time-warning-overlay');
+  const timeWarningText = document.getElementById('time-warning-text');
+  function showTimeWarning(minutesLeft){
+    timeWarningText.textContent = "This block has " + minutesLeft + " minutes left. This is just a warning. The block won't end once the time limit is reached.";
+    timeWarningOverlay.classList.add('open');
+  }
+  document.getElementById('btn-time-warning-close').addEventListener('click', ()=>{
+    timeWarningOverlay.classList.remove('open');
+  });
+
+  /* Count Up / Count Down display toggle (via the button next to the timer
+     that used to be "Block Menu" — see the Save and Exit comment above for
+     why that was safe to repurpose). elapsedSeconds itself always keeps
+     counting up from when this block was entered no matter which display
+     mode is active — it's the one source of truth everything else
+     (warnings above, persistAll(), enterBlock()'s resume) is built on.
+     Switching modes only changes how that same number is *rendered*, so
+     flipping to Count Down at, say, 5 minutes elapsed shows 70:00 remaining
+     (75 total minus 5 elapsed) and keeps ticking down from there — nothing
+     about the underlying timekeeping changes. */
+  const TOTAL_TIME_SECONDS = 75 * 60;
+  let timerMode = 'countup'; // 'countup' | 'countdown'
+  function updateTimerDisplay(){
+    const displaySeconds = timerMode === 'countdown'
+      ? Math.max(0, TOTAL_TIME_SECONDS - elapsedSeconds)
+      : elapsedSeconds;
+    timeEl.textContent = formatElapsed(displaySeconds);
+    // Same underlying moment either way — 75 minutes elapsed is both
+    // "counted all the way up" and "counted all the way down" — just turns
+    // the clock slightly red as a passive cue. Nothing else happens: no
+    // overlay, no forced end, same as the soft warnings above.
+    timeEl.classList.toggle('time-limit-reached', elapsedSeconds >= TOTAL_TIME_SECONDS);
+  }
+  const timerModeMenu = document.getElementById('timer-mode-menu');
+  function setTimerMode(mode){
+    timerMode = mode;
+    timerModeMenu.querySelectorAll('button').forEach(b=>{
+      b.classList.toggle('active', b.dataset.mode === mode);
+    });
+    updateTimerDisplay();
+  }
+  document.getElementById('list-icon').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    timerModeMenu.classList.toggle('open');
+  });
+  timerModeMenu.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      setTimerMode(btn.dataset.mode);
+      timerModeMenu.classList.remove('open');
+    });
+  });
+  document.addEventListener('click', ()=> timerModeMenu.classList.remove('open'));
+  setTimerMode('countup');
+
+  setInterval(()=>{
+    if(examStage !== 'block' || examPaused || blockEnded) return;
+    elapsedSeconds++;
+    updateTimerDisplay();
+    if(nextWarningIndex < TIME_WARNINGS.length && elapsedSeconds === TIME_WARNINGS[nextWarningIndex].atSeconds){
+      showTimeWarning(TIME_WARNINGS[nextWarningIndex].minutesLeft);
+      nextWarningIndex++;
+    }
+  },1000);
+
+  /* =========================================================
+     PAUSE / RESUME
+  ==========================================================*/
+  const pauseOverlay = document.getElementById('pause-overlay');
+  document.getElementById('btn-pause').addEventListener('click', ()=>{
+    if(blockEnded) return;
+    examPaused = true;
+    pauseOverlay.classList.add('open');
+  });
+  document.getElementById('btn-resume').addEventListener('click', ()=>{
+    examPaused = false;
+    pauseOverlay.classList.remove('open');
+  });
+
+  /* =========================================================
+     END BLOCK — confirm, check completeness, score silently, then
+     return to the dashboard. No per-block results screen: this exam
+     only reveals a score once, combined out of 200, once all 4 blocks
+     are done (see showCombinedScoreReport above).
+  ==========================================================*/
+  const endblockConfirmOverlay = document.getElementById('endblock-confirm-overlay');
+  const incompleteOverlay = document.getElementById('incomplete-overlay');
+  const incompleteText = document.getElementById('incomplete-text');
+  let unansweredIndices = [];
+  document.getElementById('btn-endblock-cancel').addEventListener('click', ()=>{
+    endblockConfirmOverlay.classList.remove('open');
+  });
+  document.getElementById('btn-incomplete-close').addEventListener('click', ()=>{
+    incompleteOverlay.classList.remove('open');
+    if(unansweredIndices.length){
+      loadItem(unansweredIndices[0]);
+    }
+  });
+  document.getElementById('btn-end-anyway').addEventListener('click', ()=>{
+    incompleteOverlay.classList.remove('open');
+    finishCurrentBlock();
+  });
+
+  function finishCurrentBlock(){
+    let correctCount = 0;
+    ACTIVE_QUESTIONS.forEach((q,i)=>{
+      if(stateByItem[i].selected === q.correct) correctCount++;
+    });
+    const bs = blockState[currentBlock];
+    bs.score = { correct: correctCount, total: ITEMS_PER_BLOCK };
+    bs.status = 'completed';
+    bs.elapsedSeconds = elapsedSeconds;
+    bs.notes = notesByItem;
+
+    showIncompleteHighlight = false;
+    blockEnded = true;
+    persistAll();
+
+    examStage = 'dashboard';
+    renderDashboard();
+    showScreen('dashboard');
+  }
+
+  document.getElementById('btn-endblock-confirm').addEventListener('click', ()=>{
+    endblockConfirmOverlay.classList.remove('open');
+
+    unansweredIndices = [];
+    ACTIVE_QUESTIONS.forEach((q,i)=>{
+      if(!stateByItem[i].selected) unansweredIndices.push(i);
+    });
+
+    if(unansweredIndices.length > 0){
+      showIncompleteHighlight = true;
+      renderSidebar();
+      const n = unansweredIndices.length;
+      incompleteText.textContent = "You have " + n + " unanswered question" + (n===1?"":"s") + ". " +
+        "Unanswered items are highlighted in red in the Question Status list, and will be scored as incorrect if you end the block now.";
+      incompleteOverlay.classList.add('open');
+      return;
+    }
+
+    finishCurrentBlock();
+  });
+
+  document.getElementById('btn-review-test').addEventListener('click', ()=>{
+    document.getElementById('results-overlay').classList.remove('open');
+    examStage = 'dashboard';
+    renderDashboard();
+    showScreen('dashboard');
+  });
+
+  /* =========================================================
+     ENTERING / RESUMING A BLOCK, AND REVIEWING A FINISHED ONE
+  ==========================================================*/
+  function enterBlock(n){
+    currentBlock = n;
+    ACTIVE_QUESTIONS = BLOCK_QUESTIONS[n];
+    stateByItem = blockState[n].stateByItem;
+    notesByItem = blockState[n].notes || {};
+    elapsedSeconds = blockState[n].elapsedSeconds || 0;
+    showIncompleteHighlight = false;
+    reviewMode = false;
+    blockEnded = false;
+    examPaused = false;
+    inBlockReviewFromDashboard = false;
+
+    nextWarningIndex = TIME_WARNINGS.length;
+    for(let idx=0; idx<TIME_WARNINGS.length; idx++){
+      if(TIME_WARNINGS[idx].atSeconds > elapsedSeconds){ nextWarningIndex = idx; break; }
+    }
+
+    document.getElementById('app').classList.remove('review-mode');
+    document.getElementById('explanation-panel').classList.remove('open');
+    document.getElementById('endblock-label').textContent = 'End Block';
+    sidebarHeader.innerHTML = 'Block ' + n + '<br>Question Status';
+    updateTimerDisplay();
+
+    examStage = 'block';
+    showScreen('block');
+    loadItem(0);
+  }
+
+  function enterBlockReview(n){
+    currentBlock = n;
+    ACTIVE_QUESTIONS = BLOCK_QUESTIONS[n];
+    stateByItem = blockState[n].stateByItem;
+    notesByItem = blockState[n].notes || {};
+    reviewMode = true;
+    blockEnded = true;
+    inBlockReviewFromDashboard = true;
+
+    document.getElementById('app').classList.add('review-mode');
+    document.getElementById('explanation-panel').classList.add('open');
+    document.getElementById('endblock-label').textContent = 'Back to Score Report';
+    sidebarHeader.innerHTML = 'Block ' + n + ' Review<br>Question Status';
+
+    examStage = 'block';
+    showScreen('block');
+    loadItem(0);
+  }
+
+  document.getElementById('btn-endblock').addEventListener('click', ()=>{
+    if(reviewMode){
+      if(inBlockReviewFromDashboard){
+        examStage = 'dashboard';
+        renderDashboard();
+        showScreen('dashboard');
+      }
+      return;
+    }
+    document.getElementById('endblock-confirm-overlay').classList.add('open');
+  });
+
+  // "Save and Exit" — this is now the only way to leave a block mid-
+  // progress and come back to it later (the button that used to be "Block
+  // Menu" — the hamburger icon here, right of the timer — has been
+  // repurposed below for the Count Up/Count Down display toggle instead,
+  // since Save and Exit already covers the same save-and-return-to-
+  // dashboard job). Lands on this file's own internal block-selection
+  // dashboard, not all the way out to the multi-exam Practice Exam Hub: the
+  // combined 4-block score is only ever revealed once every block is
+  // complete, so there's no per-block score to hand off the way the
+  // single-block template's Save and Exit hands one to the hub. Shows a
+  // Yes/No confirmation first, per the user's preference — the save itself
+  // (including the current elapsed time, via persistAll()) is always safe
+  // mid-block since every answer is already persisted continuously (see
+  // loadItem()).
+  document.getElementById('btn-save-exit').addEventListener('click', ()=>{
+    if(examStage !== 'block') return;
+    document.getElementById('save-exit-confirm-overlay').classList.add('open');
+  });
+  document.getElementById('btn-save-exit-no').addEventListener('click', ()=>{
+    document.getElementById('save-exit-confirm-overlay').classList.remove('open');
+  });
+  document.getElementById('btn-save-exit-yes').addEventListener('click', ()=>{
+    document.getElementById('save-exit-confirm-overlay').classList.remove('open');
+    if(examStage === 'block' && !reviewMode) persistAll();
+    examStage = 'dashboard';
+    renderDashboard();
+    showScreen('dashboard');
+  });
+
+  /* =========================================================
+     LAB VALUES PANEL
+  ==========================================================*/
+  const labPanel = document.getElementById('lab-panel');
+  const labBody = document.getElementById('lab-body');
+
+  /* Horizontal drag-to-resize, UWorld-style. The panel is docked to the
+     right edge (right:0), so widening it means moving its LEFT edge left —
+     dragging the handle left increases width. Content underneath (the lab
+     table) is already width:100% with no fixed pixel widths, so it reflows
+     on its own as the panel's width changes; no extra work needed there. */
+  (function(){
+    const handle = document.getElementById('lab-resize-handle');
+    const contentWrap = document.getElementById('content-wrap');
+    let resizing = false, startX = 0, startWidth = 0;
+    const MIN_WIDTH = 320;      // lab panel never gets narrower than this
+    const CONTENT_MIN = 280;    // question vignette always keeps at least this much room
+    handle.addEventListener('mousedown', (e)=>{
+      resizing = true;
+      startX = e.clientX;
+      startWidth = labPanel.getBoundingClientRect().width;
+      handle.classList.add('dragging');
+      document.body.style.cursor = 'ew-resize';
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', (e)=>{
+      if(!resizing) return;
+      const delta = startX - e.clientX;
+      // Cap against the actual space available in content-wrap (not the
+      // whole window), so the vignette always keeps CONTENT_MIN of room —
+      // #content is flex:1, so it reflows to fill whatever's left in
+      // real time as labPanel's width changes below.
+      const wrapWidth = contentWrap.getBoundingClientRect().width;
+      const maxWidth = Math.max(MIN_WIDTH, wrapWidth - CONTENT_MIN);
+      let newWidth = Math.min(maxWidth, Math.max(MIN_WIDTH, startWidth + delta));
+      labPanel.style.maxWidth = 'none';
+      labPanel.style.width = newWidth + 'px';
+    });
+    document.addEventListener('mouseup', ()=>{
+      if(!resizing) return;
+      resizing = false;
+      handle.classList.remove('dragging');
+      document.body.style.cursor = '';
+    });
+  })();
+
+  /* Same drag-to-resize behavior as the Lab Values panel, applied to the
+     Explanation panel (review mode). Docked right edge; dragging left
+     widens it, capped so the vignette keeps CONTENT_MIN of room. */
+  (function(){
+    const handle = document.getElementById('explanation-resize-handle');
+    const panel = document.getElementById('explanation-panel');
+    const contentWrap = document.getElementById('content-wrap');
+    let resizing = false, startX = 0, startWidth = 0;
+    const MIN_WIDTH = 320;
+    const CONTENT_MIN = 280;
+    handle.addEventListener('mousedown', (e)=>{
+      resizing = true;
+      startX = e.clientX;
+      startWidth = panel.getBoundingClientRect().width;
+      handle.classList.add('dragging');
+      document.body.style.cursor = 'ew-resize';
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', (e)=>{
+      if(!resizing) return;
+      const delta = startX - e.clientX;
+      const wrapWidth = contentWrap.getBoundingClientRect().width;
+      const maxWidth = Math.max(MIN_WIDTH, wrapWidth - CONTENT_MIN);
+      let newWidth = Math.min(maxWidth, Math.max(MIN_WIDTH, startWidth + delta));
+      panel.style.maxWidth = 'none';
+      panel.style.width = newWidth + 'px';
+    });
+    document.addEventListener('mouseup', ()=>{
+      if(!resizing) return;
+      resizing = false;
+      handle.classList.remove('dragging');
+      document.body.style.cursor = '';
+    });
+  })();
+
+  function row(label, value, opts){
+    opts = opts || {};
+    const cls = ['group','sub','section-title'].filter(c=>opts[c]).join(' ');
+    const lblClass = opts.sub ? 'lbl' : '';
+    return `<tr class="${cls}"><td class="${lblClass}">${label}</td><td class="val">${value||''}</td></tr>`;
+  }
+
+  const labData = {
+    'lab-serum': `
+      <table class="lab-table">
+        ${row('Serum','Reference Range',{'section-title':true})}
+        ${row('Alanine aminotransferase (ALT)','10-40 U/L')}
+        ${row('Aspartate aminotransferase (AST)','12-38 U/L')}
+        ${row('Alkaline phosphatase','25-100 U/L')}
+        ${row('Amylase','25-125 U/L')}
+        ${row('Bilirubin', '', {group:true})}
+        ${row('Total','0.1-1.0 mg/dL',{sub:true})}
+        ${row('Direct','0.0-0.3 mg/dL',{sub:true})}
+        ${row('Calcium','8.4-10.2 mg/dL')}
+        ${row('Cholesterol','',{group:true})}
+        ${row('Total, Normal','&lt;200 mg/dL',{sub:true})}
+        ${row('Total, High','&gt;240mg/dL',{sub:true})}
+        ${row('HDL','40-60 mg/dL',{sub:true})}
+        ${row('LDL','&lt;160 mg/dL',{sub:true})}
+        ${row('Triglycerides','',{group:true})}
+        ${row('Normal','&lt;150 mg/dL',{sub:true})}
+        ${row('Borderline','151-199 mg/dL',{sub:true})}
+        ${row('Cortisol','',{group:true})}
+        ${row('0800 h','5-23 &micro;g/dL',{sub:true})}
+        ${row('1600 h','3-15 &micro;g/dL',{sub:true})}
+        ${row('2000 h','&lt;50% of 0800 h',{sub:true})}
+        ${row('Creatine kinase','',{group:true})}
+        ${row('Male','25-90 U/L',{sub:true})}
+        ${row('Female','10-70 U/L',{sub:true})}
+        ${row('Creatinine','0.6-1.2 mg/dL')}
+        ${row('Urea nitrogen','7-18 mg/dL')}
+        ${row('Electrolytes, serum','',{group:true})}
+        ${row('Sodium (Na&#8314;)','136-146 mEq/L',{sub:true})}
+        ${row('Potassium (K&#8314;)','3.5-5.0 mEq/L',{sub:true})}
+        ${row('Chloride (Cl&#8315;)','95-105 mEq/L',{sub:true})}
+        ${row('Bicarbonate (HCO3&#8315;)','22-28 mEq/L',{sub:true})}
+        ${row('Magnesium (Mg2&#8314;)','1.5-2.0 mEq/L',{sub:true})}
+        ${row('Ferritin','',{group:true})}
+        ${row('Male','20-250 ng/mL',{sub:true})}
+        ${row('Female','10-120 ng/mL',{sub:true})}
+        ${row('Follicle-stimulating hormone','',{group:true})}
+        ${row('Male','4-25 mIU/mL',{sub:true})}
+        ${row('Female','',{sub:true})}
+        ${row('premenopause','4-30 mIU/mL',{sub:true})}
+        ${row('midcycle peak','10-90 mIU/mL',{sub:true})}
+        ${row('postmenopause','40-250 mIU/mL',{sub:true})}
+        ${row('Glucose','',{group:true})}
+        ${row('Fasting','70-110 mg/dL',{sub:true})}
+        ${row('Random, non-fasting','&lt;140 mg/dL',{sub:true})}
+        ${row('Growth hormone- arginine stimulation','',{group:true})}
+        ${row('Fasting','&lt;5 ng/mL',{sub:true})}
+        ${row('Provocative stimuli','&gt;7 ng/mL',{sub:true})}
+        ${row('Iron','',{group:true})}
+        ${row('Male','65-175 &micro;g/dL',{sub:true})}
+        ${row('Female','50-170 &micro;g/dL',{sub:true})}
+        ${row('Total iron-binding capacity','250-400 &micro;g/dL')}
+        ${row('Transferrin','200-360 mg/dL')}
+        ${row('Lactate dehydrogenase','45-200 U/L')}
+        ${row('Luteinizing hormone','',{group:true})}
+        ${row('Male','6-23 mIU/mL',{sub:true})}
+        ${row('Female','',{sub:true})}
+        ${row('follicular phase','5-30 mIU/mL',{sub:true})}
+        ${row('midcycle','75-150 mIU/mL',{sub:true})}
+        ${row('postmenopause','30-200 mIU/mL',{sub:true})}
+        ${row('Osmolality','275-295 mOsmol/kg H2O')}
+        ${row('Intact parathyroid hormone (PTH)','10-60 pg/mL')}
+        ${row('Phosphorus (inorganic)','3.0-4.5 mg/dL')}
+        ${row('Prolactin (hPRL)','',{group:true})}
+        ${row('Male','&lt;17 ng/mL',{sub:true})}
+        ${row('Female','&lt;25 ng/mL',{sub:true})}
+        ${row('Proteins','',{group:true})}
+        ${row('Total','6.0-7.8 g/dL',{sub:true})}
+        ${row('Albumin','3.5-5.5 g/dL',{sub:true})}
+        ${row('Globulin','2.3-3.5 g/dL',{sub:true})}
+        ${row('Troponin I','&lt;0.04 ng/dL')}
+        ${row('TSH','0.4-4.0 &micro;U/mL')}
+        ${row('Thyroidal iodine (123I) uptake','8%-30% of administered dose/24 h')}
+        ${row('Thyroxine (T4)','5-12 &micro;g/dL')}
+        ${row('Free (T4)','0.9-1.7 ng/dL')}
+        ${row('Triiodothyronine (T3) (RIA)','100-200 ng/dL')}
+        ${row('Triiodothyronine (T3) resin uptake','25%-35%')}
+        ${row('Uric acid','3.0-8.2 mg/dL')}
+        ${row('Immunoglobulins','',{group:true})}
+        ${row('IgA','76-390 mg/dL',{sub:true})}
+        ${row('IgE','0-380 IU/mL',{sub:true})}
+        ${row('IgG','650-1500 mg/dL',{sub:true})}
+        ${row('IgM','50-300 mg/dL',{sub:true})}
+        ${row('Gases, arterial blood (room air)','',{group:true})}
+        ${row('pH','7.35-7.45',{sub:true})}
+        ${row('Pco2','33-45 mm Hg',{sub:true})}
+        ${row('Po2','75-105 mm Hg',{sub:true})}
+      </table>`,
+    'lab-csf': `
+      <table class="lab-table">
+        ${row('Cerebrospinal Fluid','Reference Range',{'section-title':true})}
+        ${row('Cell count','0-5/mm3')}
+        ${row('Chloride','118-132 mEq/L')}
+        ${row('Gamma globulin','3%-12% total proteins')}
+        ${row('Glucose','40-70 mg/dL')}
+        ${row('Pressure','70-180 mm H2O')}
+        ${row('Proteins, total','&lt;40 mg/dL')}
+      </table>`,
+    'lab-blood': `
+      <table class="lab-table">
+        ${row('Hematologic','Reference Range',{'section-title':true})}
+        ${row('Erythrocyte count','',{group:true})}
+        ${row('Male','4.3-5.9 million/mm3',{sub:true})}
+        ${row('Female','3.5-5.5 million/mm3',{sub:true})}
+        ${row('Erythrocyte sedimentation rate (Westergren)','',{group:true})}
+        ${row('Male','0-15 mm/h',{sub:true})}
+        ${row('Female','0-20 mm/h',{sub:true})}
+        ${row('Hematocrit','',{group:true})}
+        ${row('Male','41%-53%',{sub:true})}
+        ${row('Female','36%-46%',{sub:true})}
+        ${row('Hemoglobin, blood','',{group:true})}
+        ${row('Male','13.5-17.5 g/dL',{sub:true})}
+        ${row('Female','12.0-16.0 g/dL',{sub:true})}
+        ${row('Hemoglobin A1c','&le;6%')}
+        ${row('Hemoglobin, plasma','&lt;4 mg/dL')}
+        ${row('Leukocyte count (WBC)','4500-11,000/mm3')}
+        ${row('Neutrophils, segmented','54%-62%')}
+        ${row('Neutrophils, bands','3%-5%')}
+        ${row('Eosinophils','1%-3%')}
+        ${row('Basophils','0%-0.75%')}
+        ${row('Lymphocytes','25%-33%')}
+        ${row('Monocytes','3%-7%')}
+        ${row('CD4+ T-lymphocyte count','&ge;500/mm3')}
+        ${row('Platelet count','150,000-400,000/mm3')}
+        ${row('Reticulocyte count','0.5%-1.5%')}
+        ${row('D-Dimer','&le;250 ng/mL')}
+        ${row('Partial thromboplastin time (PTT)(activated)','25-40 seconds')}
+        ${row('Prothrombin time (PT)','11-15 seconds')}
+        ${row('Mean corpuscular hemoglobin (MCH)','25-35 pg/cell')}
+        ${row('Mean corpuscular hemoglobin concentration (MCHC)','31%-36% Hb/cell')}
+        ${row('Mean corpuscular volume (MCV)','80-100 &micro;m3')}
+        ${row('Volume','',{group:true})}
+        ${row('Plasma','',{sub:true})}
+        ${row('Male','25-43 mL/kg',{sub:true})}
+        ${row('Female','28-45 mL/kg',{sub:true})}
+        ${row('Red cell','',{sub:true})}
+        ${row('Male','20-36 mL/kg',{sub:true})}
+        ${row('Female','19-31 mL/kg',{sub:true})}
+      </table>`,
+    'lab-urine': `
+      <table class="lab-table">
+        ${row('Urine','Reference Range',{'section-title':true})}
+        ${row('Calcium','100-300 mg/24 h')}
+        ${row('Creatinine clearance','',{group:true})}
+        ${row('Male','97-137 mL/min',{sub:true})}
+        ${row('Female','88-128 mL/min',{sub:true})}
+        ${row('Osmolality','50-1200 mOsmol/kg H2O')}
+        ${row('Oxalate','8-40 &micro;g/mL')}
+        ${row('Proteins, total','&lt;150 mg/24 h')}
+        ${row('17-Hydroxycorticosteroids','',{group:true})}
+        ${row('Male','3.0-10.0 mg/24 h',{sub:true})}
+        ${row('Female','2.0-8.0 mg/24 h',{sub:true})}
+        ${row('17-Ketosteroids, total','',{group:true})}
+        ${row('Male','8-20 mg/24 h',{sub:true})}
+        ${row('Female','6-15 mg/24 h',{sub:true})}
+        ${row('Body Mass Index (BMI)','Adult: 19-25 kg/m2',{group:true})}
+      </table>`
+  };
+
+  function renderLabPanels(){
+    labBody.innerHTML = '';
+    Object.keys(labData).forEach((key, idx)=>{
+      const div = document.createElement('div');
+      div.className = 'lab-panel-content' + (idx===0 ? ' active' : '');
+      div.id = key;
+      div.innerHTML = labData[key];
+      labBody.appendChild(div);
+    });
+  }
+  renderLabPanels();
+
+  document.getElementById('btn-labs').addEventListener('click', ()=>{
+    // In review mode the Explanation panel shares the same slot as Lab
+    // Values, so opening one temporarily steps the other aside, and closing
+    // Lab Values brings Explanation back — whether closed via this button or
+    // via the panel's own close icon (lab-close below). Both paths must stay
+    // in sync: this button used to only handle the opening case, which left
+    // Explanation stuck hidden if Lab Values was closed by clicking this
+    // button again instead of the X icon.
+    const opening = !labPanel.classList.contains('open');
+    if(opening){
+      document.getElementById('explanation-panel').classList.remove('open');
+    } else if(reviewMode){
+      document.getElementById('explanation-panel').classList.add('open');
+    }
+    labPanel.classList.toggle('open');
+  });
+  document.getElementById('lab-close').addEventListener('click', ()=>{
+    labPanel.classList.remove('open');
+    if(reviewMode) document.getElementById('explanation-panel').classList.add('open');
+  });
+
+  document.querySelectorAll('.lab-tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.lab-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.lab-panel-content').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.panel).classList.add('active');
+      document.getElementById('lab-search').value = '';
+      filterLabRows('');
+    });
+  });
+
+  // search filter — filters rows within the active tab only
+  function filterLabRows(query){
+    const active = document.querySelector('.lab-panel-content.active');
+    if(!active) return;
+    const q = query.trim().toLowerCase();
+    active.querySelectorAll('tr').forEach(tr=>{
+      if(q === ''){ tr.classList.remove('hidden-row'); return; }
+      const text = tr.textContent.toLowerCase();
+      tr.classList.toggle('hidden-row', !text.includes(q));
+    });
+  }
+  document.getElementById('lab-search').addEventListener('input', (e)=>{
+    filterLabRows(e.target.value);
+  });
+
+  const notesText = document.getElementById('notes-text');
+  notesText.addEventListener('input', ()=>{ notesByItem[currentIndex] = notesText.value; });
+
+  function openPopup(id){ document.getElementById(id).classList.add('open'); }
+  function closePopup(id){ document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('.close-x').forEach(x=>{
+    x.addEventListener('click', ()=> closePopup(x.dataset.close));
+  });
+  document.getElementById('btn-notes').addEventListener('click', ()=> openPopup('notes-popup'));
+  document.getElementById('btn-calc').addEventListener('click', ()=> openPopup('calc-popup'));
+  document.getElementById('btn-settings').addEventListener('click', ()=> alert('Settings — placeholder for future functionality.'));
+  // Draggable popups
+  document.querySelectorAll('.popup-header').forEach(header=>{
+    const popup = header.parentElement;
+    let dragging=false, offX=0, offY=0;
+    header.addEventListener('mousedown', (e)=>{
+      if(e.target.classList.contains('close-x')) return;
+      dragging=true;
+      const rect = popup.getBoundingClientRect();
+      offX = e.clientX - rect.left;
+      offY = e.clientY - rect.top;
+      popup.style.transform = 'none';
+      popup.style.left = rect.left+'px';
+      popup.style.top = rect.top+'px';
+    });
+    document.addEventListener('mousemove', (e)=>{
+      if(!dragging) return;
+      popup.style.left = (e.clientX-offX)+'px';
+      popup.style.top = (e.clientY-offY)+'px';
+    });
+    document.addEventListener('mouseup', ()=> dragging=false);
+  });
+
+  // Calculator logic
+  const calcDisplay = document.getElementById('calc-display');
+  const calcGrid = document.getElementById('calc-grid');
+  let calcExpr = '';
+  ['7','8','9','/','4','5','6','*','1','2','3','-'].forEach(k=>{
+    const b = document.createElement('button');
+    b.textContent = k;
+    if(['/','*','-'].includes(k)) b.classList.add('op');
+    b.addEventListener('click', ()=> calcInput(k));
+    calcGrid.appendChild(b);
+  });
+  const zero = document.createElement('button');
+  zero.textContent='0'; zero.classList.add('zero');
+  zero.addEventListener('click', ()=> calcInput('0'));
+  calcGrid.appendChild(zero);
+  const dot = document.createElement('button');
+  dot.textContent='.';
+  dot.addEventListener('click', ()=> calcInput('.'));
+  calcGrid.appendChild(dot);
+  const plus = document.createElement('button');
+  plus.textContent='+'; plus.classList.add('op');
+  plus.addEventListener('click', ()=> calcInput('+'));
+  calcGrid.appendChild(plus);
+  const rowC = document.createElement('button');
+  rowC.textContent='C';
+  rowC.addEventListener('click', ()=>{ calcExpr=''; calcDisplay.value='0'; });
+  calcGrid.appendChild(rowC);
+  const rowEq = document.createElement('button');
+  rowEq.textContent='='; rowEq.classList.add('eq');
+  rowEq.addEventListener('click', ()=>{
+    try{
+      if(/^[0-9+\-*/.\s]+$/.test(calcExpr)){
+        calcDisplay.value = String(Function('"use strict";return ('+calcExpr+')')());
+        calcExpr = calcDisplay.value;
+      }
+    }catch(e){ calcDisplay.value = 'Error'; calcExpr=''; }
+  });
+  calcGrid.appendChild(rowEq);
+  function calcInput(k){
+    calcExpr += k;
+    calcDisplay.value = calcExpr;
+  }
+
+
+  /* =========================================================
+     INIT — always lands on the dashboard (see restoreExamStateIfPresent
+     above for why this differs from the single-block template).
+  ==========================================================*/
+  clearExamStateIfResetRequested();
+  restoreExamStateIfPresent();
+  renderDashboard();
+  showScreen('dashboard');
+
+})();
+</script>
+</body>
+</html>

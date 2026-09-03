@@ -1,0 +1,7 @@
+# Build-tool dependencies (regenerate with: cd dependencies/_build && npm install)
+dependencies/_build/node_modules/
+# Python bytecode cache
+dependencies/_build/__pycache__/
+**/__pycache__/
+# macOS
+.DS_Store
