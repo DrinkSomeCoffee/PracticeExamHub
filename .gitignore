@@ -1,7 +1,25 @@
-# Build-tool dependencies (regenerate with: cd dependencies/_build && npm install)
-dependencies/_build/node_modules/
-# Python bytecode cache
-dependencies/_build/__pycache__/
-**/__pycache__/
-# macOS
-.DS_Store
+# =====================================================================
+#  Whitelist: GitHub receives ONLY the files needed to host the site.
+#  Everything used to *generate* exams locally stays off GitHub.
+#
+#  How it works: ignore everything by default, then allow back exactly
+#  what the website needs. New exam .html files and new images under
+#  dependencies/assets/ are included automatically; new generator files
+#  (in dependencies/_build/ or dependencies/content/) are excluded.
+# =====================================================================
+
+# 1) Ignore everything at the repo root...
+/*
+
+# 2) ...then allow back the files the site needs:
+!/.gitignore
+!/practice_exam_hub.html
+!/vercel.json
+!/dependencies/
+
+# 3) Inside dependencies/, ignore everything...
+dependencies/*
+
+# 4) ...except the assets folder and the exam HTML files:
+!dependencies/assets/
+!dependencies/*.html
