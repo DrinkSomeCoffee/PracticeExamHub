@@ -2661,18 +2661,33 @@
   const questionImg = document.getElementById('question-img');
   function formatExplanation(raw){
     if(!raw) return 'Explanation not yet added for this item.';
-    let text = raw;
-    // Make "Incorrect Answers:" and "Educational Objective:" start their own
-    // paragraph (exactly one blank line before them), unless already at the
-    // very start of the explanation.
-    text = text.replace(/[ \t]*\n*[ \t]*(Incorrect Answers:)/g, '\n\n$1');
-    text = text.replace(/[ \t]*\n*[ \t]*(Educational Objective:)/g, '\n\n$1');
-    text = text.replace(/^\n+/, '');
-    // Escape HTML special characters before injecting our own <strong> tags.
+    let text = raw.replace(/^\s+/, '');
+    // Paragraph structure, derived deterministically from the flat text:
+    //   correct-answer rationale | "Incorrect Answers:" line (if any) |
+    //   one paragraph per incorrect-answer rationale (each starts at the sentence
+    //   that introduces a "(Choice X)") | "Educational Objective:" paragraph.
+    // Works whether or not an "Incorrect Answers:" line is present.
+    (() => {
+      const SENT = String.fromCharCode(2), DOT = String.fromCharCode(1);
+      const eoIdx = text.indexOf('Educational Objective:');
+      let body = (eoIdx === -1 ? text : text.slice(0, eoIdx));
+      let tail = (eoIdx === -1 ? '' : text.slice(eoIdx));
+      body = body.replace(/\s+/g, ' ').trim()
+                 .replace(/\b(e\.g|i\.e|vs|cf|etc|Dr|Mr|Mrs|Ms|No|Fig|approx)\./g, m => m.replace('.', DOT))
+                 .replace(/([.!?])\s+(?=[A-Z(0-9])/g, '$1' + SENT);
+      let out = '';
+      body.split(SENT).forEach((s, i) => {
+        const newPara = /\(Choice/i.test(s) || /^\s*Incorrect Answers:/i.test(s);
+        if(i === 0) out = s;
+        else if(newPara) out += '\n\n' + s;
+        else out += ' ' + s;
+      });
+      out = out.split(DOT).join('.');
+      tail = tail.replace(/\s+/g, ' ').trim();
+      text = out + (tail ? '\n\n' + tail : '');
+    })();
     text = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    // Bold any "(Choice X)" / "(Choices X and Y)" style mentions.
     text = text.replace(/\(Choice[s]?\s+[^)]*\)/g, m => '<strong>' + m + '</strong>');
-    // Bold the two section labels.
     text = text.replace(/Incorrect Answers:/g, '<strong>Incorrect Answers:</strong>');
     text = text.replace(/Educational Objective:/g, '<strong>Educational Objective:</strong>');
     return text;
